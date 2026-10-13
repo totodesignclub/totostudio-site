@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import logo from '../data/logo.svg?raw';
 import {
-  contacto, links, ars, tipoDeCambio, notaPrecios, hero, lanzamiento, rediseno, descuentoRediseno,
+  contacto, links, ars, pesos, notaPrecios, hero, lanzamiento, rediseno, descuentoRediseno,
   extras, marketing, casos, quienSoy, preguntas,
 } from '../data/site';
 
@@ -17,6 +17,67 @@ const check =
   '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="currentColor"/><path d="m6 10.2 2.6 2.6L14 7.4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const flecha =
   '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const fmt = (n: number) => '$ ' + n.toLocaleString('es-AR');
+const ex = Object.fromEntries(extras.map((e) => [e.id, e]));
+const mk = Object.fromEntries(marketing.map((m) => [m.id, m]));
+const no = { etiqueta: 'No necesito', pesos: 0 };
+const si = (usd: number, desde = false) => ({ etiqueta: 'Sí', pesos: pesos(usd), desde });
+type Campo = {
+  id: string; nombre: string; tipo: 'unico' | 'mensual'; inicial?: number;
+  opciones: { etiqueta: string; pesos: number; desde?: boolean }[];
+};
+const grupos: { titulo: string; campos: Campo[] }[] = [
+  {
+    titulo: 'Tu tienda',
+    campos: [
+      {
+        id: 'tienda', nombre: 'Tipo de proyecto', tipo: 'unico',
+        opciones: [
+          { etiqueta: 'Lanzamiento', pesos: pesos(lanzamiento.usd) },
+          { etiqueta: 'Rediseño', pesos: pesos(rediseno.usd) },
+          { etiqueta: 'Ya tengo tienda', pesos: 0 },
+        ],
+      },
+    ],
+  },
+  {
+    titulo: 'Extras',
+    campos: [
+      {
+        id: 'carga', nombre: ex.carga.nombre, tipo: 'unico',
+        opciones: [
+          no,
+          ...[
+            ['Hasta 79 productos', 1], ['80 a 129 productos', 2], ['130 a 179 productos', 3],
+            ['180 a 229 productos', 4], ['230 a 279 productos', 5], ['280 a 329 productos', 6],
+          ].map(([etiqueta, n]) => ({ etiqueta: etiqueta as string, pesos: pesos(ex.carga.usd) * (n as number) })),
+        ],
+      },
+      {
+        id: 'fotos', nombre: ex.fotos.nombre, tipo: 'unico',
+        opciones: [no, ...[10, 25, 50, 100, 200].map((n) => ({ etiqueta: `${n} fotos`, pesos: pesos(ex.fotos.usd) * n }))],
+      },
+      { id: 'identidad', nombre: ex.identidad.nombre, tipo: 'unico', opciones: [no, si(ex.identidad.usd)] },
+    ],
+  },
+  {
+    titulo: 'Marketing mensual',
+    campos: [
+      { id: 'gestion', nombre: mk.gestion.nombre, tipo: 'mensual', opciones: [no, si(mk.gestion.usd)] },
+      { id: 'google', nombre: mk.google.nombre, tipo: 'mensual', opciones: [no, si(mk.google.usd)] },
+      { id: 'email', nombre: mk.email.nombre, tipo: 'mensual', opciones: [no, si(mk.email.usd)] },
+      {
+        id: 'social', nombre: 'Meta o TikTok Ads', tipo: 'mensual',
+        opciones: [
+          no,
+          { etiqueta: 'Meta Ads', pesos: pesos(mk.social.usd), desde: true },
+          { etiqueta: 'TikTok Ads', pesos: pesos(mk.social.usd), desde: true },
+          { etiqueta: 'Meta y TikTok', pesos: pesos(mk.social.usd) * 2, desde: true },
+        ],
+      },
+    ],
+  },
+];
 ---
 <Base
   title="Toto Studio · Diseño de tiendas online"
@@ -142,62 +203,31 @@ const flecha =
         </div>
 
         <!-- CALCULADORA -->
-        <form class="tarjeta calc" id="calculadora" aria-labelledby="t-calc" data-cambio={tipoDeCambio} data-form={links.formulario}>
+        <form class="tarjeta calc" id="calculadora" aria-labelledby="t-calc" data-form={links.formulario}>
           <h3 id="t-calc">Armá tu presupuesto</h3>
-          <p class="suave">Tocá lo que necesitás y te mostramos el total.</p>
+          <p class="suave">Elegí lo que necesitás y te mostramos el total.</p>
 
-          <fieldset>
-            <legend>Tu tienda</legend>
-            <div class="opciones">
-              <label class="opcion">
-                <input type="radio" name="base" value="lanzamiento" data-usd={lanzamiento.usd} data-nombre="Lanzamiento Ecommerce" checked />
-                <span>Lanzamiento</span><span class="mono">{ars(lanzamiento.usd)}</span>
-              </label>
-              <label class="opcion">
-                <input type="radio" name="base" value="rediseno" data-usd={rediseno.usd} data-nombre="Rediseño" />
-                <span>Rediseño</span><span class="mono">{ars(rediseno.usd)}</span>
-              </label>
-              <label class="opcion">
-                <input type="radio" name="base" value="ninguno" data-usd="0" data-nombre="" />
-                <span>Ya tengo tienda</span><span class="mono">$ 0</span>
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Extras</legend>
-            <div class="opciones">
-              {extras.map((e) => (
-                <div class="opcion opcion-extra">
-                  <label>
-                    <input type="checkbox" name="extra" value={e.id} data-usd={e.usd} data-nombre={e.nombre} />
-                    <span>{e.nombre}</span>
+          {grupos.map((g) => (
+            <fieldset>
+              <legend>{g.titulo}</legend>
+              <div class="campos">
+                {g.campos.map((c) => (
+                  <label class="campo">
+                    <span class="campo-nombre">{c.nombre}</span>
+                    <span class="select">
+                      <select name={c.id} data-tipo={c.tipo} data-nombre={c.nombre}>
+                        {c.opciones.map((o, i) => (
+                          <option value={o.etiqueta} data-pesos={o.pesos} data-desde={o.desde ? '1' : ''} selected={i === (c.inicial ?? 0)}>
+                            {o.pesos ? `${o.etiqueta} · ${o.desde ? 'desde ' : ''}${fmt(o.pesos)}${c.tipo === 'mensual' ? '/mes' : ''}` : o.etiqueta}
+                          </option>
+                        ))}
+                      </select>
+                    </span>
                   </label>
-                  {e.cantidad ? (
-                    <label class="cantidad">
-                      <span class="sr">Cantidad de {e.cantidad}</span>
-                      <input type="number" inputmode="numeric" min="1" max={e.id === 'fotos' ? 500 : 20} value={e.id === 'fotos' ? 20 : 1} data-cantidad={e.id} />
-                      <span class="mono">{e.cantidad}</span>
-                    </label>
-                  ) : (
-                    <span class="mono">{ars(e.usd)}</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Marketing mensual</legend>
-            <div class="opciones">
-              {marketing.map((m) => (
-                <label class="opcion">
-                  <input type="checkbox" name="marketing" value={m.id} data-usd={m.usd} data-nombre={m.nombre} data-desde={m.desde ? '1' : ''} />
-                  <span>{m.nombre}</span><span class="mono">{m.desde ? 'desde ' : ''}{ars(m.usd)}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+                ))}
+              </div>
+            </fieldset>
+          ))}
 
           <div class="total" aria-live="polite">
             <div>
@@ -276,67 +306,45 @@ const flecha =
 <script>
   const form = document.getElementById('calculadora') as HTMLFormElement | null;
   if (form) {
-    const cambio = Number(form.dataset.cambio);
     const destino = form.dataset.form || '';
-    const pesos = (usd: number) => Math.round((usd * cambio) / 1000) * 1000;
     const fmt = (n: number) => '$ ' + n.toLocaleString('es-AR');
     const unicoEl = form.querySelector('[data-total-unico]')!;
     const mensualEl = form.querySelector('[data-total-mensual]')!;
     const filaMensual = form.querySelector('[data-fila-mensual]') as HTMLElement;
-
-    const cantidad = (id: string) => {
-      const el = form.querySelector(`[data-cantidad="${id}"]`) as HTMLInputElement | null;
-      return el ? Math.max(1, Math.floor(Number(el.value) || 1)) : 1;
-    };
 
     const calcular = () => {
       let unico = 0;
       let mensual = 0;
       let desde = false;
       const items: string[] = [];
-
-      const base = form.querySelector('input[name="base"]:checked') as HTMLInputElement | null;
-      if (base && Number(base.dataset.usd)) {
-        unico += pesos(Number(base.dataset.usd));
-        items.push(base.dataset.nombre || '');
-      }
-      form.querySelectorAll<HTMLInputElement>('input[name="extra"]:checked').forEach((el) => {
-        const tieneCantidad = form.querySelector(`[data-cantidad="${el.value}"]`);
-        const n = tieneCantidad ? cantidad(el.value) : 1;
-        unico += pesos(Number(el.dataset.usd)) * n;
-        items.push(tieneCantidad ? `${el.dataset.nombre} x${n}` : el.dataset.nombre || '');
+      form.querySelectorAll<HTMLSelectElement>('select').forEach((sel) => {
+        const op = sel.selectedOptions[0];
+        const monto = Number(op?.dataset.pesos || 0);
+        sel.closest('.campo')?.classList.toggle('activa', monto > 0);
+        if (!monto) return;
+        if (sel.dataset.tipo === 'mensual') {
+          mensual += monto;
+          if (op.dataset.desde) desde = true;
+          items.push(`${sel.dataset.nombre}: ${op.value} (mensual)`);
+        } else {
+          unico += monto;
+          items.push(`${sel.dataset.nombre}: ${op.value}`);
+        }
       });
-      form.querySelectorAll<HTMLInputElement>('input[name="marketing"]:checked').forEach((el) => {
-        mensual += pesos(Number(el.dataset.usd));
-        if (el.dataset.desde) desde = true;
-        items.push(`${el.dataset.nombre} (mensual)`);
-      });
-
       unicoEl.textContent = fmt(unico);
       mensualEl.textContent = (desde ? 'desde ' : '') + fmt(mensual);
       filaMensual.hidden = mensual === 0;
-      form.querySelectorAll<HTMLElement>('.opcion').forEach((o) => {
-        const input = o.querySelector('input[type="radio"], input[type="checkbox"]') as HTMLInputElement | null;
-        o.classList.toggle('activa', Boolean(input?.checked));
-      });
       return { unico, mensual, desde, items };
     };
 
-    form.addEventListener('input', (e) => {
-      const t = e.target as HTMLInputElement;
-      if (t.dataset.cantidad) {
-        const box = form.querySelector(`input[name="extra"][value="${t.dataset.cantidad}"]`) as HTMLInputElement | null;
-        if (box) box.checked = true;
-      }
-      calcular();
-    });
+    form.addEventListener('change', calcular);
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const r = calcular();
       const total =
         fmt(r.unico) + (r.mensual ? ` + ${r.desde ? 'desde ' : ''}${fmt(r.mensual)}/mes` : '');
       const params = new URLSearchParams({
-        seleccion: r.items.join(', ') || 'Sin selección',
+        seleccion: r.items.join('\n') || 'Sin selección',
         total,
         origen: 'calculadora',
       });
@@ -498,32 +506,35 @@ const flecha =
   @media (max-width: 480px) { .marketing li { flex-direction: column; gap: 0.3rem; } }
 
   /* Calculadora */
-  .calc { position: sticky; top: 5rem; display: grid; gap: 1.1rem; }
-  @media (max-width: 900px) { .calc { position: static; } }
+  .calc { display: grid; gap: 1.1rem; }
   .calc h3 { font-size: 1.75rem; }
   .calc > .suave { margin-top: -0.6rem; }
   fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   legend { font-weight: 600; margin-bottom: 0.5rem; padding: 0; }
-  .opciones { display: grid; gap: 0.45rem; }
-  .opcion {
-    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
-    padding: 0.7rem 0.9rem; border-radius: 0.9rem;
-    border: 1.5px solid var(--linea); cursor: pointer;
+  .campos { display: grid; gap: 0.45rem; }
+  .campo {
+    display: grid; gap: 0.4rem;
+    padding: 0.7rem 0.75rem; border-radius: 0.9rem;
+    border: 1.5px solid var(--linea);
     transition: border-color 0.15s ease, background 0.15s ease;
     font-size: 0.95rem;
   }
-  .opcion > span:first-of-type, .opcion label > span { flex: 1; font-weight: 500; }
-  .opcion .mono { color: var(--tinta-suave); white-space: nowrap; }
-  .opcion:hover { border-color: var(--tinta-suave); }
-  .opcion.activa { border-color: var(--sello); background: var(--azul-claro); }
-  .opcion input[type='radio'], .opcion input[type='checkbox'] { accent-color: var(--sello); width: 1.1rem; height: 1.1rem; margin: 0; flex: none; }
-  .opcion-extra > label:first-child { display: flex; align-items: center; gap: 0.75rem; flex: 1; cursor: pointer; }
-  .cantidad { display: inline-flex; align-items: center; gap: 0.4rem; }
-  .cantidad input {
-    width: 4rem; min-height: 2.25rem; padding: 0.25rem 0.5rem;
-    border: 1px solid var(--linea); border-radius: 0.6rem; background: #fff;
-    font: 500 0.95rem var(--texto); color: var(--tinta); text-align: center;
+  .campo.activa { border-color: var(--sello); background: var(--azul-claro); }
+  .campo-nombre { font-weight: 500; line-height: 1.25; }
+  .select { position: relative; display: block; }
+  .select::after {
+    content: ''; position: absolute; right: 0.8rem; top: 50%; width: 0.45rem; height: 0.45rem;
+    border-right: 1.6px solid var(--tinta); border-bottom: 1.6px solid var(--tinta);
+    transform: translateY(-70%) rotate(45deg); pointer-events: none;
   }
+  select {
+    appearance: none; -webkit-appearance: none; width: 100%;
+    min-height: 2.5rem; padding: 0.45rem 2rem 0.45rem 0.75rem;
+    border: 1px solid var(--linea); border-radius: 0.65rem; background: #fff;
+    font: 500 0.875rem/1.2 var(--texto); color: var(--tinta);
+    text-overflow: ellipsis; cursor: pointer;
+  }
+  select:hover { border-color: var(--tinta-suave); }
   .total {
     display: flex; flex-wrap: wrap; gap: 1.5rem;
     padding-top: 1rem; border-top: 1px dashed var(--linea);
