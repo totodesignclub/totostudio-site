@@ -28,7 +28,7 @@ const redondeo = 1000; // redondea a miles de pesos
 export const pesos = (usd: number) => Math.round((usd * tipoDeCambio) / redondeo) * redondeo;
 export const ars = (usd: number) => '$ ' + pesos(usd).toLocaleString('es-AR');
 
-export const notaPrecios = `Precios en pesos al tipo de cambio oficial del ${fechaCambio}. El plan de Tienda Nube, las apps y la pauta publicitaria los paga la marca directo.`;
+export const notaPrecios = 'El plan de Tienda Nube, las apps y la pauta publicitaria los paga la marca directo.';
 
 // ── Hero ──────────────────────────────────────────────────────
 export const hero = {
@@ -48,12 +48,12 @@ export const lanzamiento = {
   usd: 790,
   bajada: 'Tu tienda diseñada a medida y lista para vender.',
   incluye: [
-    'Home diseñada a medida para tu marca',
-    'Categorías, páginas y políticas',
-    'Pagos, envíos, dominio, WhatsApp y redes',
-    '10 productos de muestra cargados',
-    'Capacitación de 1 hora grabada',
-    '14 días de ajustes después del lanzamiento',
+    { icono: 'home', texto: 'Home diseñada a medida para tu marca' },
+    { icono: 'paginas', texto: 'Categorías, páginas y políticas' },
+    { icono: 'pagos', texto: 'Pagos, envíos, dominio, WhatsApp y redes' },
+    { icono: 'productos', texto: '10 productos de muestra cargados' },
+    { icono: 'video', texto: 'Capacitación de 1 hora grabada' },
+    { icono: 'ajustes', texto: '14 días de ajustes después del lanzamiento' },
   ],
 };
 
@@ -104,30 +104,11 @@ export const marketing = [
 
 // ── Diseños realizados ────────────────────────────────────────
 export const casos = [
-  {
-    marca: 'Veta',
-    rubro: 'Indumentaria seleccionada',
-    trabajo: 'Rediseño en Tienda Nube con identidad propia.',
-    url: 'https://vdveta.com.ar/',
-    color: '#5F6F52',
-    tinta: '#FFFBF8',
-  },
-  {
-    marca: 'Pasto',
-    rubro: 'Almacén natural',
-    trabajo: 'Tienda de despensa, frescos, vinos y bienestar.',
-    url: 'https://pasto.com.ar/',
-    color: '#E7EBD8',
-    tinta: '#2E3A1F',
-  },
-  {
-    marca: 'Danco',
-    rubro: 'Industria B2B',
-    trabajo: 'Web institucional con consultas por WhatsApp.',
-    url: 'https://www.danco.com.ar/',
-    color: '#1C2B45',
-    tinta: '#F1F3FA',
-  },
+  { marca: 'Pasto', rubro: 'Almacén natural', url: 'https://pasto.com.ar/', slug: 'pasto', color: '#E7EBD8', tinta: '#2E3A1F' },
+  { marca: 'Danco', rubro: 'Industria B2B', url: 'https://www.danco.com.ar/', slug: 'danco', color: '#1C2B45', tinta: '#F1F3FA' },
+  { marca: 'Tentak', rubro: 'Software gastronómico', url: 'https://tentak.framer.website/', slug: 'tentak', color: '#FFE3D3', tinta: '#7A2E0E' },
+  { marca: 'Fixi', rubro: 'Servicios para el hogar', url: 'https://fixijobs.netlify.app/', slug: 'fixi', color: '#DDF4E7', tinta: '#0F5132' },
+  { marca: 'Finerio Connect', rubro: 'Open finance', url: 'https://finerioconnect.com/en', slug: 'finerio', color: '#E6E3FF', tinta: '#2C1F8F' },
 ];
 
 // ── Quién soy ─────────────────────────────────────────────────

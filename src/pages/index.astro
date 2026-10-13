@@ -9,74 +9,54 @@ import {
 const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
 const wa = `https://wa.me/${contacto.whatsapp}`;
 const tiktok = `https://www.tiktok.com/@${contacto.tiktok}`;
-const formulario = `${links.formulario}?origen=web`;
 const consulta = links.calendario || `${links.formulario}?origen=consulta`;
 const anio = new Date().getFullYear();
 
-const check =
-  '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="currentColor"/><path d="m6 10.2 2.6 2.6L14 7.4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const flecha =
-  '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const svg = (d: string, extra = '') =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${d}</svg>`;
+const check = svg('<circle cx="12" cy="12" r="9.2"/><path d="m8 12.3 2.7 2.7L16.2 9.5"/>');
+const flecha = svg('<path d="M5 12h14m-6-6 6 6-6 6"/>');
+const iconos: Record<string, string> = {
+  home: svg('<path d="M3.5 10.5 12 4l8.5 6.5"/><path d="M5.5 9v10.5h13V9"/><path d="M10 19.5V14h4v5.5"/>'),
+  paginas: svg('<rect x="4" y="3.5" width="12" height="15" rx="2"/><path d="M8 7.5h4M8 11h4M19.5 7v11.5a2 2 0 0 1-2 2H9"/>'),
+  pagos: svg('<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/>'),
+  productos: svg('<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>'),
+  video: svg('<rect x="3" y="5" width="18" height="13" rx="2.5"/><path d="m10.5 9 4.5 2.5-4.5 2.5z"/><path d="M8 21h8"/>'),
+  ajustes: svg('<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>'),
+};
+const plataformaIcono: Record<string, string> = {
+  'Tienda Nube': svg('<path d="M7 18a4 4 0 0 1-.6-7.95A5.5 5.5 0 0 1 17 9a4.5 4.5 0 0 1 .5 9z"/>'),
+  Shopify: svg('<path d="M6 8h12l-1 12H7z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>'),
+};
 const fmt = (n: number) => '$ ' + n.toLocaleString('es-AR');
+
 const ex = Object.fromEntries(extras.map((e) => [e.id, e]));
 const mk = Object.fromEntries(marketing.map((m) => [m.id, m]));
-const no = { etiqueta: 'No necesito', pesos: 0 };
-const si = (usd: number, desde = false) => ({ etiqueta: 'Sí', pesos: pesos(usd), desde });
-type Campo = {
-  id: string; nombre: string; tipo: 'unico' | 'mensual'; inicial?: number;
-  opciones: { etiqueta: string; pesos: number; desde?: boolean }[];
-};
-const grupos: { titulo: string; campos: Campo[] }[] = [
-  {
-    titulo: 'Tu tienda',
-    campos: [
-      {
-        id: 'tienda', nombre: 'Tipo de proyecto', tipo: 'unico',
-        opciones: [
-          { etiqueta: 'Lanzamiento', pesos: pesos(lanzamiento.usd) },
-          { etiqueta: 'Rediseño', pesos: pesos(rediseno.usd) },
-          { etiqueta: 'Ya tengo tienda', pesos: 0 },
-        ],
-      },
-    ],
-  },
-  {
-    titulo: 'Extras',
-    campos: [
-      {
-        id: 'carga', nombre: ex.carga.nombre, tipo: 'unico',
-        opciones: [
-          no,
-          ...[
-            ['Hasta 79 productos', 1], ['80 a 129 productos', 2], ['130 a 179 productos', 3],
-            ['180 a 229 productos', 4], ['230 a 279 productos', 5], ['280 a 329 productos', 6],
-          ].map(([etiqueta, n]) => ({ etiqueta: etiqueta as string, pesos: pesos(ex.carga.usd) * (n as number) })),
-        ],
-      },
-      {
-        id: 'fotos', nombre: ex.fotos.nombre, tipo: 'unico',
-        opciones: [no, ...[10, 25, 50, 100, 200].map((n) => ({ etiqueta: `${n} fotos`, pesos: pesos(ex.fotos.usd) * n }))],
-      },
-      { id: 'identidad', nombre: ex.identidad.nombre, tipo: 'unico', opciones: [no, si(ex.identidad.usd)] },
-    ],
-  },
-  {
-    titulo: 'Marketing mensual',
-    campos: [
-      { id: 'gestion', nombre: mk.gestion.nombre, tipo: 'mensual', opciones: [no, si(mk.gestion.usd)] },
-      { id: 'google', nombre: mk.google.nombre, tipo: 'mensual', opciones: [no, si(mk.google.usd)] },
-      { id: 'email', nombre: mk.email.nombre, tipo: 'mensual', opciones: [no, si(mk.email.usd)] },
-      {
-        id: 'social', nombre: 'Meta o TikTok Ads', tipo: 'mensual',
-        opciones: [
-          no,
-          { etiqueta: 'Meta Ads', pesos: pesos(mk.social.usd), desde: true },
-          { etiqueta: 'TikTok Ads', pesos: pesos(mk.social.usd), desde: true },
-          { etiqueta: 'Meta y TikTok', pesos: pesos(mk.social.usd) * 2, desde: true },
-        ],
-      },
-    ],
-  },
+type Opcion = { id: string; nombre: string; detalle: string; pesos: number; grupo?: string; desde?: boolean; definir?: boolean };
+const opcionesExtras: Opcion[] = [
+  { id: 'carga50', nombre: 'Carga de productos', detalle: 'Hasta 50 productos', pesos: pesos(ex.carga.usd), grupo: 'carga' },
+  { id: 'carga100', nombre: 'Carga de productos', detalle: 'Hasta 100 productos', pesos: pesos(ex.carga.usd) * 2, grupo: 'carga' },
+  { id: 'carga+', nombre: 'Carga de productos', detalle: 'Más de 100 productos', pesos: 0, grupo: 'carga', definir: true },
+  { id: 'fotos25', nombre: 'Edición de fotos con IA', detalle: '25 fotos', pesos: pesos(ex.fotos.usd) * 25, grupo: 'fotos' },
+  { id: 'fotos50', nombre: 'Edición de fotos con IA', detalle: '50 fotos', pesos: pesos(ex.fotos.usd) * 50, grupo: 'fotos' },
+  { id: 'fotos+', nombre: 'Edición de fotos con IA', detalle: 'Más de 50 fotos', pesos: 0, grupo: 'fotos', definir: true },
+  { id: 'identidad', nombre: 'Mini identidad de marca', detalle: 'Logo, paleta y tipografías', pesos: pesos(ex.identidad.usd) },
+];
+const opcionesMarketing: Opcion[] = [
+  { id: 'gestion', nombre: mk.gestion.nombre, detalle: 'Por mes', pesos: pesos(mk.gestion.usd) },
+  { id: 'google', nombre: mk.google.nombre, detalle: 'Por mes', pesos: pesos(mk.google.usd) },
+  { id: 'email', nombre: mk.email.nombre, detalle: 'Por mes', pesos: pesos(mk.email.usd) },
+  { id: 'meta', nombre: 'Meta Ads', detalle: 'Por mes, desde', pesos: pesos(mk.social.usd), desde: true },
+  { id: 'tiktok', nombre: 'TikTok Ads', detalle: 'Por mes, desde', pesos: pesos(mk.social.usd), desde: true },
+];
+const multis = [
+  { id: 'extras', titulo: 'Extras', vacio: 'Elegí los extras', tipo: 'unico', opciones: opcionesExtras },
+  { id: 'marketing', titulo: 'Marketing mensual', vacio: 'Elegí servicios de marketing', tipo: 'mensual', opciones: opcionesMarketing },
+];
+const sumables = [
+  { nombre: ex.carga.nombre, precio: `${ars(ex.carga.usd)} cada 50 productos` },
+  { nombre: ex.fotos.nombre, precio: `${ars(ex.fotos.usd)} por foto` },
+  { nombre: ex.identidad.nombre, precio: ars(ex.identidad.usd) },
 ];
 ---
 <Base
@@ -97,90 +77,99 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
 
   <main id="inicio">
     <!-- HERO -->
-    <section class="hero envoltura">
-      <div class="hero-texto">
-        <h1>Diseñamos la experiencia de tu <span class="azul">ecommerce</span></h1>
-        <p class="bajada">{hero.bajada}</p>
-        <ul class="chips" aria-label="Plataformas">
-          {hero.plataformas.map((p) => <li class="chip">{p}</li>)}
-        </ul>
-        <ul class="checks">
-          {hero.puntos.map((p) => <li><span class="check" set:html={check} />{p}</li>)}
-        </ul>
-      </div>
-
-      <aside class="tarjeta hero-tarjeta" aria-labelledby="potencia-1">
-        <p class="etiqueta">Lanzamiento ecommerce</p>
-        <h2 id="potencia-1">Potenciá tu marca</h2>
-        <p class="hero-precio"><span class="mono">desde</span> {ars(lanzamiento.usd)}</p>
-        <p class="suave">Pago único. Diseño a medida, configuración completa y 14 días de ajustes.</p>
-        <div class="botones">
-          <a href="#precio" class="boton boton-claro">Ver precios</a>
-          <a href={consulta} class="boton" target="_blank" rel="noopener">Agendá consulta gratis</a>
+    <section class="hero-zona">
+      <div class="hero envoltura">
+        <div class="hero-texto">
+          <p class="ojo"><span class="punto"></span>Estudio de ecommerce · Buenos Aires</p>
+          <h1>Diseñamos la experiencia de tu <span class="azul">ecommerce</span></h1>
+          <p class="bajada">{hero.bajada}</p>
+          <ul class="checks">
+            {hero.puntos.map((p) => <li><span class="check" set:html={check} />{p}</li>)}
+          </ul>
         </div>
-      </aside>
+
+        <aside class="hero-tarjeta" aria-labelledby="potencia-1">
+          <span class="cinta" aria-hidden="true">Tendencias 2026</span>
+          <h2 id="potencia-1">Potenciá tu marca</h2>
+          <p class="suave hero-sub">Tiendas online en</p>
+          <ul class="chips" aria-label="Plataformas">
+            {hero.plataformas.map((p) => <li class="chip"><span class="chip-icono" set:html={plataformaIcono[p]} />{p}</li>)}
+          </ul>
+          <div class="botones">
+            <a href="#precio" class="boton boton-claro">Ver precios</a>
+            <a href={consulta} class="boton" target="_blank" rel="noopener">Agendá consulta gratis</a>
+          </div>
+        </aside>
+      </div>
     </section>
 
     <!-- DISEÑOS REALIZADOS -->
-    <section id="disenos" class="seccion envoltura" aria-labelledby="t-disenos">
-      <h2 id="t-disenos" class="titulo-seccion">Diseños realizados</h2>
-      <div class="casos">
-        {casos.map((c) => (
-          <a class="caso" href={c.url} target="_blank" rel="noopener">
-            <div class="caso-visual" style={`--fondo:${c.color};--letra:${c.tinta}`}>
-              <span class="caso-puntos" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="caso-marca">{c.marca}</span>
-            </div>
-            <div class="caso-info">
-              <p class="caso-rubro mono">{c.rubro}</p>
-              <p>{c.trabajo}</p>
-              <span class="caso-link">Ver tienda <span set:html={flecha} /></span>
-            </div>
-          </a>
-        ))}
-        <a class="caso caso-vacio" href={formulario} target="_blank" rel="noopener">
-          <div class="caso-visual">
-            <span class="caso-puntos" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="caso-marca">Tu marca</span>
-          </div>
-          <div class="caso-info">
-            <p class="caso-rubro mono">Próximo lanzamiento</p>
-            <p>Contanos de tu marca y armamos la próxima.</p>
-            <span class="caso-link">Empezar <span set:html={flecha} /></span>
-          </div>
-        </a>
+    <section id="disenos" class="seccion" aria-labelledby="t-disenos">
+      <div class="envoltura">
+        <p class="ojo">01 · Portfolio</p>
+        <h2 id="t-disenos" class="titulo-seccion">Diseños realizados</h2>
+      </div>
+      <div class="carrusel" aria-label="Sitios de clientes">
+        <div class="pista">
+          {[0, 1].map((vuelta) => (
+            <ul class="grupo-casos" aria-hidden={vuelta === 1 ? 'true' : undefined}>
+              {casos.map((c) => (
+                <li>
+                  <a class="caso" href={c.url} target="_blank" rel="noopener" tabindex={vuelta === 1 ? -1 : undefined}>
+                    <div class="navegador">
+                      <span class="caso-puntos" aria-hidden="true"><i></i><i></i><i></i></span>
+                      <span class="url mono">{c.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</span>
+                    </div>
+                    <div class="caso-visual" style={`--fondo:${c.color};--letra:${c.tinta}`}>
+                      <span class="caso-marca">{c.marca}</span>
+                      <img src={`/previews/${c.slug}.jpg`} alt={`Vista previa del sitio de ${c.marca}`} loading="lazy" decoding="async" onerror="this.remove()" />
+                    </div>
+                    <div class="caso-info">
+                      <div>
+                        <p class="caso-nombre">{c.marca}</p>
+                        <p class="caso-rubro mono">{c.rubro}</p>
+                      </div>
+                      <span class="caso-link" set:html={flecha} />
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
       </div>
     </section>
 
     <!-- PRECIO -->
     <section id="precio" class="seccion envoltura" aria-labelledby="t-precio">
+      <p class="ojo">02 · Inversión</p>
       <h2 id="t-precio" class="titulo-seccion">Precio</h2>
 
       <div class="precio-grilla">
         <div class="precio-col">
-          <article class="tarjeta plan">
+          <article class="tarjeta plan plan-principal">
             <p class="etiqueta">{lanzamiento.nombre}</p>
-            <p class="plan-precio">{ars(lanzamiento.usd)}</p>
+            <p class="plan-precio"><span class="resaltado">{ars(lanzamiento.usd)}</span></p>
             <p class="suave">Pago único · {lanzamiento.bajada}</p>
-            <ul class="checks checks-chicos">
-              {lanzamiento.incluye.map((i) => <li><span class="check" set:html={check} />{i}</li>)}
+            <ul class="incluye">
+              {lanzamiento.incluye.map((i) => <li><span class="incluye-icono" set:html={iconos[i.icono]} />{i.texto}</li>)}
             </ul>
 
             <div class="rediseno">
-              <span class="off">{descuentoRediseno}% off</span>
-              <div>
-                <p><strong>Con Rediseño</strong> · {ars(rediseno.usd)}</p>
-                <p class="suave">{rediseno.bajada}</p>
+              <p class="rediseno-pregunta">¿Ya tenés una tienda funcionando?</p>
+              <div class="rediseno-fila">
+                <span class="off">{descuentoRediseno}% off</span>
+                <div>
+                  <p><strong>Rediseño</strong> · <span class="nowrap">{ars(rediseno.usd)}</span></p>
+                  <p class="suave">{rediseno.bajada}</p>
+                </div>
               </div>
             </div>
 
             <p class="sumables-titulo">Sumá si lo necesitás</p>
             <ul class="sumables">
-              {extras.map((e) => (
-                <li class="chip chip-precio">
-                  <span>{e.nombre}</span>
-                  <span class="mono">{ars(e.usd)} {e.unidad === 'pago único' ? '' : e.unidad}</span>
-                </li>
+              {sumables.map((s) => (
+                <li><span>{s.nombre}</span><span class="mono">{s.precio}</span></li>
               ))}
             </ul>
           </article>
@@ -203,43 +192,57 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
         </div>
 
         <!-- CALCULADORA -->
-        <form class="tarjeta calc" id="calculadora" aria-labelledby="t-calc" data-form={links.formulario}>
+        <form class="calc" id="calculadora" aria-labelledby="t-calc" data-form={links.formulario}>
           <h3 id="t-calc">Armá tu presupuesto</h3>
-          <p class="suave">Elegí lo que necesitás y te mostramos el total.</p>
+          <p class="calc-sub">Elegí lo que necesitás y te mostramos el total.</p>
 
-          {grupos.map((g) => (
-            <fieldset>
-              <legend>{g.titulo}</legend>
-              <div class="campos">
-                {g.campos.map((c) => (
-                  <label class="campo">
-                    <span class="campo-nombre">{c.nombre}</span>
-                    <span class="select">
-                      <select name={c.id} data-tipo={c.tipo} data-nombre={c.nombre}>
-                        {c.opciones.map((o, i) => (
-                          <option value={o.etiqueta} data-pesos={o.pesos} data-desde={o.desde ? '1' : ''} selected={i === (c.inicial ?? 0)}>
-                            {o.pesos ? `${o.etiqueta} · ${o.desde ? 'desde ' : ''}${fmt(o.pesos)}${c.tipo === 'mensual' ? '/mes' : ''}` : o.etiqueta}
-                          </option>
-                        ))}
-                      </select>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+          <label class="campo">
+            <span class="campo-nombre">Tu tienda</span>
+            <span class="select">
+              <select name="tienda">
+                <option value="Lanzamiento Ecommerce" data-pesos={pesos(lanzamiento.usd)} selected>Lanzamiento · {ars(lanzamiento.usd)}</option>
+                <option value="Rediseño" data-pesos={pesos(rediseno.usd)}>Rediseño · {ars(rediseno.usd)}</option>
+                <option value="" data-pesos="0">Ya tengo tienda</option>
+              </select>
+            </span>
+          </label>
+
+          {multis.map((m) => (
+            <div class="campo">
+              <span class="campo-nombre" id={`t-${m.id}`}>{m.titulo}</span>
+              <details class="multi" data-tipo={m.tipo}>
+                <summary aria-labelledby={`t-${m.id}`}>
+                  <span class="multi-texto" data-vacio={m.vacio}>{m.vacio}</span>
+                </summary>
+                <div class="multi-panel" role="group" aria-labelledby={`t-${m.id}`}>
+                  {m.opciones.map((o, i) => (
+                    <Fragment>
+                    {o.grupo && o.grupo !== m.opciones[i - 1]?.grupo && <p class="multi-grupo">{o.nombre} <span>· elegí una opción</span></p>}
+                    <label class={`multi-op${o.grupo ? ' multi-op-sub' : ''}`}>
+                      <input type="checkbox" value={o.id} data-nombre={o.nombre} data-detalle={o.detalle} data-pesos={o.pesos} data-grupo={o.grupo || ''} data-desde={o.desde ? '1' : ''} data-definir={o.definir ? '1' : ''} />
+                      <span class="multi-caja" set:html={svg('<path d="m6 12.5 4 4 8-9"/>', 'stroke-width="2.4"')} />
+                      <span class="multi-nombre">{o.grupo ? o.detalle : <Fragment>{o.nombre}<small>{o.detalle}</small></Fragment>}</span>
+                      <span class="mono">{o.definir ? 'A definir' : `${o.desde ? 'desde ' : ''}${fmt(o.pesos)}${m.tipo === 'mensual' ? '/mes' : ''}`}</span>
+                    </label>
+                    </Fragment>
+                  ))}
+                </div>
+              </details>
+            </div>
           ))}
 
           <div class="total" aria-live="polite">
             <div>
               <p class="mono">Pago único</p>
               <p class="total-num" data-total-unico>{ars(lanzamiento.usd)}</p>
+              <p class="definir" data-definir hidden>+ ítems a definir en la llamada</p>
             </div>
             <div data-fila-mensual hidden>
               <p class="mono">Por mes</p>
               <p class="total-num" data-total-mensual>$ 0</p>
             </div>
           </div>
-          <button type="submit" class="boton boton-ancho">Sumar</button>
+          <button type="submit" class="boton boton-amarillo boton-ancho">Sumar</button>
           <p class="nota">{notaPrecios}</p>
         </form>
       </div>
@@ -248,8 +251,9 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
     <!-- QUIÉN SOY -->
     <section id="quien-soy" class="seccion envoltura" aria-labelledby="t-quien">
       <div class="tarjeta quien">
-        <div class="avatar" aria-hidden="true">T</div>
+        <div class="avatar" aria-hidden="true"><span>T</span></div>
         <div>
+          <p class="ojo">03 · Detrás del estudio</p>
           <h2 id="t-quien" class="titulo-seccion">Quién soy</h2>
           <p class="mono quien-rol">{quienSoy.nombre} · {quienSoy.rol}</p>
           {quienSoy.parrafos.map((p) => <p class="quien-texto">{p}</p>)}
@@ -258,8 +262,12 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
     </section>
 
     <!-- FAQ -->
-    <section id="faq" class="seccion envoltura" aria-labelledby="t-faq">
-      <h2 id="t-faq" class="titulo-seccion">FAQ's</h2>
+    <section id="faq" class="seccion envoltura faq-zona" aria-labelledby="t-faq">
+      <div class="faq-titulo">
+        <p class="ojo">04 · Dudas</p>
+        <h2 id="t-faq" class="titulo-seccion">FAQ's</h2>
+        <p class="suave">¿No encontrás tu respuesta? Escribinos por <a href={wa} target="_blank" rel="noopener">WhatsApp</a>.</p>
+      </div>
       <div class="faq">
         {preguntas.map((q) => (
           <details>
@@ -273,7 +281,9 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
     <!-- CTA FINAL -->
     <section class="seccion envoltura" aria-labelledby="potencia-2">
       <div class="cta">
-        <div>
+        <span class="forma forma-1" aria-hidden="true"></span>
+        <span class="forma forma-2" aria-hidden="true"></span>
+        <div class="cta-texto">
           <h2 id="potencia-2">Potenciá tu marca</h2>
           <p>Contanos qué vendés y en 30 minutos vemos cómo llevar tu tienda al próximo nivel.</p>
         </div>
@@ -311,38 +321,84 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
     const unicoEl = form.querySelector('[data-total-unico]')!;
     const mensualEl = form.querySelector('[data-total-mensual]')!;
     const filaMensual = form.querySelector('[data-fila-mensual]') as HTMLElement;
+    const definirEl = form.querySelector('[data-definir]') as HTMLElement;
+    const multis = [...form.querySelectorAll<HTMLDetailsElement>('.multi')];
 
     const calcular = () => {
       let unico = 0;
       let mensual = 0;
       let desde = false;
+      let definir = false;
       const items: string[] = [];
-      form.querySelectorAll<HTMLSelectElement>('select').forEach((sel) => {
-        const op = sel.selectedOptions[0];
-        const monto = Number(op?.dataset.pesos || 0);
-        sel.closest('.campo')?.classList.toggle('activa', monto > 0);
-        if (!monto) return;
-        if (sel.dataset.tipo === 'mensual') {
-          mensual += monto;
-          if (op.dataset.desde) desde = true;
-          items.push(`${sel.dataset.nombre}: ${op.value} (mensual)`);
-        } else {
-          unico += monto;
-          items.push(`${sel.dataset.nombre}: ${op.value}`);
-        }
+
+      const tienda = form.querySelector('select[name="tienda"]') as HTMLSelectElement;
+      const op = tienda.selectedOptions[0];
+      if (op && op.value) {
+        unico += Number(op.dataset.pesos || 0);
+        items.push(op.value);
+      }
+
+      multis.forEach((m) => {
+        const marcados = [...m.querySelectorAll<HTMLInputElement>('input:checked')];
+        const texto = m.querySelector('.multi-texto') as HTMLElement;
+        texto.textContent = marcados.length
+          ? marcados.map((i) => (i.dataset.grupo ? `${i.dataset.nombre} (${i.dataset.detalle})` : i.dataset.nombre)).join(', ')
+          : texto.dataset.vacio || '';
+        m.classList.toggle('activa', marcados.length > 0);
+        marcados.forEach((i) => {
+          const monto = Number(i.dataset.pesos || 0);
+          const etiqueta = i.dataset.grupo ? `${i.dataset.nombre}: ${i.dataset.detalle}` : i.dataset.nombre || '';
+          if (i.dataset.definir) definir = true;
+          if (m.dataset.tipo === 'mensual') {
+            mensual += monto;
+            if (i.dataset.desde) desde = true;
+            items.push(`${etiqueta} (mensual)`);
+          } else {
+            unico += monto;
+            items.push(i.dataset.definir ? `${etiqueta} (a definir)` : etiqueta);
+          }
+        });
       });
+
       unicoEl.textContent = fmt(unico);
       mensualEl.textContent = (desde ? 'desde ' : '') + fmt(mensual);
       filaMensual.hidden = mensual === 0;
-      return { unico, mensual, desde, items };
+      definirEl.hidden = !definir;
+      return { unico, mensual, desde, definir, items };
     };
 
-    form.addEventListener('change', calcular);
+    form.addEventListener('change', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.type === 'checkbox' && t.checked && t.dataset.grupo) {
+        form.querySelectorAll<HTMLInputElement>(`input[data-grupo="${t.dataset.grupo}"]`).forEach((o) => {
+          if (o !== t) o.checked = false;
+        });
+      }
+      calcular();
+    });
+
+    // Un solo desplegable abierto a la vez; se cierra al tocar afuera o con Escape
+    multis.forEach((m) =>
+      m.addEventListener('toggle', () => {
+        if (m.open) multis.forEach((o) => o !== m && (o.open = false));
+      }),
+    );
+    document.addEventListener('click', (e) => {
+      multis.forEach((m) => {
+        if (m.open && !m.contains(e.target as Node)) m.open = false;
+      });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') multis.forEach((m) => (m.open = false));
+    });
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const r = calcular();
       const total =
-        fmt(r.unico) + (r.mensual ? ` + ${r.desde ? 'desde ' : ''}${fmt(r.mensual)}/mes` : '');
+        fmt(r.unico) +
+        (r.mensual ? ` + ${r.desde ? 'desde ' : ''}${fmt(r.mensual)}/mes` : '') +
+        (r.definir ? ' + ítems a definir' : '');
       const params = new URLSearchParams({
         seleccion: r.items.join('\n') || 'Sin selección',
         total,
@@ -365,21 +421,26 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
   .azul { color: var(--sello); }
   .mono { font-family: var(--mono); font-size: 0.8125rem; letter-spacing: 0.01em; }
   .suave { color: var(--tinta-suave); }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .ojo {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--sello); margin-bottom: 0.75rem;
+  }
+  .punto { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 4px color-mix(in srgb, var(--verde) 20%, transparent); }
 
   /* Barra */
   .barra {
     position: sticky; top: 0; z-index: 20;
-    background: color-mix(in srgb, var(--papel) 88%, transparent);
-    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--papel) 85%, transparent);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--linea);
   }
   .barra-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; }
   .marca { display: inline-flex; color: var(--tinta); width: 7.5rem; }
   .marca :global(svg) { width: 100%; height: auto; display: block; }
-  nav { display: flex; gap: 1.5rem; font-weight: 500; font-size: 0.9375rem; }
-  nav a { text-decoration: none; color: var(--tinta-suave); }
-  nav a:hover { color: var(--tinta); }
+  nav { display: flex; gap: 0.25rem; font-weight: 500; font-size: 0.9375rem; }
+  nav a { text-decoration: none; color: var(--tinta-suave); padding: 0.4rem 0.8rem; border-radius: 999px; transition: background 0.15s ease, color 0.15s ease; }
+  nav a:hover { color: var(--tinta); background: var(--superficie); }
   @media (max-width: 640px) { nav { display: none; } }
 
   /* Botones */
@@ -389,13 +450,14 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
     border-radius: 999px; border: 1.5px solid var(--tinta);
     background: var(--tinta); color: #fff;
     font: 600 1rem/1.2 var(--texto); text-decoration: none; cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   }
-  .boton:hover { transform: translateY(-1px); background: var(--sello); border-color: var(--sello); }
+  .boton:hover { transform: translateY(-2px); background: var(--sello); border-color: var(--sello); box-shadow: 0 10px 20px -10px var(--sello); }
   .boton-claro { background: transparent; color: var(--tinta); }
-  .boton-claro:hover { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+  .boton-claro:hover { background: var(--tinta); color: #fff; border-color: var(--tinta); box-shadow: none; }
+  .boton-amarillo { background: var(--cinta); border-color: var(--cinta); color: var(--tinta); }
+  .boton-amarillo:hover { background: #fff; border-color: #fff; color: var(--tinta); box-shadow: 0 10px 24px -10px rgba(255, 207, 61, 0.8); }
   .boton-ancho { width: 100%; }
-  .botones .boton { white-space: nowrap; padding-inline: 1.1rem; }
 
   .tarjeta {
     background: var(--superficie);
@@ -409,91 +471,153 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
   }
 
   /* Hero */
+  .hero-zona {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(40rem 26rem at 88% 10%, rgba(31, 91, 255, 0.16), transparent 70%),
+      radial-gradient(28rem 20rem at 70% 95%, rgba(255, 207, 61, 0.28), transparent 70%),
+      radial-gradient(circle at 1px 1px, rgba(11, 19, 43, 0.09) 1px, transparent 0) 0 0 / 22px 22px;
+  }
   .hero {
     display: grid; gap: 2.5rem; align-items: center;
     grid-template-columns: 1.25fr 1fr;
-    padding-block: clamp(3rem, 8vw, 6rem);
+    padding-block: clamp(3rem, 8vw, 6.5rem);
   }
   @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } }
-  h1 { font-size: clamp(2.6rem, 6.2vw, 4.75rem); }
-  .bajada { margin-top: 1.25rem; font-size: clamp(1.0625rem, 1.6vw, 1.25rem); color: var(--tinta-suave); max-width: 34rem; }
-  .chips { list-style: none; padding: 0; margin: 1.5rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .chip {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    padding: 0.4rem 0.9rem; border-radius: 999px;
-    background: var(--superficie); border: 1px solid var(--linea);
-    font-weight: 600; font-size: 0.9375rem;
+  h1 { font-size: clamp(2.6rem, 6.2vw, 4.75rem); isolation: isolate; }
+  .azul { position: relative; white-space: nowrap; }
+  h1 .azul::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0.02em; height: 0.14em;
+    background: var(--cinta); border-radius: 999px; z-index: -1;
   }
-  .checks { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 0.6rem; }
-  .checks li { display: flex; align-items: flex-start; gap: 0.6rem; font-weight: 500; }
-  .check { color: var(--verde); flex: none; width: 1.25rem; height: 1.25rem; margin-top: 0.15rem; display: inline-flex; }
+  .bajada { margin-top: 1.25rem; font-size: clamp(1.0625rem, 1.6vw, 1.25rem); color: var(--tinta-suave); max-width: 34rem; }
+  .checks { list-style: none; padding: 0; margin: 1.75rem 0 0; display: grid; gap: 0.65rem; }
+  .checks li { display: flex; align-items: center; gap: 0.6rem; font-weight: 500; }
+  .check { color: var(--verde); flex: none; width: 1.4rem; height: 1.4rem; display: inline-flex; }
   .check :global(svg) { width: 100%; height: 100%; }
-  .checks-chicos { margin-top: 1.25rem; }
-  .checks-chicos li { font-weight: 400; font-size: 0.975rem; }
 
-  .hero-tarjeta { box-shadow: 0 30px 60px -30px rgba(11, 19, 43, 0.25); }
-  .hero-tarjeta h2 { font-size: clamp(2rem, 3.6vw, 2.75rem); margin-top: 0.5rem; }
-  .hero-precio { font-family: var(--display); font-weight: 800; font-size: 1.75rem; margin-top: 1.25rem; }
-  .hero-precio .mono { font-weight: 400; color: var(--tinta-suave); }
-  .hero-tarjeta .suave { margin-top: 0.4rem; }
-  .botones { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem; margin-top: 1.5rem; }
+  .hero-tarjeta {
+    position: relative;
+    background: var(--superficie);
+    border-radius: 1.75rem;
+    padding: clamp(1.5rem, 3.5vw, 2.25rem);
+    border: 1px solid var(--linea);
+    box-shadow: 0 1px 0 #fff inset, 0 40px 80px -40px rgba(31, 91, 255, 0.45);
+  }
+  .hero-tarjeta::before {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px;
+    background: linear-gradient(140deg, var(--sello), transparent 40%, transparent 65%, var(--cinta));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+  .cinta {
+    position: absolute; top: -0.9rem; right: 1.5rem; rotate: 4deg;
+    background: var(--cinta); color: var(--tinta);
+    font: 600 0.75rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.55rem 0.9rem; border-radius: 0.3rem;
+    box-shadow: 0 6px 14px -6px rgba(11, 19, 43, 0.35);
+  }
+  .hero-tarjeta h2 { font-size: clamp(2rem, 3.6vw, 2.75rem); }
+  .hero-sub { margin-top: 1.25rem; font-size: 0.95rem; }
+  .chips { list-style: none; padding: 0; margin: 0.6rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.5rem 1rem 0.5rem 0.75rem; border-radius: 999px;
+    background: var(--azul-claro); color: var(--sello);
+    font-weight: 600; font-size: 0.975rem;
+  }
+  .chip-icono { width: 1.15rem; height: 1.15rem; display: inline-flex; }
+  .chip-icono :global(svg) { width: 100%; height: 100%; }
+  .botones { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem; margin-top: 1.75rem; }
+  .botones .boton { white-space: nowrap; padding-inline: 1.1rem; }
   @media (max-width: 420px) { .botones { grid-template-columns: 1fr; } }
 
   /* Secciones */
   .seccion { padding-block: clamp(2.5rem, 6vw, 4.5rem); }
   .titulo-seccion { font-size: clamp(2rem, 4.5vw, 3rem); margin-bottom: 1.75rem; }
 
-  /* Casos */
-  .casos { display: grid; gap: 1rem; grid-template-columns: repeat(4, 1fr); }
-  @media (max-width: 1000px) { .casos { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 520px) {
-    .casos { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-    .caso-marca { font-size: 1.5rem; }
-    .caso-info { font-size: 0.85rem; padding: 0.75rem; }
+  /* Carrusel de casos */
+  .carrusel {
+    overflow: hidden; padding-block: 0.75rem 1.5rem;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
+  .pista { display: flex; width: max-content; animation: desfile 45s linear infinite; }
+  .carrusel:hover .pista, .carrusel:focus-within .pista { animation-play-state: paused; }
+  @keyframes desfile { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .pista { animation: none; }
+    .carrusel { overflow-x: auto; }
+  }
+  .grupo-casos { list-style: none; margin: 0; padding: 0 0.6rem; display: flex; gap: 1.2rem; }
   .caso {
-    display: flex; flex-direction: column; text-decoration: none;
+    display: block; width: clamp(17rem, 30vw, 24rem); text-decoration: none;
     background: var(--superficie); border: 1px solid var(--linea); border-radius: 1.25rem; overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
-  .caso:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -24px rgba(11, 19, 43, 0.35); }
+  .caso:hover { transform: translateY(-6px) rotate(-0.6deg); border-color: var(--sello); box-shadow: 0 28px 50px -28px rgba(31, 91, 255, 0.6); }
+  .navegador { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--linea); }
+  .caso-puntos { display: flex; gap: 0.3rem; }
+  .caso-puntos i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--linea); }
+  .caso-puntos i:first-child { background: #ff6b5e; }
+  .caso-puntos i:nth-child(2) { background: var(--cinta); }
+  .caso-puntos i:nth-child(3) { background: #3ccf6e; }
+  .url { flex: 1; background: var(--papel); border-radius: 999px; padding: 0.15rem 0.7rem; font-size: 0.7rem; color: var(--tinta-suave); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .caso-visual {
-    position: relative; aspect-ratio: 4 / 3; display: grid; place-items: center;
+    position: relative; aspect-ratio: 4 / 3; display: grid; place-items: center; overflow: hidden;
     background: var(--fondo); color: var(--letra);
   }
-  .caso-puntos { position: absolute; top: 0.75rem; left: 0.9rem; display: flex; gap: 0.3rem; }
-  .caso-puntos i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: currentColor; opacity: 0.45; }
-  .caso-marca { font-family: var(--display); font-weight: 800; font-size: 2.25rem; letter-spacing: -0.02em; }
-  .caso-info { padding: 1rem 1.1rem 1.2rem; display: grid; gap: 0.35rem; flex: 1; font-size: 0.95rem; }
-  .caso-rubro { color: var(--tinta-suave); }
-  .caso-link { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; color: var(--sello); margin-top: auto; padding-top: 0.4rem; }
-  .caso-link :global(svg) { width: 1rem; height: 1rem; }
-  .caso-vacio .caso-visual {
-    --fondo: repeating-linear-gradient(-45deg, #fff, #fff 10px, #f0f2f8 10px, #f0f2f8 20px);
-    --letra: var(--tinta-suave);
-    border-bottom: 1px dashed var(--linea);
+  .caso-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.6s ease; }
+  .caso:hover .caso-visual img { transform: scale(1.04); }
+  .caso-marca { font-family: var(--display); font-weight: 800; font-size: 2.25rem; letter-spacing: -0.02em; text-align: center; padding: 1rem; }
+  .caso-info { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem 1.1rem; }
+  .caso-nombre { font-weight: 700; }
+  .caso-rubro { color: var(--tinta-suave); font-size: 0.75rem; }
+  .caso-link {
+    flex: none; width: 2.25rem; height: 2.25rem; border-radius: 50%; display: grid; place-items: center;
+    background: var(--papel); color: var(--tinta); transition: background 0.2s ease, color 0.2s ease, rotate 0.2s ease;
   }
+  .caso-link :global(svg) { width: 1.1rem; height: 1.1rem; }
+  .caso:hover .caso-link { background: var(--sello); color: #fff; rotate: -45deg; }
 
   /* Precio */
   .precio-grilla { display: grid; gap: 1.25rem; grid-template-columns: 1.15fr 1fr; align-items: start; }
   @media (max-width: 900px) { .precio-grilla { grid-template-columns: 1fr; } }
   .precio-col { display: grid; gap: 1.25rem; }
-  .plan-precio { font-family: var(--display); font-weight: 800; font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1; margin-top: 0.6rem; }
-  .plan > .suave { margin-top: 0.5rem; }
-  .rediseno {
-    display: flex; gap: 1rem; align-items: center;
-    margin-top: 1.5rem; padding: 1rem; border-radius: 1rem;
-    background: var(--azul-claro);
+  .plan-principal { position: relative; overflow: hidden; }
+  .plan-principal::before {
+    content: ''; position: absolute; inset: 0 0 auto; height: 6px;
+    background: linear-gradient(90deg, var(--sello), #7c9bff 50%, var(--cinta));
   }
+  .plan-precio { font-family: var(--display); font-weight: 800; font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1.05; margin-top: 0.6rem; }
+  .resaltado { background: linear-gradient(transparent 62%, rgba(255, 207, 61, 0.7) 62%, rgba(255, 207, 61, 0.7) 92%, transparent 92%); padding-inline: 0.1em; }
+  .plan > .suave { margin-top: 0.5rem; }
+  .incluye { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 0.7rem; }
+  .incluye li { display: flex; align-items: center; gap: 0.75rem; }
+  .incluye-icono {
+    flex: none; width: 2.25rem; height: 2.25rem; border-radius: 0.7rem;
+    display: grid; place-items: center; background: var(--azul-claro); color: var(--sello);
+  }
+  .incluye-icono :global(svg) { width: 1.2rem; height: 1.2rem; }
+
+  .rediseno { margin-top: 1.75rem; padding: 1.1rem; border-radius: 1rem; background: var(--azul-claro); border: 1px dashed color-mix(in srgb, var(--sello) 40%, transparent); }
+  .rediseno-pregunta { font-weight: 700; font-family: var(--display); font-size: 1.15rem; margin-bottom: 0.7rem; }
+  .rediseno-fila { display: flex; gap: 1rem; align-items: center; }
   .off {
-    flex: none; background: var(--sello); color: #fff; border-radius: 999px;
-    padding: 0.35rem 0.75rem; font: 600 0.875rem/1 var(--mono);
+    flex: none; background: var(--sello); color: #fff; border-radius: 999px; rotate: -4deg;
+    padding: 0.45rem 0.8rem; font: 600 0.875rem/1 var(--mono);
   }
   .rediseno .suave { font-size: 0.925rem; }
+  .nowrap { white-space: nowrap; }
+  @media (max-width: 480px) { .rediseno-fila { flex-direction: column; align-items: flex-start; gap: 0.6rem; } }
   .sumables-titulo { margin-top: 1.5rem; font-weight: 600; }
-  .sumables { list-style: none; padding: 0; margin: 0.6rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .chip-precio { flex-direction: column; align-items: flex-start; gap: 0.1rem; border-radius: 0.9rem; padding: 0.55rem 0.9rem; }
-  .chip-precio .mono { font-weight: 400; color: var(--tinta-suave); font-size: 0.75rem; }
+  .sumables { list-style: none; padding: 0; margin: 0.6rem 0 0; display: grid; gap: 0.5rem; }
+  .sumables li {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+    padding: 0.75rem 1rem; border-radius: 0.9rem; border: 1px solid var(--linea); background: var(--papel);
+    font-weight: 600;
+  }
+  .sumables .mono { font-weight: 400; color: var(--tinta-suave); }
 
   .marketing { list-style: none; padding: 0; margin: 1rem 0 0; }
   .marketing li {
@@ -506,85 +630,138 @@ const grupos: { titulo: string; campos: Campo[] }[] = [
   @media (max-width: 480px) { .marketing li { flex-direction: column; gap: 0.3rem; } }
 
   /* Calculadora */
-  .calc { display: grid; gap: 1.1rem; }
+  .calc {
+    position: relative; display: grid; gap: 1.1rem;
+    background: var(--tinta); color: #fff;
+    border-radius: 1.5rem; padding: clamp(1.25rem, 3vw, 2rem);
+    background-image:
+      radial-gradient(22rem 14rem at 100% 0%, rgba(31, 91, 255, 0.55), transparent 70%),
+      radial-gradient(16rem 12rem at 0% 100%, rgba(255, 207, 61, 0.18), transparent 70%);
+  }
   .calc h3 { font-size: 1.75rem; }
-  .calc > .suave { margin-top: -0.6rem; }
-  fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
-  legend { font-weight: 600; margin-bottom: 0.5rem; padding: 0; }
-  .campos { display: grid; gap: 0.45rem; }
-  .campo {
-    display: grid; gap: 0.4rem;
-    padding: 0.7rem 0.75rem; border-radius: 0.9rem;
-    border: 1.5px solid var(--linea);
-    transition: border-color 0.15s ease, background 0.15s ease;
-    font-size: 0.95rem;
-  }
-  .campo.activa { border-color: var(--sello); background: var(--azul-claro); }
-  .campo-nombre { font-weight: 500; line-height: 1.25; }
+  .calc-sub { margin-top: -0.6rem; color: #b9c0dc; }
+  .campo { display: grid; gap: 0.45rem; }
+  .campo-nombre { font-weight: 600; font-size: 0.95rem; }
   .select { position: relative; display: block; }
-  .select::after {
-    content: ''; position: absolute; right: 0.8rem; top: 50%; width: 0.45rem; height: 0.45rem;
-    border-right: 1.6px solid var(--tinta); border-bottom: 1.6px solid var(--tinta);
-    transform: translateY(-70%) rotate(45deg); pointer-events: none;
+  .select::after, .multi summary::after {
+    content: ''; position: absolute; right: 1rem; top: 50%; width: 0.45rem; height: 0.45rem;
+    border-right: 1.8px solid var(--tinta); border-bottom: 1.8px solid var(--tinta);
+    transform: translateY(-70%) rotate(45deg); pointer-events: none; transition: transform 0.2s ease;
   }
-  select {
+  select, .multi summary {
     appearance: none; -webkit-appearance: none; width: 100%;
-    min-height: 2.5rem; padding: 0.45rem 2rem 0.45rem 0.75rem;
-    border: 1px solid var(--linea); border-radius: 0.65rem; background: #fff;
-    font: 500 0.875rem/1.2 var(--texto); color: var(--tinta);
-    text-overflow: ellipsis; cursor: pointer;
+    min-height: 3rem; padding: 0.6rem 2.5rem 0.6rem 1rem;
+    border: 2px solid transparent; border-radius: 0.85rem; background: #fff;
+    font: 500 0.95rem/1.3 var(--texto); color: var(--tinta); cursor: pointer;
   }
-  select:hover { border-color: var(--tinta-suave); }
+  select:focus-visible, .multi summary:focus-visible { outline: none; border-color: var(--cinta); }
+  .multi { position: relative; }
+  .multi summary { list-style: none; position: relative; display: flex; align-items: center; }
+  .multi summary::-webkit-details-marker { display: none; }
+  .multi[open] summary::after { transform: translateY(-20%) rotate(225deg); }
+  .multi.activa summary { border-color: var(--sello); }
+  .multi-texto { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .multi:not(.activa) .multi-texto { color: var(--tinta-suave); }
+  .multi-panel {
+    position: absolute; z-index: 10; left: 0; right: 0; top: calc(100% + 0.4rem);
+    background: #fff; color: var(--tinta); border-radius: 1rem; padding: 0.4rem;
+    box-shadow: 0 24px 50px -16px rgba(11, 19, 43, 0.5); border: 1px solid var(--linea);
+    max-height: 22rem; overflow-y: auto;
+  }
+  .multi-op {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.7rem;
+    padding: 0.6rem 0.7rem; border-radius: 0.7rem; cursor: pointer; font-size: 0.925rem;
+  }
+  .multi-op + .multi-op:not(.multi-op-sub), .multi-op-sub + .multi-op:not(.multi-op-sub) { margin-top: 0.3rem; }
+  .multi-op:hover { background: var(--papel); }
+  .multi-grupo { padding: 0.7rem 0.7rem 0.2rem; font-weight: 700; font-size: 0.875rem; }
+  .multi-grupo span { font-weight: 400; color: var(--tinta-suave); }
+  .multi-grupo:not(:first-child) { border-top: 1px solid var(--linea); margin-top: 0.3rem; }
+  .multi-op-sub .multi-nombre { font-weight: 500; }
+  .multi-op input { position: absolute; opacity: 0; pointer-events: none; }
+  .multi-caja {
+    width: 1.25rem; height: 1.25rem; border-radius: 0.4rem; border: 1.5px solid var(--linea);
+    display: grid; place-items: center; color: transparent; transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .multi-caja :global(svg) { width: 0.9rem; height: 0.9rem; }
+  .multi-op input:checked + .multi-caja { background: var(--sello); border-color: var(--sello); color: #fff; }
+  .multi-op input:focus-visible + .multi-caja { outline: 3px solid var(--sello); outline-offset: 2px; }
+  .multi-op:has(input:checked) { background: var(--azul-claro); }
+  .multi-nombre { font-weight: 600; line-height: 1.25; }
+  .multi-nombre small { display: block; font-weight: 400; color: var(--tinta-suave); font-size: 0.8125rem; }
+  .multi-op .mono { color: var(--tinta-suave); white-space: nowrap; font-size: 0.75rem; }
+
   .total {
-    display: flex; flex-wrap: wrap; gap: 1.5rem;
-    padding-top: 1rem; border-top: 1px dashed var(--linea);
+    display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem;
+    padding-top: 1.1rem; border-top: 1px dashed rgba(255, 255, 255, 0.2);
   }
-  .total .mono { color: var(--tinta-suave); }
-  .total-num { font-family: var(--display); font-weight: 800; font-size: 2rem; line-height: 1.1; }
-  .nota { font-size: 0.8125rem; color: var(--tinta-suave); }
+  .total .mono { color: #b9c0dc; }
+  .total-num { font-family: var(--display); font-weight: 800; font-size: 2.1rem; line-height: 1.1; }
+  .definir { font-size: 0.8125rem; color: var(--cinta); margin-top: 0.2rem; }
+  .nota { font-size: 0.8125rem; color: #b9c0dc; }
 
   /* Quién soy */
-  .quien { display: grid; grid-template-columns: auto 1fr; gap: clamp(1.25rem, 4vw, 2.5rem); align-items: start; }
+  .quien { display: grid; grid-template-columns: auto 1fr; gap: clamp(1.25rem, 4vw, 3rem); align-items: center; }
   @media (max-width: 560px) { .quien { grid-template-columns: 1fr; } }
   .avatar {
-    width: clamp(5rem, 12vw, 8rem); aspect-ratio: 1; border-radius: 50%;
+    position: relative; width: clamp(6rem, 14vw, 10rem); aspect-ratio: 1;
     display: grid; place-items: center;
-    background: var(--cinta); color: var(--tinta);
-    font: 800 clamp(2.5rem, 6vw, 4rem)/1 var(--display);
   }
+  .avatar::before {
+    content: ''; position: absolute; inset: 0; background: var(--cinta);
+    border-radius: 42% 58% 55% 45% / 48% 40% 60% 52%; rotate: -8deg;
+  }
+  .avatar::after {
+    content: ''; position: absolute; inset: 8%; border: 1.5px dashed var(--sello); border-radius: 50%;
+  }
+  .avatar span { position: relative; font: 800 clamp(2.75rem, 7vw, 4.5rem)/1 var(--display); }
   .quien .titulo-seccion { margin-bottom: 0.4rem; }
   .quien-rol { color: var(--tinta-suave); margin-bottom: 1rem; }
   .quien-texto { max-width: 40rem; font-size: 1.0625rem; }
   .quien-texto + .quien-texto { margin-top: 0.8rem; }
 
   /* FAQ */
-  .faq { display: grid; gap: 0.6rem; max-width: 50rem; }
-  details { background: var(--superficie); border: 1px solid var(--linea); border-radius: 1rem; padding: 0 1.2rem; }
-  summary {
+  .faq-zona { display: grid; grid-template-columns: 1fr 1.7fr; gap: clamp(1.5rem, 5vw, 4rem); align-items: start; }
+  .faq-titulo { position: sticky; top: 6rem; }
+  .faq-titulo .titulo-seccion { margin-bottom: 1rem; }
+  @media (max-width: 800px) { .faq-zona { grid-template-columns: 1fr; } .faq-titulo { position: static; } }
+  .faq { display: grid; gap: 0.6rem; }
+  details:not(.multi) { background: var(--superficie); border: 1px solid var(--linea); border-radius: 1rem; padding: 0 1.2rem; transition: border-color 0.2s ease; }
+  details:not(.multi)[open] { border-color: var(--sello); }
+  details:not(.multi) summary {
     cursor: pointer; list-style: none; padding-block: 1.05rem; font-weight: 600;
-    display: flex; justify-content: space-between; gap: 1rem;
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
   }
-  summary::-webkit-details-marker { display: none; }
-  summary::after { content: '+'; font: 400 1.4rem/1 var(--texto); color: var(--tinta-suave); transition: transform 0.2s ease; }
-  details[open] summary::after { transform: rotate(45deg); }
-  details p { padding-bottom: 1.1rem; color: var(--tinta-suave); }
+  details:not(.multi) summary::-webkit-details-marker { display: none; }
+  details:not(.multi) summary::after {
+    content: '+'; flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%;
+    display: grid; place-items: center; background: var(--papel);
+    font: 400 1.25rem/1 var(--texto); color: var(--tinta); transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+  details:not(.multi)[open] summary::after { transform: rotate(45deg); background: var(--sello); color: #fff; }
+  details:not(.multi) p { padding-bottom: 1.1rem; color: var(--tinta-suave); }
 
   /* CTA */
   .cta {
+    position: relative; overflow: hidden; isolation: isolate;
     display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center;
-    background: var(--tinta); color: #fff; border-radius: 1.75rem;
+    background: var(--sello); color: #fff; border-radius: 1.75rem;
     padding: clamp(1.75rem, 5vw, 3.5rem);
   }
   @media (max-width: 760px) { .cta { grid-template-columns: 1fr; } }
+  .forma { position: absolute; z-index: -1; border-radius: 50%; }
+  .forma-1 { width: 22rem; height: 22rem; right: -6rem; top: -10rem; background: rgba(255, 255, 255, 0.12); }
+  .forma-2 { width: 14rem; height: 14rem; left: -5rem; bottom: -8rem; border: 2px solid rgba(255, 207, 61, 0.7); }
   .cta h2 { font-size: clamp(2.25rem, 5vw, 3.5rem); }
-  .cta p { margin-top: 0.75rem; color: #c4cae0; max-width: 28rem; }
+  .cta p { margin-top: 0.75rem; color: #dbe3ff; max-width: 28rem; }
   .cta-caja {
     display: grid; gap: 0.3rem; position: relative;
     background: var(--cinta); color: var(--tinta); text-decoration: none;
-    border-radius: 1.25rem; padding: 1.5rem 4rem 1.5rem 1.5rem;
-    transition: transform 0.15s ease;
+    border-radius: 1.25rem; padding: 1.5rem 4rem 1.5rem 1.5rem; rotate: -1.5deg;
+    box-shadow: 0 20px 40px -20px rgba(11, 19, 43, 0.6);
+    transition: rotate 0.2s ease, transform 0.2s ease;
   }
-  .cta-caja:hover { transform: translateY(-2px); }
+  .cta-caja:hover { rotate: 0deg; transform: translateY(-3px); }
   .cta-caja strong { font: 800 clamp(1.4rem, 2.6vw, 1.9rem)/1.1 var(--display); }
   .cta-flecha { position: absolute; right: 1.25rem; top: 50%; translate: 0 -50%; width: 2rem; height: 2rem; display: inline-flex; }
   .cta-flecha :global(svg) { width: 100%; height: 100%; }
