@@ -415,6 +415,69 @@ const sumables = [
     window.addEventListener('scroll', mostrar, { passive: true });
     mostrar();
   }
+  // Carrusel: avanza solo, se frena con hover y se puede arrastrar
+  const carrusel = document.querySelector('.carrusel') as HTMLElement | null;
+  const pista = carrusel?.querySelector('.pista') as HTMLElement | null;
+  if (carrusel && pista && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    carrusel.classList.add('js');
+    const velocidad = 70; // px por segundo
+    let x = 0;
+    let mitad = pista.scrollWidth / 2;
+    let pausado = false;
+    let arrastre: { id: number; inicio: number; base: number; movio: boolean } | null = null;
+    let anterior = performance.now();
+
+    const envolver = () => {
+      if (x <= -mitad) x += mitad;
+      if (x > 0) x -= mitad;
+    };
+    const cuadro = (t: number) => {
+      const dt = Math.min(t - anterior, 64) / 1000;
+      anterior = t;
+      if (!pausado && !arrastre) x -= velocidad * dt;
+      envolver();
+      pista.style.transform = `translate3d(${x}px,0,0)`;
+      requestAnimationFrame(cuadro);
+    };
+    requestAnimationFrame(cuadro);
+    addEventListener('resize', () => (mitad = pista.scrollWidth / 2));
+
+    carrusel.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') pausado = true; });
+    carrusel.addEventListener('pointerleave', () => (pausado = false));
+    carrusel.addEventListener('focusin', () => (pausado = true));
+    carrusel.addEventListener('focusout', () => (pausado = false));
+
+    carrusel.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      arrastre = { id: e.pointerId, inicio: e.clientX, base: x, movio: false };
+    });
+    carrusel.addEventListener('pointermove', (e) => {
+      if (!arrastre || e.pointerId !== arrastre.id) return;
+      const dx = e.clientX - arrastre.inicio;
+      if (!arrastre.movio && Math.abs(dx) > 6) {
+        arrastre.movio = true;
+        carrusel.classList.add('arrastrando');
+        carrusel.setPointerCapture(e.pointerId);
+      }
+      if (arrastre.movio) x = arrastre.base + dx;
+    });
+    const soltar = (e: PointerEvent) => {
+      if (!arrastre || e.pointerId !== arrastre.id) return;
+      const movio = arrastre.movio;
+      arrastre = null;
+      if (movio) {
+        // evita que el click al soltar abra el sitio
+        const bloquear = (c: Event) => { c.preventDefault(); c.stopPropagation(); };
+        carrusel.addEventListener('click', bloquear, { capture: true, once: true });
+        setTimeout(() => carrusel.removeEventListener('click', bloquear, { capture: true }), 300);
+        setTimeout(() => carrusel.classList.remove('arrastrando'), 0);
+      }
+    };
+    carrusel.addEventListener('pointerup', soltar);
+    carrusel.addEventListener('pointercancel', soltar);
+    carrusel.addEventListener('dragstart', (e) => e.preventDefault());
+  }
+
 </script>
 
 <style>
@@ -542,7 +605,12 @@ const sumables = [
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
-  .pista { display: flex; width: max-content; animation: desfile 45s linear infinite; }
+  .pista { display: flex; width: max-content; animation: desfile 28s linear infinite; }
+  .carrusel.js .pista { animation: none; will-change: transform; }
+  .carrusel.js { cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .carrusel.js.arrastrando { cursor: grabbing; }
+  .carrusel.js.arrastrando .caso { pointer-events: none; }
+  .carrusel img { -webkit-user-drag: none; user-select: none; }
   .carrusel:hover .pista, .carrusel:focus-within .pista { animation-play-state: paused; }
   @keyframes desfile { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) {
