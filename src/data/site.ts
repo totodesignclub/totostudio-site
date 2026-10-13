@@ -116,8 +116,7 @@ export const quienSoy = {
   nombre: 'Tomi',
   rol: 'Diseñador de producto digital · Buenos Aires',
   parrafos: [
-    'Vengo del diseño de producto digital: años pensando cómo la gente usa una pantalla, dónde se traba y qué la hace volver. Hoy aplico eso a tiendas online.',
-    'Me ocupo de la estrategia, el diseño y la parte técnica, integraciones incluidas. Vos te ocupás de tu marca y de tus clientes.',
+    'Vengo del diseño de producto digital: pasé años estudiando cómo navega la gente, dónde abandona y qué la hace volver. Ese mismo criterio lo pongo en tu tienda para que cada visita tenga más chances de terminar en compra. Me encargo de la estrategia, el diseño y la parte técnica, integraciones incluidas, así vos te enfocás en lo que mejor sabés hacer: tu marca y tus clientes.',
   ],
 };
 
