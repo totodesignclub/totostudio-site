@@ -6,6 +6,7 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
@@ -25,7 +26,7 @@ const { title, description } = Astro.props;
 </html>
 
 <style is:global>
-  /* Toto Studio · cinta y ticket: tinta navy del logo, papel frío, cinta amarilla de embalar */
+  /* Toto Studio (siempre modo claro) · cinta y ticket: tinta navy del logo, papel frío, cinta amarilla de embalar */
   :root {
     --papel: #f5f6fa;
     --superficie: #ffffff;
@@ -41,30 +42,6 @@ const { title, description } = Astro.props;
     --ancho: 72rem;
     --gutter: clamp(1rem, 4vw, 2.5rem);
     color-scheme: light;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) {
-      --papel: #0b132b;
-      --superficie: #131c3a;
-      --tinta: #eef1fa;
-      --tinta-suave: #a6adc9;
-      --linea: #26305a;
-      --cinta: #ffcf3d;
-      --cinta-tinta: #0b132b;
-      --sello: #8ea0ff;
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme='dark'] {
-    --papel: #0b132b;
-    --superficie: #131c3a;
-    --tinta: #eef1fa;
-    --tinta-suave: #a6adc9;
-    --linea: #26305a;
-    --cinta: #ffcf3d;
-    --cinta-tinta: #0b132b;
-    --sello: #8ea0ff;
-    color-scheme: dark;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
