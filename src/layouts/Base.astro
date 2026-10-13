@@ -1,0 +1,94 @@
+---
+interface Props { title: string; description: string }
+const { title, description } = Astro.props;
+---
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  /* Toto Studio · cinta y ticket: tinta navy del logo, papel frío, cinta amarilla de embalar */
+  :root {
+    --papel: #f5f6fa;
+    --superficie: #ffffff;
+    --tinta: #0b132b;
+    --tinta-suave: #4f5776;
+    --linea: #dadfeb;
+    --cinta: #ffcf3d;
+    --cinta-tinta: #0b132b;
+    --sello: #2f49d1;
+    --display: 'Bricolage Grotesque', 'Arial Narrow', system-ui, sans-serif;
+    --texto: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --ancho: 72rem;
+    --gutter: clamp(1rem, 4vw, 2.5rem);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --papel: #0b132b;
+      --superficie: #131c3a;
+      --tinta: #eef1fa;
+      --tinta-suave: #a6adc9;
+      --linea: #26305a;
+      --cinta: #ffcf3d;
+      --cinta-tinta: #0b132b;
+      --sello: #8ea0ff;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme='dark'] {
+    --papel: #0b132b;
+    --superficie: #131c3a;
+    --tinta: #eef1fa;
+    --tinta-suave: #a6adc9;
+    --linea: #26305a;
+    --cinta: #ffcf3d;
+    --cinta-tinta: #0b132b;
+    --sello: #8ea0ff;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--texto);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  img, svg { max-width: 100%; }
+  a { color: inherit; text-underline-offset: 0.2em; }
+  :focus-visible { outline: 3px solid var(--sello); outline-offset: 3px; border-radius: 4px; }
+  h1, h2, h3 {
+    font-family: var(--display);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0;
+  }
+  p { margin: 0; }
+  .envoltura { max-width: var(--ancho); margin-inline: auto; padding-inline: var(--gutter); }
+</style>

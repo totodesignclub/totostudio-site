@@ -1,0 +1,555 @@
+---
+import Base from '../layouts/Base.astro';
+import logo from '../data/logo.svg?raw';
+import {
+  contacto, links, moneda, notaPrecios, rubros, lanzamiento, unicos, mensuales,
+  proceso, requisitos, casos, preguntas,
+} from '../data/site';
+
+const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const wa = `https://wa.me/${contacto.whatsapp}`;
+const anio = new Date().getFullYear();
+---
+<Base
+  title="Toto Studio"
+  description="Tiendas online en Tienda Nube para marcas de moda, deco, dietética, vinos, mascotas y arte. Diseño, armado y gestión con precio cerrado."
+>
+  <header class="barra">
+    <div class="envoltura barra-in">
+      <a href="#inicio" class="marca" aria-label="Toto Studio, inicio" set:html={logoSvg} />
+      <nav aria-label="Secciones">
+        <a href="#servicios">Servicios</a>
+        <a href="#proceso">Cómo trabajamos</a>
+        <a href="#casos">Casos</a>
+        <a href="#preguntas">Preguntas</a>
+      </nav>
+      <a href="#aplicar" class="boton boton-chico">Aplicar</a>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <!-- HERO -->
+    <section class="hero envoltura">
+      <div class="hero-texto">
+        <h1>Tu tienda online, lista para vender.</h1>
+        <p class="bajada">
+          Diseño, armo y gestiono tiendas en Tienda Nube para marcas con identidad. Precio cerrado,
+          pago por adelantado y una fecha de lanzamiento clara.
+        </p>
+        <div class="acciones">
+          <a href="#aplicar" class="boton">Aplicar para empezar</a>
+          <a href="#servicios" class="enlace">Ver precios</a>
+        </div>
+        <div class="rubros">
+          <p>Trabajo con marcas de</p>
+          <ul>{rubros.map((r) => <li>{r}</li>)}</ul>
+        </div>
+      </div>
+
+      <figure class="ticket-zona" aria-label="Ejemplo de pedido: lanzamiento de una tienda">
+        <div class="ticket">
+          <span class="cinta" aria-hidden="true"></span>
+          <div class="ticket-cab">
+            <span>Toto Studio</span>
+            <span>Pedido #0001</span>
+          </div>
+          <ul class="ticket-items">
+            <li><span>Lanzamiento Ecommerce</span><span>{moneda} 790</span></li>
+            <li><span>Carga de productos ×2 bloques</span><span>{moneda} 200</span></li>
+            <li><span>Edición de fotos con IA ×40</span><span>{moneda} 160</span></li>
+          </ul>
+          <div class="ticket-total"><span>Total</span><span>{moneda} 1.150</span></div>
+          <ul class="ticket-pie">
+            <li>Dominio a nombre de la marca</li>
+            <li>Ronda de ajustes: 14 días</li>
+            <li>Lanzamiento estimado: 4 semanas</li>
+          </ul>
+          <span class="sello" aria-hidden="true">Pagado</span>
+        </div>
+        <figcaption>Ejemplo de pedido para una marca de indumentaria con 100 productos.</figcaption>
+      </figure>
+    </section>
+
+    <!-- SERVICIOS -->
+    <section id="servicios" class="bloque envoltura">
+      <div class="bloque-cab">
+        <h2>Lo que hago y cuánto cuesta</h2>
+        <p>{notaPrecios}</p>
+      </div>
+
+      <article class="principal">
+        <div class="principal-cab">
+          <div>
+            <h3>{lanzamiento.nombre}</h3>
+            <p>{lanzamiento.bajada}</p>
+          </div>
+          <p class="precio-grande"><span>{moneda}</span> {lanzamiento.precio}</p>
+        </div>
+        <ul class="tilde">{lanzamiento.incluye.map((i) => <li>{i}</li>)}</ul>
+        <p class="nota">La carga del catálogo completo se cotiza aparte, por bloques de 50 productos.</p>
+      </article>
+
+      <div class="listas">
+        <div class="lista">
+          <h3 class="lista-titulo">Proyectos y extras</h3>
+          <ul class="filas">
+            {unicos.map((s) => (
+              <li>
+                <div class="fila-cab">
+                  <span class="fila-nombre">{s.nombre}</span>
+                  <span class="fila-precio">{moneda} {s.precio}{s.unidad && <small> {s.unidad}</small>}</span>
+                </div>
+                <p>{s.detalle}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="lista">
+          <h3 class="lista-titulo">Planes mensuales</h3>
+          <ul class="filas">
+            {mensuales.map((s) => (
+              <li>
+                <div class="fila-cab">
+                  <span class="fila-nombre">{s.nombre}</span>
+                  <span class="fila-precio">{moneda} {s.precio}<small> por mes</small></span>
+                </div>
+                <p>{s.detalle}</p>
+              </li>
+            ))}
+          </ul>
+          <p class="nota">Compromiso mínimo de 3 meses. Se paga mes a mes por adelantado.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESO -->
+    <section id="proceso" class="bloque envoltura">
+      <div class="bloque-cab">
+        <h2>Cómo trabajamos</h2>
+        <p>Un proceso corto y claro, de la primera charla al lanzamiento.</p>
+      </div>
+      <ol class="pasos">
+        {proceso.map((p) => (
+          <li>
+            <h3>{p.titulo}</h3>
+            <p>{p.texto}</p>
+          </li>
+        ))}
+      </ol>
+
+      <div class="requisitos">
+        <h3>Antes de empezar, necesitás</h3>
+        <ul>
+          {requisitos.map((r) => (
+            <li>
+              <strong>{r.titulo}</strong>
+              <span>{r.texto}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- CASOS -->
+    <section id="casos" class="bloque envoltura">
+      <div class="bloque-cab">
+        <h2>Marcas con las que trabajé</h2>
+      </div>
+      <ul class="casos">
+        {casos.map((c) => (
+          <li>
+            <a href={c.url} target="_blank" rel="noopener" class="caso">
+              <span class="caso-muestra" style={`--c:${c.color};--t:${c.tinta}`}>{c.marca}</span>
+              <span class="caso-texto">
+                <span class="caso-rubro">{c.rubro}</span>
+                <span>{c.trabajo}</span>
+                <span class="caso-link">Ver sitio</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- PREGUNTAS -->
+    <section id="preguntas" class="bloque envoltura">
+      <div class="bloque-cab">
+        <h2>Preguntas frecuentes</h2>
+      </div>
+      <div class="faq">
+        {preguntas.map((q) => (
+          <details>
+            <summary>{q.p}</summary>
+            <p>{q.r}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- APLICAR -->
+    <section id="aplicar" class="aplicar">
+      <div class="envoltura aplicar-in">
+        <div class="aplicar-texto">
+          <h2>Contame de tu marca</h2>
+          <p>
+            Tomo pocos proyectos por mes para dedicarle tiempo a cada uno. Completá el formulario y,
+            si encaja, te paso un link para agendar una charla de 20 minutos.
+          </p>
+          <p class="contacto">
+            ¿Preferís escribir directo? <a href={wa} target="_blank" rel="noopener">WhatsApp {contacto.whatsappVisible}</a>
+            o <a href={`mailto:${contacto.email}`}>{contacto.email}</a>
+          </p>
+        </div>
+
+        <form
+          class="formulario"
+          id="form-aplicar"
+          data-endpoint={links.formulario}
+          data-calendario={links.calendario}
+          data-wa={contacto.whatsapp}
+          novalidate
+        >
+          <div class="campo">
+            <label for="f-nombre">Tu nombre</label>
+            <input id="f-nombre" name="nombre" autocomplete="name" required />
+          </div>
+          <div class="campo">
+            <label for="f-marca">Marca</label>
+            <input id="f-marca" name="marca" required />
+          </div>
+          <div class="campo">
+            <label for="f-rubro">Rubro</label>
+            <select id="f-rubro" name="rubro" required>
+              <option value="">Elegí uno</option>
+              {rubros.map((r) => <option>{r}</option>)}
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="f-productos">¿Cuántos productos tenés?</label>
+            <select id="f-productos" name="productos" required>
+              <option value="">Elegí un rango</option>
+              <option>Menos de 50</option>
+              <option>50 a 129</option>
+              <option>130 a 300</option>
+              <option>Más de 300</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="f-tipo">Qué necesitás</label>
+            <select id="f-tipo" name="tipo" required>
+              <option value="">Elegí una opción</option>
+              <option>Lanzar mi primera tienda</option>
+              <option>Rediseñar mi tienda actual</option>
+              <option>Gestión o marketing mensual</option>
+            </select>
+          </div>
+          <fieldset class="campo">
+            <legend>¿Estás inscripto en ARCA?</legend>
+            <div class="opciones">
+              <label><input type="radio" name="arca" value="Sí" id="f-arca-si" required /> Sí</label>
+              <label><input type="radio" name="arca" value="En trámite" id="f-arca-tramite" /> En trámite</label>
+              <label><input type="radio" name="arca" value="No" id="f-arca-no" /> No</label>
+            </div>
+          </fieldset>
+          <div class="campo campo-ancho">
+            <label for="f-link">Instagram o web actual</label>
+            <input id="f-link" name="link" placeholder="@tumarca o tumarca.com.ar" />
+          </div>
+          <div class="campo campo-ancho">
+            <label for="f-mensaje">Algo más que quieras contarme</label>
+            <textarea id="f-mensaje" name="mensaje" rows="3"></textarea>
+          </div>
+          <div class="campo-ancho envio">
+            <button type="submit" class="boton">Enviar</button>
+            <p class="estado" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="envoltura pie-in">
+      <span class="marca marca-pie" set:html={logoSvg} />
+      <p>Tiendas online para marcas con identidad. Buenos Aires, Argentina.</p>
+      <p>
+        <a href={wa} target="_blank" rel="noopener">WhatsApp</a>
+        <a href={`mailto:${contacto.email}`}>{contacto.email}</a>
+        {contacto.instagram && <a href={`https://instagram.com/${contacto.instagram}`} target="_blank" rel="noopener">Instagram</a>}
+      </p>
+      <p class="pie-legal">© {anio} Toto Studio</p>
+    </div>
+  </footer>
+</Base>
+
+<script>
+  const form = document.getElementById('form-aplicar') as HTMLFormElement | null;
+  if (form) {
+    const estado = form.querySelector('.estado') as HTMLElement;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const faltan = [...form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[required]')]
+        .filter((el) => {
+          if (el instanceof HTMLInputElement && el.type === 'radio') {
+            return !form.querySelector(`input[name="${el.name}"]:checked`);
+          }
+          return !el.value.trim();
+        });
+      form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+      if (faltan.length) {
+        faltan.forEach((el) => el.setAttribute('aria-invalid', 'true'));
+        estado.textContent = 'Completá los campos marcados para enviar.';
+        (faltan[0] as HTMLElement).focus();
+        return;
+      }
+      const datos = Object.fromEntries(new FormData(form).entries());
+      const endpoint = form.dataset.endpoint;
+      const calendario = form.dataset.calendario;
+      if (endpoint) {
+        try {
+          const r = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(datos),
+          });
+          if (!r.ok) throw new Error();
+        } catch {
+          estado.textContent = 'No se pudo enviar. Probá de nuevo o escribime por WhatsApp.';
+          return;
+        }
+        estado.textContent = '¡Listo! Recibí tu aplicación.';
+        if (calendario) window.location.href = calendario;
+        return;
+      }
+      // Sin endpoint configurado: arma el mensaje y abre WhatsApp
+      const texto = Object.entries(datos)
+        .filter(([, v]) => String(v).trim())
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n');
+      const url = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent('Hola Toto Studio, quiero aplicar.\n\n' + texto)}`;
+      estado.textContent = 'Abrimos WhatsApp con tus respuestas para que las envíes.';
+      window.open(url, '_blank', 'noopener');
+    });
+  }
+</script>
+
+<style>
+  /* Barra superior */
+  .barra {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 10;
+    background: color-mix(in srgb, var(--papel) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--linea);
+  }
+  .barra-in { display: flex; align-items: center; gap: 1.5rem; padding-block: 0.75rem; }
+  .marca { display: inline-flex; color: var(--tinta); }
+  .marca :global(svg) { height: 2rem; width: auto; }
+  .barra nav { display: flex; gap: 1.5rem; margin-left: auto; font-weight: 500; }
+  .barra nav a { text-decoration: none; color: var(--tinta-suave); }
+  .barra nav a:hover { color: var(--tinta); }
+  @media (max-width: 760px) { .barra nav { display: none; } .barra-in > .boton-chico { margin-left: auto; } }
+
+  /* Botones */
+  .boton {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0.85rem 1.4rem;
+    background: var(--tinta); color: var(--papel);
+    font: 600 1rem/1 var(--texto);
+    border: 0; border-radius: 999px; text-decoration: none; cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .boton:hover { transform: translateY(-1px); }
+  .boton-chico { padding: 0.6rem 1rem; font-size: 0.95rem; }
+  .enlace { font-weight: 600; }
+
+  /* Hero */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+    padding-block: clamp(3rem, 8vw, 6.5rem) clamp(3rem, 6vw, 5rem);
+  }
+  .hero h1 { font-size: clamp(2.6rem, 6.4vw, 5.2rem); max-width: 12ch; }
+  .bajada { font-size: 1.2rem; color: var(--tinta-suave); max-width: 34rem; margin-top: 1.5rem; }
+  .acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem; margin-top: 2rem; }
+  .rubros { margin-top: 2.75rem; }
+  .rubros p { font-size: 0.95rem; color: var(--tinta-suave); }
+  .rubros ul { list-style: none; padding: 0; margin: 0.6rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .rubros li {
+    border: 1px solid var(--linea); background: var(--superficie);
+    padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.92rem;
+  }
+
+  /* Ticket */
+  .ticket-zona { margin: 0; display: grid; justify-items: center; gap: 1rem; min-width: 0; }
+  .ticket {
+    position: relative;
+    width: min(100%, 26rem);
+    background: var(--superficie);
+    color: var(--tinta);
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    padding: 2.25rem 1.6rem 1.75rem;
+    transform: rotate(-2.5deg);
+    box-shadow: 0 1px 0 var(--linea), 0 24px 48px -24px rgba(11, 19, 43, 0.35);
+    --diente: radial-gradient(circle at 50% 0, transparent 6px, #000 6.5px);
+    -webkit-mask: var(--diente) bottom / 16px 12px repeat-x, linear-gradient(#000, #000) top / 100% calc(100% - 11px) no-repeat;
+    mask: var(--diente) bottom / 16px 12px repeat-x, linear-gradient(#000, #000) top / 100% calc(100% - 11px) no-repeat;
+    animation: entra 0.9s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes entra { from { transform: translateY(18px) rotate(-6deg); opacity: 0.4; } }
+  @media (prefers-reduced-motion: reduce) { .ticket { animation: none; } }
+  .cinta {
+    position: absolute; top: -0.9rem; left: 50%;
+    width: 7.5rem; height: 1.9rem;
+    background: var(--cinta);
+    opacity: 0.92;
+    transform: translateX(-50%) rotate(3deg);
+    clip-path: polygon(3% 0, 97% 4%, 100% 100%, 0 96%);
+  }
+  .ticket-cab { display: flex; justify-content: space-between; padding-bottom: 0.9rem; border-bottom: 1px dashed var(--linea); color: var(--tinta-suave); }
+  .ticket-items, .ticket-pie { list-style: none; padding: 0; margin: 0; }
+  .ticket-items { padding-block: 0.9rem; display: grid; gap: 0.55rem; }
+  .ticket-items li, .ticket-total { display: flex; justify-content: space-between; gap: 1rem; }
+  .ticket-items li span:last-child, .ticket-total span:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .ticket-total { border-top: 1px dashed var(--linea); padding-top: 0.9rem; font-weight: 500; font-size: 1.05rem; }
+  .ticket-pie { margin-top: 1.1rem; color: var(--tinta-suave); font-size: 0.82rem; display: grid; gap: 0.2rem; }
+  .ticket-pie li::before { content: '✓ '; color: var(--sello); }
+  .sello {
+    position: absolute; right: 1rem; bottom: 1.9rem;
+    border: 2px solid var(--sello); color: var(--sello);
+    font: 600 0.9rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.45rem 0.7rem; border-radius: 6px;
+    transform: rotate(-12deg); opacity: 0.85;
+  }
+  .ticket-zona figcaption { font-size: 0.85rem; color: var(--tinta-suave); text-align: center; max-width: 22rem; }
+
+  /* Bloques */
+  .bloque { padding-block: clamp(3.5rem, 8vw, 6rem); border-top: 1px solid var(--linea); }
+  .bloque-cab { display: grid; gap: 0.9rem; max-width: 46rem; margin-bottom: 2.5rem; }
+  .bloque-cab h2 { font-size: clamp(2rem, 4.4vw, 3.2rem); }
+  .bloque-cab p { color: var(--tinta-suave); }
+
+  /* Servicio principal */
+  .principal {
+    background: var(--tinta); color: var(--papel);
+    border-radius: 1.5rem;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    display: grid; gap: 1.75rem;
+  }
+  .principal-cab { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem 2rem; }
+  .principal h3 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
+  .principal-cab p:not(.precio-grande) { margin-top: 0.6rem; opacity: 0.8; max-width: 30rem; }
+  .precio-grande { font: 800 clamp(2.4rem, 6vw, 3.6rem)/1 var(--display); color: var(--cinta); white-space: nowrap; }
+  .precio-grande span { font-size: 0.45em; vertical-align: 0.9em; margin-right: 0.15em; }
+  .tilde { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 0.6rem 2rem; }
+  .tilde li { padding-left: 1.6rem; position: relative; }
+  .tilde li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.8rem; height: 0.45rem; border-left: 2px solid var(--cinta); border-bottom: 2px solid var(--cinta); transform: rotate(-45deg); }
+  .principal .nota { opacity: 0.75; }
+  .nota { font-size: 0.92rem; color: var(--tinta-suave); }
+
+  /* Listas de precios */
+  .listas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 2.5rem 4rem; margin-top: 3rem; }
+  .lista { min-width: 0; }
+  .lista-titulo { font-size: 1.4rem; padding-bottom: 0.8rem; border-bottom: 2px solid var(--tinta); }
+  .filas { list-style: none; padding: 0; margin: 0 0 1rem; }
+  .filas li { padding-block: 1rem; border-bottom: 1px solid var(--linea); display: grid; gap: 0.3rem; }
+  .fila-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .fila-nombre { font-weight: 600; font-size: 1.08rem; }
+  .fila-precio { font-family: var(--display); font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .fila-precio small { font-family: var(--texto); font-weight: 400; color: var(--tinta-suave); font-size: 0.8rem; }
+  .filas p { color: var(--tinta-suave); font-size: 0.96rem; max-width: 34rem; }
+
+  /* Pasos */
+  .pasos { list-style: none; counter-reset: paso; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem 2.5rem; }
+  @media (max-width: 960px) { .pasos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .pasos { grid-template-columns: 1fr; } }
+  .pasos li { counter-increment: paso; display: grid; gap: 0.4rem; align-content: start; }
+  .pasos li::before {
+    content: counter(paso);
+    font: 800 2.6rem/1 var(--display);
+    color: var(--tinta);
+    width: 3.4rem; height: 3.4rem; display: grid; place-items: center;
+    background: var(--cinta); color: var(--cinta-tinta);
+    border-radius: 0.6rem; transform: rotate(-4deg); margin-bottom: 0.5rem;
+  }
+  .pasos h3 { font-size: 1.3rem; }
+  .pasos p { color: var(--tinta-suave); }
+
+  .requisitos { margin-top: 4rem; padding: clamp(1.5rem, 4vw, 2.5rem); border: 2px dashed var(--linea); border-radius: 1.25rem; }
+  .requisitos h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+  .requisitos ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1.5rem; }
+  .requisitos li { display: grid; gap: 0.3rem; }
+  .requisitos span { color: var(--tinta-suave); font-size: 0.96rem; }
+
+  /* Casos */
+  .casos { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
+  .caso {
+    display: grid; grid-template-columns: minmax(8rem, 14rem) minmax(0, 1fr); gap: 1.5rem; align-items: center;
+    text-decoration: none; padding: 1rem; border-radius: 1.25rem; background: var(--superficie); border: 1px solid var(--linea);
+    transition: border-color 0.2s;
+  }
+  .caso:hover { border-color: var(--tinta); }
+  .caso-muestra {
+    aspect-ratio: 16 / 10; max-width: 100%; display: grid; place-items: center; border-radius: 0.8rem;
+    background: var(--c); color: var(--t);
+    font: 600 clamp(1.4rem, 3vw, 2rem)/1 var(--display); letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .caso-texto { display: grid; gap: 0.35rem; min-width: 0; }
+  .caso-rubro { font-weight: 600; font-size: 1.15rem; }
+  .caso-texto > span:nth-child(2) { color: var(--tinta-suave); }
+  .caso-link { font-weight: 600; text-decoration: underline; text-underline-offset: 0.2em; }
+  @media (max-width: 560px) { .caso { grid-template-columns: 1fr; } }
+
+  /* FAQ */
+  .faq { display: grid; max-width: 50rem; }
+  .faq details { border-bottom: 1px solid var(--linea); }
+  .faq summary { cursor: pointer; list-style: none; padding: 1.15rem 2.5rem 1.15rem 0; font-weight: 600; font-size: 1.1rem; position: relative; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; position: absolute; right: 0.25rem; top: 0.9rem; font: 400 1.6rem/1 var(--display); transition: transform 0.2s; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p { padding-bottom: 1.25rem; color: var(--tinta-suave); max-width: 42rem; }
+
+  /* Aplicar */
+  .aplicar { background: var(--cinta); color: var(--cinta-tinta); padding-block: clamp(3.5rem, 8vw, 6rem); }
+  .aplicar-in { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  .aplicar h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+  .aplicar-texto { display: grid; gap: 1.2rem; }
+  .aplicar-texto a { font-weight: 600; }
+  .contacto { font-size: 0.96rem; }
+  .formulario {
+    background: #ffffff; color: #0b132b;
+    border-radius: 1.25rem; padding: clamp(1.25rem, 3vw, 2rem);
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem 1.25rem;
+    box-shadow: 6px 6px 0 #0b132b;
+  }
+  .campo { display: grid; gap: 0.35rem; min-width: 0; border: 0; padding: 0; margin: 0; }
+  .campo-ancho { grid-column: 1 / -1; }
+  .campo label, .campo legend { font-weight: 600; font-size: 0.92rem; padding: 0; }
+  .campo input, .campo select, .campo textarea {
+    font: inherit; font-size: 1rem; color: #0b132b; background: #f5f6fa;
+    border: 1.5px solid #c9cfdf; border-radius: 0.6rem; padding: 0.65rem 0.75rem; width: 100%; min-width: 0;
+  }
+  .campo [aria-invalid='true'] { border-color: #c2312b; }
+  .opciones { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; padding-top: 0.25rem; }
+  .opciones label { font-weight: 400; display: inline-flex; gap: 0.4rem; align-items: center; }
+  .opciones input { width: auto; }
+  .envio { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+  .formulario .boton { background: #0b132b; color: #ffffff; }
+  .estado { font-size: 0.92rem; }
+  @media (max-width: 860px) {
+    .hero, .aplicar-in { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) { .formulario { grid-template-columns: 1fr; } }
+
+  /* Pie */
+  .pie { padding-block: 3rem; border-top: 1px solid var(--linea); }
+  .pie-in { display: grid; gap: 0.8rem; color: var(--tinta-suave); }
+  .pie-in p { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+  .marca-pie :global(svg) { height: 2.2rem; color: var(--tinta); }
+  .pie-legal { font-size: 0.85rem; }
+</style>
