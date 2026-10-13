@@ -14,7 +14,7 @@ export const contacto = {
 export const links = {
   // PENDIENTE: link público de Cal.com (ej. https://cal.com/toto-studio/consulta).
   // Si queda vacío, "Agendá consulta gratis" lleva al formulario.
-  calendario: '',
+  calendario: 'https://cal.com/tomas-curtelo-ljyjsx/30min',
   formulario: 'https://tally.so/r/Zj4K8y',
 };
 
@@ -72,6 +72,13 @@ export const extras = [
 ];
 
 export const marketing = [
+  {
+    id: 'gestion',
+    nombre: 'Gestión ecommerce',
+    usd: 150,
+    desde: false,
+    texto: 'Hasta 50 productos trabajados por mes, dos banners nuevos, aumentos de precio masivos e informe mensual.',
+  },
   {
     id: 'google',
     nombre: 'Google Ads y My Business',
@@ -161,7 +168,7 @@ export const preguntas = [
   },
   {
     p: '¿Qué pasa después del lanzamiento?',
-    r: 'Tenés 14 días para mandar una lista de ajustes. Después cerramos el proyecto con un mail de entrega. Si querés seguir creciendo, sumás un servicio de marketing.',
+    r: 'Tenés 14 días para mandar una lista de ajustes. Después cerramos el proyecto con un mail de entrega. Si querés seguir creciendo, sumás la gestión mensual o un servicio de marketing.',
   },
   {
     p: '¿Atienden a mis clientes?',
