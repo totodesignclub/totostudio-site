@@ -118,7 +118,7 @@ const sumables = [
                   <a class="caso" href={c.url} target="_blank" rel="noopener" tabindex={vuelta === 1 ? -1 : undefined}>
                     <div class="navegador">
                       <span class="caso-puntos" aria-hidden="true"><i></i><i></i><i></i></span>
-                      <span class="url mono">{c.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</span>
+                      <span class="url mono">{c.dominio}</span>
                     </div>
                     <div class="caso-visual" style={`--fondo:${c.color};--letra:${c.tinta}`}>
                       <span class="caso-marca">{c.marca}</span>
