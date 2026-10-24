@@ -14,7 +14,7 @@ export const contacto = {
 export const links = {
   // PENDIENTE: link público de Cal.com (ej. https://cal.com/toto-studio/consulta).
   // Si queda vacío, "Agendá consulta gratis" lleva al formulario.
-  calendario: 'https://cal.com/tomas-curtelo-ljyjsx/30min',
+  calendario: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ23eA80YC7V9Bsb3zbOED76DSjykGriUQk6qnbWMFIHgOw-a-N6-Twzja-EL6guwc9xtpvbtqII',
   formulario: 'https://tally.so/r/Zj4K8y',
 };
 
