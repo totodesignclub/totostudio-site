@@ -1,4 +1,4 @@
-# Toto Studio · web
+# Toto &Co · web
 
 Sitio en Astro (una página) para toto-co.com (totostudio.site redirige acá).
 

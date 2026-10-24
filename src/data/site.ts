@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// Toto Studio · datos editables de la web
+// Toto &Co · datos editables de la web
 // Todo lo que cambia seguido (links, precios, contacto) vive acá.
 // Los valores marcados con PENDIENTE son placeholders.
 // ─────────────────────────────────────────────────────────────
