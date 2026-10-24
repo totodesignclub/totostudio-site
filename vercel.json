@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/(.*)", "has": [{ "type": "host", "value": "totostudio.site" }], "destination": "https://toto-co.com/$1", "permanent": true },
+    { "source": "/(.*)", "has": [{ "type": "host", "value": "www.totostudio.site" }], "destination": "https://toto-co.com/$1", "permanent": true }
+  ]
+}

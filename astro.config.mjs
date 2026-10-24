@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://totostudio.site',
+  site: 'https://toto-co.com',
   build: { inlineStylesheets: 'always' },
 });
