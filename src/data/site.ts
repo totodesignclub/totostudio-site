@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────
 
 export const contacto = {
-  email: 'totodesignclub@gmail.com',
+  email: 'tomi@toto-co.com',
   whatsapp: '5491164679917', // sin + ni espacios, formato wa.me
   whatsappVisible: '+54 9 11 6467-9917',
   tiktok: 'totodesign.studio', // sin @
