@@ -2,8 +2,8 @@
 import Base from '../layouts/Base.astro';
 import logo from '../data/logo.svg?raw';
 import {
-  contacto, links, ars, notaPrecios, marketing,
-  paginaMarketing, pasosMarketing, canalesMarketing, preguntasMarketing,
+  contacto, links, ars, marketing,
+  paginaMarketing, pasosMarketing, canalesMarketing, conceptosMarketing, preguntasMarketing,
 } from '../data/site';
 
 const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
@@ -17,14 +17,13 @@ const svg = (d: string) =>
 const check = svg('<circle cx="12" cy="12" r="9.2"/><path d="m8 12.3 2.7 2.7L16.2 9.5"/>');
 const flecha = svg('<path d="M5 12h14m-6-6 6 6-6 6"/>');
 const iconos: Record<string, string> = {
-  estrategia: svg('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>'),
   mybusiness: svg('<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/>'),
   googleads: svg('<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/>'),
-  meta: svg('<path d="M4 10v4a1 1 0 0 0 1 1h3l6 4V5L8 9H5a1 1 0 0 0-1 1z"/><path d="M18 9.5a4 4 0 0 1 0 5"/>'),
+  organica: svg('<path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.4l-1.9-5.6L4.5 10.9 10.1 9z"/>'),
+  instagram: svg('<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6"/>'),
+  facebook: svg('<path d="M14 21v-7h3l.5-3.5H14V8.6c0-1 .5-1.8 1.9-1.8h1.7V3.7a22 22 0 0 0-2.4-.2C12.7 3.5 11 5 11 7.8v2.7H8V14h3v7z"/>'),
   tiktok: svg('<rect x="3.5" y="5" width="17" height="14" rx="3"/><path d="m10.5 9.2 4 2.8-4 2.8z"/>'),
-  contenido: svg('<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M3.5 9.5h17M9.5 9.5v11"/>'),
-  web: svg('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.4 3.6 5.2 3.6 8.5s-1.1 6.1-3.6 8.5c-2.5-2.4-3.6-5.2-3.6-8.5S9.5 5.9 12 3.5z"/>'),
-  seo: svg('<path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.4l-1.9-5.6L4.5 10.9 10.1 9z"/>'),
+  email: svg('<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="m4 7.5 8 6 8-6"/>'),
 };
 
 const mk = Object.fromEntries(marketing.map((m) => [m.id, m]));
@@ -32,16 +31,17 @@ const canales = canalesMarketing.map((c) => ({
   ...c,
   facturaTexto: c.servicio ? mk[c.servicio].nombre : c.factura,
 }));
-// Para cada concepto facturable: qué canales cubre
-const conceptos = marketing.map((m) => ({
-  ...m,
-  cubre: canalesMarketing.filter((c) => c.servicio === m.id).map((c) => c.chip),
+// Para cada concepto facturable: qué canales cubre (precio de `marketing`, texto de esta página)
+const conceptos = conceptosMarketing.map((c) => ({
+  ...mk[c.id],
+  texto: c.texto,
+  cubre: canalesMarketing.filter((x) => x.servicio === c.id).map((x) => x.chip),
 }));
-const chipsHero = ['Google', 'Instagram y Facebook', 'TikTok', 'SEO y GEO'];
+const chipsHero = paginaMarketing.hero.canales;
 ---
 <Base
   title="Marketing · Toto &Co"
-  description="Estrategia, tono de voz y gestión en Google, Meta, TikTok, SEO y GEO para marcas de ecommerce. Cada tarea con su concepto claro."
+  description="Google My Business, Google Ads, búsqueda orgánica, anuncios en Instagram, Facebook y TikTok, y email marketing. Cada tarea con su concepto claro."
   noindex={paginaMarketing.borrador}
 >
   {paginaMarketing.borrador && (
@@ -115,6 +115,7 @@ const chipsHero = ['Google', 'Instagram y Facebook', 'TikTok', 'SEO y GEO'];
               <h3>{c.nombre}</h3>
             </div>
             <p class="canal-gancho">{c.gancho}</p>
+            <p class="suave canal-explica">{c.explica}</p>
             <ul class="canal-puntos">
               {c.puntos.map((p) => <li><span class="check" set:html={check} />{p}</li>)}
             </ul>
@@ -150,8 +151,16 @@ const chipsHero = ['Google', 'Instagram y Facebook', 'TikTok', 'SEO y GEO'];
               <p class="mono concepto-precio">{m.desde ? 'desde ' : ''}{ars(m.usd)}<span>/mes</span></p>
             </li>
           ))}
+          <li>
+            <div class="concepto-info">
+              <p><strong>Búsqueda orgánica</strong></p>
+              <p class="suave">Palabras clave, contenido y seguimiento para aparecer en Google sin pagar cada clic.</p>
+              <ul class="cubre" aria-label="Incluye búsqueda orgánica"><li>Búsqueda orgánica</li></ul>
+            </div>
+            <p class="mono concepto-precio">A medida</p>
+          </li>
         </ul>
-        <p class="nota-precio suave">{notaPrecios} Pago por adelantado, mes a mes.</p>
+        <p class="nota-precio suave">{paginaMarketing.nota}</p>
       </div>
     </section>
 
@@ -355,6 +364,9 @@ const chipsHero = ['Google', 'Instagram y Facebook', 'TikTok', 'SEO y GEO'];
   }
   .canal-icono :global(svg) { width: 1.4rem; height: 1.4rem; }
   .canal-gancho { font-weight: 600; }
+  .canal-explica { font-size: 0.975rem; margin-top: -0.35rem; }
+  .canal:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  @media (max-width: 760px) { .canal:last-child:nth-child(odd) { grid-column: auto; } }
   .canal-puntos { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
   .canal-puntos li { display: flex; gap: 0.6rem; align-items: flex-start; color: var(--tinta-suave); font-size: 0.975rem; }
   .canal-puntos .check { width: 1.2rem; height: 1.2rem; margin-top: 0.15rem; }

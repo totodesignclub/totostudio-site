@@ -156,11 +156,10 @@ export const preguntas = [
   },
 ];
 
-// ── Página /marketing (PROPUESTA, para ajustar) ───────────────
+// ── Página /marketing ─────────────────────────────────────────
 // borrador: true muestra un aviso arriba y marca la página como noindex.
-// Cuando esté aprobada, ponelo en false.
 export const paginaMarketing = {
-  borrador: true,
+  borrador: false,
   hero: {
     bajada:
       'Armamos la estrategia, la bajamos a cada canal y la gestionamos mes a mes. Vos ves en qué se trabaja y qué resultados trae.',
@@ -169,70 +168,111 @@ export const paginaMarketing = {
       'Cuentas, píxeles y medición a tu nombre',
       'Informe mensual claro, sin vueltas',
     ],
+    canales: ['Google', 'Instagram', 'Facebook', 'TikTok', 'Email'],
   },
+  nota: 'La inversión en anuncios se paga directo a Google, Meta y TikTok. Los servicios mensuales se pagan por adelantado, mes a mes.',
 };
 
 export const pasosMarketing = [
-  { n: '01', titulo: 'Estrategia', texto: 'Definimos a quién le hablás, qué vendés mejor y qué número querés mover.' },
+  { n: '01', titulo: 'Estrategia', texto: 'Definimos a quién le hablás, qué ofrecés mejor y qué número querés mover.' },
   { n: '02', titulo: 'Voz y mensaje', texto: 'Tono de voz, pilares de contenido y mensajes clave, para sonar siempre como tu marca.' },
-  { n: '03', titulo: 'Configuración', texto: 'Cuentas, píxeles, catálogo y medición listos para empezar sin perder datos.' },
+  { n: '03', titulo: 'Configuración', texto: 'Cuentas, píxeles y medición listos para empezar sin perder datos.' },
   { n: '04', titulo: 'Gestión y mejora', texto: 'Publicamos, optimizamos y te mostramos cada mes qué funcionó y qué ajustamos.' },
 ];
 
 // `servicio` es el id de un concepto facturable de `marketing` (arriba).
 // Si es null, usa `factura` como texto propio.
 export const canalesMarketing: {
-  id: string; icono: string; nombre: string; gancho: string; puntos: string[];
-  servicio: 'gestion' | 'google' | 'email' | 'social' | null; factura?: string; chip: string;
+  id: string; icono: string; nombre: string; gancho: string; explica: string; puntos: string[];
+  servicio: 'google' | 'email' | 'social' | null; factura?: string; chip: string;
 }[] = [
   {
-    id: 'estrategia', icono: 'estrategia', nombre: 'Estrategia y tono de voz', chip: 'Estrategia',
-    gancho: 'El plan antes que la pauta.',
-    puntos: ['Objetivos, público y competencia', 'Propuesta de valor y posicionamiento', 'Guía de tono de voz y mensajes clave'],
-    servicio: null, factura: 'Se hace en el primer mes de cualquier servicio mensual',
-  },
-  {
     id: 'mybusiness', icono: 'mybusiness', nombre: 'Google My Business', chip: 'My Business',
-    gancho: 'Que te encuentren cerca y con buena cara.',
-    puntos: ['Ficha creada o recuperada, y verificada', 'Categorías, horarios, fotos y productos', 'Reseñas y publicaciones al día'],
+    gancho: 'Tu ficha de Google: lo primero que ve quien te busca.',
+    explica: 'Es el cuadro que aparece en Google y en Maps con tu nombre, fotos, horarios, ubicación y reseñas.',
+    puntos: [
+      'Creación o recuperación de la ficha, y verificación',
+      'Categorías, datos de contacto, horarios y servicios',
+      'Fotos, publicaciones y respuesta a reseñas',
+    ],
     servicio: 'google',
   },
   {
     id: 'googleads', icono: 'googleads', nombre: 'Google Ads', chip: 'Google Ads',
-    gancho: 'Aparecé justo cuando alguien busca lo que vendés.',
-    puntos: ['Campañas de búsqueda y Shopping', 'Conversiones y medición configuradas', 'Presupuesto optimizado de forma continua'],
+    gancho: 'Anuncios que aparecen cuando alguien ya está buscando lo que ofrecés.',
+    explica: 'Armamos las campañas de punta a punta: qué buscan tus clientes, cómo se escribe cada anuncio y adónde llegan.',
+    puntos: [
+      'Palabras clave y estructura de campañas',
+      'Textos en búsqueda: títulos, descripciones y extensiones',
+      'Anuncios en sitios web de la red de Google, con imagen y texto',
+      'Medición de llamadas, mensajes y ventas',
+    ],
     servicio: 'google',
   },
   {
-    id: 'meta', icono: 'meta', nombre: 'Meta Ads · Instagram y Facebook', chip: 'Meta Ads',
-    gancho: 'Que te descubran y que vuelvan.',
-    puntos: ['Campañas de descubrimiento y remarketing', 'Catálogo de productos conectado', 'Creatividades y pruebas A/B'],
+    id: 'organica', icono: 'organica', nombre: 'Búsqueda orgánica', chip: 'Búsqueda orgánica',
+    gancho: 'Aparecer en Google sin pagar cada clic.',
+    explica: 'Trabajamos tu sitio para que Google lo entienda y lo muestre, y para que las respuestas con IA puedan citarte.',
+    puntos: [
+      'Palabras clave, títulos y descripciones que invitan al clic',
+      'Contenido claro y estructurado, y velocidad de carga',
+      'Search Console, indexación y seguimiento mensual',
+      'Sin promesas de posiciones: te mostramos la evolución',
+    ],
+    servicio: null, factura: 'Se cotiza según el proyecto',
+  },
+  {
+    id: 'instagram', icono: 'instagram', nombre: 'Anuncios en Instagram', chip: 'Instagram',
+    gancho: 'Que te descubran en el feed, las historias y los reels.',
+    explica: 'Piezas pensadas para que se vean bien en el celular y frenen el scroll.',
+    puntos: [
+      'Piezas gráficas y guiones de reels',
+      'Públicos por intereses, zona y remarketing',
+      'Pruebas de creatividades y optimización del presupuesto',
+    ],
     servicio: 'social',
   },
   {
-    id: 'tiktok', icono: 'tiktok', nombre: 'TikTok', chip: 'TikTok Ads',
+    id: 'facebook', icono: 'facebook', nombre: 'Anuncios en Facebook', chip: 'Facebook',
+    gancho: 'Llegá a tu zona y a quienes ya te visitaron.',
+    explica: 'Campañas con segmentación fina para generar consultas y recuperar visitas.',
+    puntos: [
+      'Segmentación por zona, edad e intereses',
+      'Formularios de contacto y mensajes por WhatsApp o Messenger',
+      'Remarketing a quienes visitaron tu web o tu perfil',
+    ],
+    servicio: 'social',
+  },
+  {
+    id: 'tiktok', icono: 'tiktok', nombre: 'Anuncios en TikTok', chip: 'TikTok',
     gancho: 'Video corto para llegar a quienes todavía no te conocen.',
-    puntos: ['Campañas en TikTok Ads', 'Ideas de video según tu marca', 'Píxel y medición de ventas'],
+    explica: 'Ideas y campañas con el lenguaje de la plataforma, sin que parezca publicidad de otra época.',
+    puntos: [
+      'Ideas y guiones de video según tu marca',
+      'Campañas en TikTok Ads',
+      'Píxel y medición de resultados',
+    ],
     servicio: 'social',
   },
   {
-    id: 'contenido', icono: 'contenido', nombre: 'Diseño, contenido y gestión', chip: 'Diseño y gestión',
-    gancho: 'Que tu marca se vea cuidada y activa todos los meses.',
-    puntos: ['Piezas gráficas y banners', 'Calendario de contenido y promociones', 'Gestión de tu tienda y productos'],
-    servicio: 'gestion',
+    id: 'email', icono: 'email', nombre: 'Email marketing', chip: 'Email',
+    gancho: 'Hablale directo a quienes ya te conocen.',
+    explica: 'Tu lista de contactos es un canal propio: no depende de ningún algoritmo.',
+    puntos: [
+      'Armado y limpieza de tu lista de contactos',
+      'Diseño de newsletters y campañas',
+      'Automatizaciones: bienvenida y seguimiento',
+      'Reportes de aperturas y clics',
+    ],
+    servicio: 'email',
   },
-  {
-    id: 'web', icono: 'web', nombre: 'Tu web en Google', chip: 'Web en Google',
-    gancho: 'Que tu URL se encuentre y se vea bien en los resultados.',
-    puntos: ['Dominio verificado en Search Console', 'Sitemap e indexación de tus productos', 'Títulos y descripciones que invitan al clic'],
-    servicio: 'gestion',
-  },
-  {
-    id: 'seo', icono: 'seo', nombre: 'SEO y GEO', chip: 'SEO y GEO',
-    gancho: 'Que te encuentren en Google y te citen las respuestas con IA.',
-    puntos: ['SEO: estructura, velocidad y fichas de producto', 'GEO: contenido claro para que las IA puedan citar tu marca', 'Seguimiento mensual, sin promesas de posiciones'],
-    servicio: 'gestion',
-  },
+];
+
+// Qué se factura: texto propio de esta página; el precio sale de `marketing`.
+export const conceptosMarketing = [
+  { id: 'google', texto: 'Campañas en Google y tu ficha siempre al día.' },
+  { id: 'social', texto: 'Campañas en Instagram, Facebook o TikTok gestionadas por el equipo.' },
+  { id: 'email', texto: 'Newsletters y automatizaciones todos los meses.' },
 ];
 
 export const preguntasMarketing = [
@@ -246,7 +286,7 @@ export const preguntasMarketing = [
   },
   {
     p: '¿Cuánto tarda en verse resultados?',
-    r: 'Depende del canal. Con anuncios se ven señales en las primeras semanas; el SEO y el GEO son de mediano plazo. No prometemos posiciones ni ventas: te mostramos los números todos los meses.',
+    r: 'Depende del canal. Con anuncios se ven señales en las primeras semanas; la búsqueda orgánica es de mediano plazo. No prometemos posiciones ni ventas: te mostramos los números todos los meses.',
   },
   {
     p: '¿Hay un compromiso mínimo?',
