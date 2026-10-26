@@ -1,0 +1,454 @@
+---
+import Base from '../layouts/Base.astro';
+import logo from '../data/logo.svg?raw';
+import {
+  contacto, links, ars, notaPrecios, marketing,
+  paginaMarketing, pasosMarketing, canalesMarketing, preguntasMarketing,
+} from '../data/site';
+
+const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const wa = `https://wa.me/${contacto.whatsapp}`;
+const tiktok = `https://www.tiktok.com/@${contacto.tiktok}`;
+const consulta = links.calendario || `${links.formulario}?origen=consulta`;
+const anio = new Date().getFullYear();
+
+const svg = (d: string) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const check = svg('<circle cx="12" cy="12" r="9.2"/><path d="m8 12.3 2.7 2.7L16.2 9.5"/>');
+const flecha = svg('<path d="M5 12h14m-6-6 6 6-6 6"/>');
+const iconos: Record<string, string> = {
+  estrategia: svg('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>'),
+  mybusiness: svg('<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/>'),
+  googleads: svg('<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/>'),
+  meta: svg('<path d="M4 10v4a1 1 0 0 0 1 1h3l6 4V5L8 9H5a1 1 0 0 0-1 1z"/><path d="M18 9.5a4 4 0 0 1 0 5"/>'),
+  tiktok: svg('<rect x="3.5" y="5" width="17" height="14" rx="3"/><path d="m10.5 9.2 4 2.8-4 2.8z"/>'),
+  contenido: svg('<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M3.5 9.5h17M9.5 9.5v11"/>'),
+  web: svg('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.4 3.6 5.2 3.6 8.5s-1.1 6.1-3.6 8.5c-2.5-2.4-3.6-5.2-3.6-8.5S9.5 5.9 12 3.5z"/>'),
+  seo: svg('<path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.4l-1.9-5.6L4.5 10.9 10.1 9z"/>'),
+};
+
+const mk = Object.fromEntries(marketing.map((m) => [m.id, m]));
+const canales = canalesMarketing.map((c) => ({
+  ...c,
+  facturaTexto: c.servicio ? mk[c.servicio].nombre : c.factura,
+}));
+// Para cada concepto facturable: qué canales cubre
+const conceptos = marketing.map((m) => ({
+  ...m,
+  cubre: canalesMarketing.filter((c) => c.servicio === m.id).map((c) => c.chip),
+}));
+const chipsHero = ['Google', 'Instagram y Facebook', 'TikTok', 'SEO y GEO'];
+---
+<Base
+  title="Marketing · Toto &Co"
+  description="Estrategia, tono de voz y gestión en Google, Meta, TikTok, SEO y GEO para marcas de ecommerce. Cada tarea con su concepto claro."
+  noindex={paginaMarketing.borrador}
+>
+  {paginaMarketing.borrador && (
+    <p class="borrador">Borrador para revisar · esta página todavía no está publicada ni indexada</p>
+  )}
+  <header class="barra">
+    <div class="envoltura barra-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <nav aria-label="Secciones">
+        <a href="/">Inicio</a>
+        <a href="#metodo">Método</a>
+        <a href="#canales">Qué hacemos</a>
+        <a href="#factura">Qué se factura</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <!-- HERO -->
+    <section class="hero-zona">
+      <div class="hero envoltura">
+        <div class="hero-texto">
+          <p class="ojo"><span class="punto"></span>Marketing · Toto &amp;Co</p>
+          <h1>Que te encuentren, te elijan y vuelvan a <span class="azul">comprar</span></h1>
+          <p class="bajada">{paginaMarketing.hero.bajada}</p>
+          <ul class="checks">
+            {paginaMarketing.hero.puntos.map((p) => <li><span class="check" set:html={check} />{p}</li>)}
+          </ul>
+        </div>
+
+        <aside class="hero-tarjeta" aria-labelledby="mk-1">
+          <span class="cinta" aria-hidden="true">Con método</span>
+          <h2 id="mk-1">Marketing que se explica solo</h2>
+          <p class="suave hero-sub">Canales que cubrimos</p>
+          <ul class="chips" aria-label="Canales">
+            {chipsHero.map((c) => <li class="chip">{c}</li>)}
+          </ul>
+          <div class="botones">
+            <a href="#canales" class="boton boton-claro">Ver qué hacemos</a>
+            <a href={consulta} class="boton" target="_blank" rel="noopener">Agendá consulta gratis</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- MÉTODO -->
+    <section id="metodo" class="seccion envoltura" aria-labelledby="t-metodo">
+      <p class="ojo">01 · Método</p>
+      <h2 id="t-metodo" class="titulo-seccion">Primero pensamos, después pautamos</h2>
+      <ol class="pasos">
+        {pasosMarketing.map((p) => (
+          <li class="tarjeta paso">
+            <span class="paso-n mono">{p.n}</span>
+            <h3>{p.titulo}</h3>
+            <p class="suave">{p.texto}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- CANALES -->
+    <section id="canales" class="seccion envoltura" aria-labelledby="t-canales">
+      <p class="ojo">02 · Qué hacemos</p>
+      <h2 id="t-canales" class="titulo-seccion">Todo el trabajo, canal por canal</h2>
+      <div class="canales">
+        {canales.map((c) => (
+          <article class="tarjeta canal">
+            <div class="canal-cab">
+              <span class="canal-icono" set:html={iconos[c.icono]} />
+              <h3>{c.nombre}</h3>
+            </div>
+            <p class="canal-gancho">{c.gancho}</p>
+            <ul class="canal-puntos">
+              {c.puntos.map((p) => <li><span class="check" set:html={check} />{p}</li>)}
+            </ul>
+            <p class="canal-factura mono"><span>Se factura en</span>{c.facturaTexto}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- QUÉ SE FACTURA -->
+    <section id="factura" class="seccion envoltura" aria-labelledby="t-factura">
+      <div class="factura-cab">
+        <div>
+          <p class="ojo">03 · Transparencia</p>
+          <h2 id="t-factura" class="titulo-seccion">Cada tarea tiene su concepto</h2>
+        </div>
+        <p class="suave factura-intro">Nada de cajas negras: cada canal se factura dentro de un servicio mensual claro, así sabés qué estás pagando y qué recibís.</p>
+      </div>
+
+      <div class="tarjeta factura">
+        <ul class="conceptos">
+          {conceptos.map((m) => (
+            <li>
+              <div class="concepto-info">
+                <p><strong>{m.nombre}</strong></p>
+                <p class="suave">{m.texto}</p>
+                {m.cubre.length > 0 && (
+                  <ul class="cubre" aria-label={`Incluye ${m.nombre}`}>
+                    {m.cubre.map((x) => <li>{x}</li>)}
+                  </ul>
+                )}
+              </div>
+              <p class="mono concepto-precio">{m.desde ? 'desde ' : ''}{ars(m.usd)}<span>/mes</span></p>
+            </li>
+          ))}
+        </ul>
+        <p class="nota-precio suave">{notaPrecios} Pago por adelantado, mes a mes.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="seccion envoltura faq-zona" aria-labelledby="t-faq">
+      <div class="faq-titulo">
+        <p class="ojo">04 · Dudas</p>
+        <h2 id="t-faq" class="titulo-seccion">FAQ's</h2>
+        <p class="suave">¿No encontrás tu respuesta? Escribinos por <a href={wa} target="_blank" rel="noopener">WhatsApp</a>.</p>
+      </div>
+      <div class="faq">
+        {preguntasMarketing.map((q) => (
+          <details>
+            <summary>{q.p}</summary>
+            <p>{q.r}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="seccion envoltura" aria-labelledby="mk-2">
+      <div class="cta">
+        <span class="forma forma-1" aria-hidden="true"></span>
+        <span class="forma forma-2" aria-hidden="true"></span>
+        <div class="cta-texto">
+          <h2 id="mk-2">Armemos tu plan</h2>
+          <p>Contanos qué vendés y en 30 minutos te mostramos por dónde conviene arrancar.</p>
+        </div>
+        <a href={consulta} class="cta-caja" target="_blank" rel="noopener">
+          <span class="mono">30 minutos · sin costo</span>
+          <strong>Agendá consulta gratis</strong>
+          <span class="cta-flecha" set:html={flecha} />
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <a href="#inicio" class="arriba" aria-label="Volver arriba">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4m-5 5 5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+
+  <footer class="pie">
+    <div class="envoltura pie-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <ul class="pie-links">
+        <li><a href={`mailto:${contacto.email}`}>{contacto.email}</a></li>
+        <li><a href={wa} target="_blank" rel="noopener">WhatsApp {contacto.whatsappVisible}</a></li>
+        <li><a href={tiktok} target="_blank" rel="noopener">TikTok @{contacto.tiktok}</a></li>
+      </ul>
+      <p class="suave pie-copy">© {anio} Toto &amp;Co · Buenos Aires</p>
+    </div>
+  </footer>
+</Base>
+
+<script>
+  const arriba = document.querySelector('.arriba') as HTMLElement | null;
+  if (arriba) {
+    const mostrar = () => arriba.classList.toggle('visible', window.scrollY > 600);
+    window.addEventListener('scroll', mostrar, { passive: true });
+    mostrar();
+  }
+</script>
+
+<style>
+  /* Base compartida con la home (src/pages/index.astro): barra, botones, tarjeta, hero, FAQ, CTA y pie.
+     Si se unifican, mover a una hoja común. */
+  .azul { color: var(--sello); }
+  .mono { font-family: var(--mono); font-size: 0.8125rem; letter-spacing: 0.01em; }
+  .suave { color: var(--tinta-suave); }
+  .ojo {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--sello); margin-bottom: 0.75rem;
+  }
+  .punto { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 4px color-mix(in srgb, var(--verde) 20%, transparent); }
+
+  .borrador {
+    margin: 0; padding: 0.45rem 1rem; text-align: center;
+    background: var(--cinta); color: var(--tinta);
+    font: 600 0.75rem/1.3 var(--mono); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  .barra {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--papel) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--linea);
+  }
+  .barra-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; }
+  .marca { display: inline-flex; color: var(--tinta); width: 7.5rem; }
+  .marca :global(svg) { width: 100%; height: auto; display: block; }
+  nav { display: flex; gap: 0.25rem; font-weight: 500; font-size: 0.9375rem; }
+  nav a { text-decoration: none; color: var(--tinta-suave); padding: 0.4rem 0.8rem; border-radius: 999px; transition: background 0.15s ease, color 0.15s ease; }
+  nav a:hover { color: var(--tinta); background: var(--superficie); }
+  @media (max-width: 720px) { nav a:not(:first-child) { display: none; } }
+
+  .boton {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 3rem; padding: 0.75rem 1.4rem;
+    border-radius: 999px; border: 1.5px solid var(--tinta);
+    background: var(--tinta); color: #fff;
+    font: 600 1rem/1.2 var(--texto); text-decoration: none; cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .boton:hover { transform: translateY(-2px); background: var(--sello); border-color: var(--sello); box-shadow: 0 10px 20px -10px var(--sello); }
+  .boton-claro { background: transparent; color: var(--tinta); }
+  .boton-claro:hover { background: var(--tinta); color: #fff; border-color: var(--tinta); box-shadow: none; }
+
+  .tarjeta {
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    border-radius: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  /* Hero */
+  .hero-zona {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(40rem 26rem at 88% 10%, rgba(31, 91, 255, 0.16), transparent 70%),
+      radial-gradient(28rem 20rem at 70% 95%, rgba(255, 138, 31, 0.28), transparent 70%),
+      radial-gradient(circle at 1px 1px, rgba(11, 19, 43, 0.09) 1px, transparent 0) 0 0 / 22px 22px;
+  }
+  .hero {
+    display: grid; gap: 2.5rem; align-items: center;
+    grid-template-columns: 1.25fr 1fr;
+    padding-block: clamp(3rem, 8vw, 6.5rem);
+  }
+  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } }
+  h1 { font-size: clamp(2.4rem, 5.6vw, 4.25rem); isolation: isolate; }
+  .azul { position: relative; white-space: nowrap; }
+  h1 .azul::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0.02em; height: 0.14em;
+    background: var(--cinta); border-radius: 999px; z-index: -1;
+  }
+  .bajada { margin-top: 1.25rem; font-size: clamp(1.0625rem, 1.6vw, 1.25rem); color: var(--tinta-suave); max-width: 34rem; }
+  .checks { list-style: none; padding: 0; margin: 1.75rem 0 0; display: grid; gap: 0.65rem; }
+  .checks li { display: flex; align-items: center; gap: 0.6rem; font-weight: 500; }
+  .check { color: var(--verde); flex: none; width: 1.4rem; height: 1.4rem; display: inline-flex; }
+  .check :global(svg) { width: 100%; height: 100%; }
+
+  .hero-tarjeta {
+    position: relative;
+    background: var(--superficie);
+    border-radius: 1.75rem;
+    padding: clamp(1.5rem, 3.5vw, 2.25rem);
+    border: 1px solid var(--linea);
+    box-shadow: 0 1px 0 #fff inset, 0 40px 80px -40px rgba(31, 91, 255, 0.45);
+  }
+  .hero-tarjeta::before {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px;
+    background: linear-gradient(140deg, var(--sello), transparent 40%, transparent 65%, var(--cinta));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+  .cinta {
+    position: absolute; top: -0.9rem; right: 1.5rem; rotate: 4deg;
+    background: var(--cinta); color: var(--tinta);
+    font: 600 0.75rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.55rem 0.9rem; border-radius: 0.3rem;
+    box-shadow: 0 6px 14px -6px rgba(11, 19, 43, 0.35);
+  }
+  .hero-tarjeta h2 { font-size: clamp(1.8rem, 3.2vw, 2.4rem); }
+  .hero-sub { margin-top: 1.25rem; font-size: 0.95rem; }
+  .chips { list-style: none; padding: 0; margin: 0.6rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip {
+    display: inline-flex; align-items: center;
+    padding: 0.5rem 1rem; border-radius: 999px;
+    background: var(--azul-claro); color: var(--sello);
+    font-weight: 600; font-size: 0.975rem;
+  }
+  .botones { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem; margin-top: 1.75rem; }
+  .botones .boton { white-space: nowrap; padding-inline: 1.1rem; }
+  @media (max-width: 420px) { .botones { grid-template-columns: 1fr; } }
+
+  .seccion { padding-block: clamp(2.5rem, 6vw, 4.5rem); }
+  .titulo-seccion { font-size: clamp(2rem, 4.5vw, 3rem); margin-bottom: 1.75rem; }
+
+  /* Método */
+  .pasos { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 980px) { .pasos { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .pasos { grid-template-columns: 1fr; } }
+  .paso { position: relative; display: grid; gap: 0.5rem; align-content: start; }
+  .paso h3 { font-size: 1.4rem; }
+  .paso-n {
+    width: fit-content; background: var(--azul-claro); color: var(--sello);
+    padding: 0.3rem 0.7rem; border-radius: 999px; font-weight: 500;
+  }
+
+  /* Canales */
+  .canales { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .canales { grid-template-columns: 1fr; } }
+  .canal { display: grid; gap: 0.9rem; align-content: start; transition: border-color 0.2s ease, transform 0.2s ease; }
+  .canal:hover { border-color: var(--sello); transform: translateY(-3px); }
+  .canal-cab { display: flex; align-items: center; gap: 0.8rem; }
+  .canal-cab h3 { font-size: 1.35rem; line-height: 1.1; }
+  .canal-icono {
+    flex: none; width: 2.75rem; height: 2.75rem; border-radius: 0.9rem;
+    display: grid; place-items: center; background: var(--azul-claro); color: var(--sello);
+  }
+  .canal-icono :global(svg) { width: 1.4rem; height: 1.4rem; }
+  .canal-gancho { font-weight: 600; }
+  .canal-puntos { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+  .canal-puntos li { display: flex; gap: 0.6rem; align-items: flex-start; color: var(--tinta-suave); font-size: 0.975rem; }
+  .canal-puntos .check { width: 1.2rem; height: 1.2rem; margin-top: 0.15rem; }
+  .canal-factura {
+    margin-top: 0.2rem; padding-top: 0.8rem; border-top: 1px dashed var(--linea);
+    display: grid; gap: 0.15rem; font-weight: 500; color: var(--tinta);
+  }
+  .canal-factura span { color: var(--tinta-suave); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 400; }
+
+  /* Qué se factura */
+  .factura-cab { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 3rem; align-items: end; margin-bottom: 1.5rem; }
+  .factura-cab .titulo-seccion { margin-bottom: 0; }
+  .factura-intro { max-width: 32rem; }
+  @media (max-width: 800px) { .factura-cab { grid-template-columns: 1fr; } }
+  .conceptos { list-style: none; padding: 0; margin: 0; }
+  .conceptos > li {
+    display: flex; justify-content: space-between; gap: 1.5rem; align-items: flex-start;
+    padding-block: 1.1rem; border-top: 1px solid var(--linea);
+  }
+  .conceptos > li:first-child { border-top: 0; padding-top: 0; }
+  .concepto-info .suave { font-size: 0.925rem; }
+  .cubre { list-style: none; padding: 0; margin: 0.7rem 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .cubre li {
+    background: var(--azul-claro); color: var(--sello); font-weight: 600; font-size: 0.8125rem;
+    padding: 0.25rem 0.7rem; border-radius: 999px;
+  }
+  .concepto-precio { white-space: nowrap; font-weight: 500; font-size: 0.9375rem; }
+  .concepto-precio span { color: var(--tinta-suave); }
+  @media (max-width: 560px) { .conceptos > li { flex-direction: column; gap: 0.4rem; } }
+  .nota-precio { margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--linea); font-size: 0.875rem; }
+
+  /* FAQ */
+  .faq-zona { display: grid; grid-template-columns: 1fr 1.7fr; gap: clamp(1.5rem, 5vw, 4rem); align-items: start; }
+  .faq-titulo { position: sticky; top: 6rem; }
+  .faq-titulo .titulo-seccion { margin-bottom: 1rem; }
+  @media (max-width: 800px) { .faq-zona { grid-template-columns: 1fr; } .faq-titulo { position: static; } }
+  .faq { display: grid; gap: 0.6rem; }
+  details { background: var(--superficie); border: 1px solid var(--linea); border-radius: 1rem; padding: 0 1.2rem; transition: border-color 0.2s ease; }
+  details[open] { border-color: var(--sello); }
+  details summary {
+    cursor: pointer; list-style: none; padding-block: 1.05rem; font-weight: 600;
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: '+'; flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%;
+    display: grid; place-items: center; background: var(--papel);
+    font: 400 1.25rem/1 var(--texto); color: var(--tinta); transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+  details[open] summary::after { transform: rotate(45deg); background: var(--sello); color: #fff; }
+  details p { padding-bottom: 1.1rem; color: var(--tinta-suave); }
+
+  /* CTA */
+  .cta {
+    position: relative; overflow: hidden; isolation: isolate;
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center;
+    background: var(--sello); color: #fff; border-radius: 1.75rem;
+    padding: clamp(1.75rem, 5vw, 3.5rem);
+  }
+  @media (max-width: 760px) { .cta { grid-template-columns: 1fr; } }
+  .forma { position: absolute; z-index: -1; border-radius: 50%; }
+  .forma-1 { width: 22rem; height: 22rem; right: -6rem; top: -10rem; background: rgba(255, 255, 255, 0.12); }
+  .forma-2 { width: 14rem; height: 14rem; left: -5rem; bottom: -8rem; border: 2px solid rgba(255, 138, 31, 0.7); }
+  .cta h2 { font-size: clamp(2.25rem, 5vw, 3.5rem); }
+  .cta p { margin-top: 0.75rem; color: #dbe3ff; max-width: 28rem; }
+  .cta-caja {
+    display: grid; gap: 0.3rem; position: relative;
+    background: var(--cinta); color: var(--tinta); text-decoration: none;
+    border-radius: 1.25rem; padding: 1.5rem 4rem 1.5rem 1.5rem; rotate: -1.5deg;
+    box-shadow: 0 20px 40px -20px rgba(11, 19, 43, 0.6);
+    transition: rotate 0.2s ease, transform 0.2s ease;
+  }
+  .cta-caja:hover { rotate: 0deg; transform: translateY(-3px); }
+  .cta-caja strong { font: 800 clamp(1.4rem, 2.6vw, 1.9rem)/1.1 var(--display); }
+  .cta-flecha { position: absolute; right: 1.25rem; top: 50%; translate: 0 -50%; width: 2rem; height: 2rem; display: inline-flex; }
+  .cta-flecha :global(svg) { width: 100%; height: 100%; }
+
+  .arriba {
+    position: fixed; right: 1rem; bottom: 1rem; z-index: 30;
+    width: 3rem; height: 3rem; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--tinta); color: #fff;
+    box-shadow: 0 10px 25px -10px rgba(11, 19, 43, 0.5);
+    opacity: 0; pointer-events: none; transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s ease;
+  }
+  .arriba.visible { opacity: 1; pointer-events: auto; transform: none; }
+  .arriba:hover { background: var(--sello); }
+  .arriba svg { width: 1.25rem; height: 1.25rem; }
+
+  .pie { border-top: 1px solid var(--linea); padding-block: 2.5rem 5rem; margin-top: 2rem; }
+  .pie-in { display: grid; gap: 1.25rem; justify-items: start; }
+  .pie-links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.95rem; }
+  .pie-links a { text-decoration: none; }
+  .pie-links a:hover { text-decoration: underline; }
+  .pie-copy { font-size: 0.875rem; }
+</style>
