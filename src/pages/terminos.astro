@@ -13,7 +13,7 @@ const secciones = [
   {
     t: '1. Quiénes somos y a qué se aplican estos términos',
     p: [
-      'Toto &Co es un estudio de diseño de tiendas online y marketing para marcas, con base en Buenos Aires, Argentina. Estos términos regulan la contratación de nuestros servicios (diseño y configuración de tiendas en Tienda Nube y Shopify, carga de productos, imágenes con IA, identidad, gestión mensual y servicios de marketing) y el uso de este sitio.',
+      'Toto &Co es un estudio de diseño de tiendas online y marketing para marcas, con base en Buenos Aires, Argentina. Estos términos regulan la contratación de nuestros servicios (diseño y configuración de tiendas online en plataformas de ecommerce como Tienda Nube o Shopify, carga de productos, imágenes con IA, identidad, gestión mensual y servicios de marketing) y el uso de este sitio.',
       'Al pagar un servicio o aprobar un presupuesto, aceptás estos términos. Si hay un acuerdo escrito particular con tu marca, ese acuerdo prevalece en lo que diga distinto.',
     ],
   },
@@ -29,14 +29,14 @@ const secciones = [
     p: [
       'Los precios se expresan en dólares estadounidenses (USD). La web los muestra en pesos argentinos con una cotización de referencia, que puede cambiar. El monto a pagar es el que figura en el presupuesto o link de pago al momento de contratar.',
       'Los proyectos (por ejemplo, Lanzamiento o Rediseño) se pagan el 100% por adelantado, antes de empezar. Los servicios mensuales se pagan por adelantado, mes a mes.',
-      'Los cobros se procesan a través de Rebill u otro medio de pago que te indiquemos. No guardamos datos de tu tarjeta. Los impuestos y comisiones que cobre el medio de pago pueden sumarse según corresponda.',
+      'Los cobros se procesan a través de una pasarela o medio de pago que te indicaremos al contratar. No guardamos datos de tu tarjeta. Los impuestos y comisiones que cobre el medio de pago pueden sumarse según corresponda.',
       'Emitimos la factura que corresponda por cada pago.',
     ],
   },
   {
     t: '4. Lo que paga tu marca directamente a terceros',
     p: [
-      'No están incluidos en nuestros precios: el plan de Tienda Nube o Shopify, las aplicaciones y plantillas de terceros, el dominio, la inversión publicitaria en Google, Meta y TikTok, ni las comisiones de los medios de pago. Se pagan directo a cada plataforma. Las cuentas y el dominio son siempre de tu marca.',
+      'No están incluidos en nuestros precios: el plan de la plataforma de ecommerce, las aplicaciones y plantillas de terceros, el dominio, la inversión publicitaria en las plataformas de anuncios, ni las comisiones de los medios de pago. Se pagan directo a cada proveedor. Las cuentas y el dominio son siempre de tu marca.',
     ],
   },
   {
@@ -80,14 +80,14 @@ const secciones = [
   {
     t: '10. Datos personales',
     p: [
-      'Con el formulario de contacto, la agenda o el WhatsApp recibimos datos como nombre, mail, teléfono y la información de tu marca. Los usamos para responderte, armar presupuestos, prestar el servicio y facturar. No los vendemos ni los cedemos, salvo a los proveedores necesarios para operar (por ejemplo Google, Tally, Rebill o Vercel) y cuando la ley lo exija.',
+      'Con el formulario de contacto, la agenda o el WhatsApp recibimos datos como nombre, mail, teléfono y la información de tu marca. Los usamos para responderte, armar presupuestos, prestar el servicio y facturar. No los vendemos ni los cedemos, salvo a los proveedores necesarios para operar (por ejemplo, herramientas de agenda, formularios, cobro, hosting y correo) y cuando la ley lo exija. Más detalle en nuestra <a href="/privacidad">política de privacidad</a>.',
       `Podés pedir acceso, rectificación o eliminación de tus datos escribiendo a ${contacto.email}. El titular de los datos tiene la facultad de ejercer el derecho de acceso en forma gratuita a intervalos no inferiores a seis meses (Ley 25.326). La Agencia de Acceso a la Información Pública es el órgano de control de esa ley.`,
     ],
   },
   {
     t: '11. Limitación de responsabilidad',
     p: [
-      'Nuestra responsabilidad se limita al monto efectivamente pagado por el servicio que originó el reclamo. No respondemos por lucro cesante, caídas o cambios de las plataformas de terceros (Tienda Nube, Shopify, Google, Meta, TikTok, medios de pago), bloqueos o suspensiones de cuentas, ni por decisiones comerciales de tu marca.',
+      'Nuestra responsabilidad se limita al monto efectivamente pagado por el servicio que originó el reclamo. No respondemos por lucro cesante, caídas o cambios de las plataformas y herramientas de terceros (ecommerce, anuncios, medios de pago, hosting), bloqueos o suspensiones de cuentas, ni por decisiones comerciales de tu marca.',
       'Nada de lo anterior limita derechos que la ley no permita limitar.',
     ],
   },
@@ -129,7 +129,7 @@ const secciones = [
       {secciones.map((s) => (
         <section>
           <h2>{s.t}</h2>
-          {s.p.map((x) => <p>{x}</p>)}
+          {s.p.map((x) => <p set:html={x} />)}
         </section>
       ))}
     </div>
@@ -143,6 +143,7 @@ const secciones = [
         <li><a href={wa} target="_blank" rel="noopener">WhatsApp {contacto.whatsappVisible}</a></li>
         <li><a href={tiktok} target="_blank" rel="noopener">TikTok @{contacto.tiktok}</a></li>
         <li><a href="/terminos">Términos y condiciones</a></li>
+        <li><a href="/privacidad">Política de privacidad</a></li>
       </ul>
       <p class="suave pie-copy">© {anio} Toto &amp;Co · Buenos Aires</p>
     </div>

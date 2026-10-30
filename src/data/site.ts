@@ -136,7 +136,7 @@ export const preguntas = [
   },
   {
     p: '¿Por qué se paga el 100% por adelantado?',
-    r: 'Porque reserva tu lugar en la agenda y nos deja enfocarnos en el trabajo y no en la cobranza. Podés pagar con tarjeta en cuotas por Mercado Pago.',
+    r: 'Porque reserva tu lugar en la agenda y nos deja enfocarnos en el trabajo y no en la cobranza. Te indicamos los medios de pago disponibles al momento de contratar.',
   },
   {
     p: '¿Cómo se cuenta la carga de productos?',

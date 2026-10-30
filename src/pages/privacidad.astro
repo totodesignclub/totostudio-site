@@ -1,0 +1,160 @@
+---
+import Base from '../layouts/Base.astro';
+import logo from '../data/logo.svg?raw';
+import { contacto, links } from '../data/site';
+
+const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const wa = `https://wa.me/${contacto.whatsapp}`;
+const tiktok = `https://www.tiktok.com/@${contacto.tiktok}`;
+const anio = new Date().getFullYear();
+const actualizado = '30 de octubre de 2026';
+
+const secciones = [
+  {
+    t: '1. Quién es responsable de tus datos',
+    p: [
+      'Toto &Co es un estudio de diseño de tiendas online y marketing con base en Buenos Aires, Argentina. Somos responsables del tratamiento de los datos personales que recibimos a través de este sitio y de la prestación de nuestros servicios.',
+      `Para cualquier consulta sobre tus datos escribinos a ${contacto.email}.`,
+    ],
+  },
+  {
+    t: '2. Qué datos recopilamos',
+    p: [
+      'Datos que nos das vos: nombre, mail, teléfono, nombre de tu marca, sitio web o redes, y la información que cuentes al completar el formulario, reservar una consulta o escribirnos por WhatsApp o mail.',
+      'Datos para prestar el servicio: catálogo, imágenes, logos, textos y accesos a las plataformas de tu marca (tienda, dominio, redes, cuentas publicitarias), y datos de facturación.',
+      'Datos técnicos: al visitar el sitio, el proveedor de hosting y las fuentes tipográficas pueden registrar tu dirección IP y datos básicos del navegador. No usamos cookies de publicidad ni herramientas de seguimiento propias.',
+    ],
+  },
+  {
+    t: '3. Para qué los usamos',
+    p: [
+      'Para responder tus consultas, coordinar reuniones, armar presupuestos, prestar y facturar el servicio contratado, cumplir obligaciones legales e impositivas, y mejorar el sitio y nuestro trabajo.',
+      'Solo te escribimos con fines comerciales si nos contactaste o nos diste tu consentimiento, y podés pedir que dejemos de hacerlo en cualquier momento.',
+    ],
+  },
+  {
+    t: '4. Con quién los compartimos',
+    p: [
+      'No vendemos tus datos. Los compartimos únicamente con proveedores que necesitamos para operar, como herramientas de agenda, formularios, mensajería, correo, almacenamiento, cobro, facturación y hosting. Cada uno trata los datos según sus propias políticas y solo para prestarnos ese servicio. Estos proveedores pueden estar ubicados fuera de Argentina.',
+      'También podemos compartir datos cuando lo exija una autoridad competente o una norma legal.',
+    ],
+  },
+  {
+    t: '5. Datos de los clientes de tu marca',
+    p: [
+      'Si al prestar el servicio accedemos a datos de los clientes de tu marca (por ejemplo pedidos o contactos de tu tienda), los usamos solo para realizar la tarea encargada y no los copiamos ni los usamos para otro fin. Tu marca es responsable de contar con la base legal para tratarlos.',
+    ],
+  },
+  {
+    t: '6. Cuánto tiempo los conservamos',
+    p: [
+      'Conservamos los datos mientras dure la relación y durante los plazos que exijan las normas contables, impositivas y de defensa de derechos. Después los eliminamos o anonimizamos. Si el servicio termina, podés pedir que retiremos nuestros accesos a tus cuentas.',
+    ],
+  },
+  {
+    t: '7. Seguridad',
+    p: [
+      'Usamos medidas razonables para proteger los datos: cuentas con verificación en dos pasos cuando la plataforma lo permite, accesos por invitación en lugar de contraseñas compartidas y acceso limitado a quien lo necesita. Ningún sistema es 100% seguro, por eso te pedimos no enviar contraseñas por mail ni WhatsApp.',
+    ],
+  },
+  {
+    t: '8. Tus derechos',
+    p: [
+      `Podés pedir acceso, rectificación, actualización o supresión de tus datos escribiendo a ${contacto.email}. Respondemos dentro de los plazos de la Ley 25.326 de Protección de los Datos Personales.`,
+      'El titular de los datos personales tiene la facultad de ejercer el derecho de acceso a los mismos en forma gratuita a intervalos no inferiores a seis meses, salvo que se acredite un interés legítimo (art. 14, inc. 3, Ley 25.326).',
+      'La Agencia de Acceso a la Información Pública, en su carácter de órgano de control de la Ley 25.326, tiene la atribución de atender las denuncias y reclamos que se interpongan con relación al incumplimiento de las normas sobre protección de datos personales.',
+    ],
+  },
+  {
+    t: '9. Menores de edad',
+    p: [
+      'Nuestros servicios están dirigidos a personas y marcas con capacidad para contratar. No recopilamos a sabiendas datos de menores de edad.',
+    ],
+  },
+  {
+    t: '10. Cambios en esta política',
+    p: [
+      'Podemos actualizar esta política. La versión vigente es la publicada en esta página, con su fecha de actualización. Si hay cambios importantes, te avisamos por los canales habituales.',
+    ],
+  },
+];
+
+---
+<Base
+  title="Política de privacidad · Toto &Co"
+  description="Cómo Toto &Co recopila, usa y protege tus datos personales, y cómo ejercer tus derechos."
+>
+  <header class="barra">
+    <div class="envoltura barra-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <nav aria-label="Secciones">
+        <a href="/">Inicio</a>
+        <a href="/marketing">Marketing</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="envoltura doc">
+      <p class="ojo">Legal</p>
+      <h1>Política de privacidad</h1>
+      <p class="suave actualizado">Última actualización: {actualizado}</p>
+
+      {secciones.map((s) => (
+        <section>
+          <h2>{s.t}</h2>
+          {s.p.map((x) => <p set:html={x} />)}
+        </section>
+      ))}
+    </div>
+  </main>
+
+  <footer class="pie">
+    <div class="envoltura pie-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <ul class="pie-links">
+        <li><a href={`mailto:${contacto.email}`}>{contacto.email}</a></li>
+        <li><a href={wa} target="_blank" rel="noopener">WhatsApp {contacto.whatsappVisible}</a></li>
+        <li><a href={tiktok} target="_blank" rel="noopener">TikTok @{contacto.tiktok}</a></li>
+        <li><a href="/terminos">Términos y condiciones</a></li>
+        <li><a href="/privacidad">Política de privacidad</a></li>
+      </ul>
+      <p class="suave pie-copy">© {anio} Toto &amp;Co · Buenos Aires</p>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .suave { color: var(--tinta-suave); }
+  .ojo {
+    font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--sello); margin-bottom: 0.75rem;
+  }
+  .barra {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--papel) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--linea);
+  }
+  .barra-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; }
+  .marca { display: inline-flex; color: var(--tinta); width: 7.5rem; }
+  .marca :global(svg) { width: 100%; height: auto; display: block; }
+  nav { display: flex; gap: 0.25rem; font-weight: 500; font-size: 0.9375rem; }
+  nav a { text-decoration: none; color: var(--tinta-suave); padding: 0.4rem 0.8rem; border-radius: 999px; }
+  nav a:hover { color: var(--tinta); background: var(--superficie); }
+
+  .doc { max-width: 46rem; padding-block: clamp(2.5rem, 7vw, 5rem); }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); }
+  .actualizado { margin-top: 0.75rem; font-size: 0.9375rem; }
+  section { margin-top: 2.5rem; }
+  h2 { font-size: clamp(1.2rem, 2.4vw, 1.5rem); line-height: 1.15; margin-bottom: 0.75rem; }
+  section p + p { margin-top: 0.75rem; }
+  section p { color: var(--tinta); }
+
+  .pie { border-top: 1px solid var(--linea); padding-block: 2.5rem 5rem; margin-top: 2rem; }
+  .pie-in { display: grid; gap: 1.25rem; justify-items: start; }
+  .pie-links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.95rem; }
+  .pie-links a { text-decoration: none; }
+  .pie-links a:hover { text-decoration: underline; }
+  .pie-copy { font-size: 0.875rem; }
+</style>
