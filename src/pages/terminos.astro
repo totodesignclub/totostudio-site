@@ -46,8 +46,9 @@ const secciones = [
     ],
   },
   {
-    t: '6. Ajustes y entrega',
+    t: '6. Plazos, entrega y ajustes',
     p: [
+      'Plazos de entrega, contados desde que recibimos el material completo y los accesos: Lanzamiento Ecommerce y Rediseño, hasta 14 días hábiles. Carga de productos, imágenes con IA y mini identidad de marca se acuerdan al contratar, según el volumen. Los servicios mensuales se prestan mes a mes, con un informe mensual de lo realizado.',
       'Después de la entrega de un proyecto, tenés 14 días corridos para enviar una lista de ajustes dentro del alcance contratado. Pasado ese plazo, damos el proyecto por entregado y cerrado. Los cambios posteriores se cotizan como tarea adicional o se incluyen en un servicio mensual.',
       'Una vez entregado el trabajo, la operación diaria de la tienda (productos, precios, stock, pedidos, envíos y atención a tus clientes) es responsabilidad de tu marca, salvo que contrates un servicio de gestión.',
     ],
@@ -61,11 +62,12 @@ const secciones = [
     ],
   },
   {
-    t: '8. Cancelaciones y reembolsos',
+    t: '8. Cancelaciones, arrepentimiento y reembolsos',
     p: [
       'Si cancelás un proyecto antes de que empecemos a trabajar, te devolvemos el 100% de lo pagado, menos las comisiones del medio de pago.',
       'Una vez iniciado el trabajo, el pago reserva nuestro lugar en la agenda y no se reembolsa. Si decidís frenar a mitad de camino, te entregamos lo realizado hasta ese momento.',
       'Si nosotros no pudiéramos realizar el servicio contratado, te devolvemos lo pagado por la parte no realizada.',
+      'Arrepentimiento. Si contratás a distancia como consumidor final, podés revocar la contratación dentro de los 10 días corridos desde que la aceptaste, escribiendo a ' + contacto.email + '. En ese caso te devolvemos lo pagado. Lo dispuesto antes en esta sección se aplica sin perjuicio de este derecho.',
     ],
   },
   {
@@ -107,7 +109,7 @@ const secciones = [
     t: '14. Ley aplicable y contacto',
     p: [
       'Estos términos se rigen por las leyes de la República Argentina. Para cualquier controversia, las partes se someten a los tribunales ordinarios con competencia en el domicilio del titular, en la Provincia de Buenos Aires, sin perjuicio de los derechos que la ley otorgue a los consumidores.',
-      `Para consultas sobre estos términos escribinos a ${contacto.email} o por WhatsApp al ${contacto.whatsappVisible}.`,
+      `Para consultas sobre estos términos visitá nuestra <a href="/contacto">página de contacto</a> o escribinos a ${contacto.email} o por WhatsApp al ${contacto.whatsappVisible}.`,
     ],
   },
 ];
@@ -148,6 +150,7 @@ const secciones = [
         <li><a href={`mailto:${contacto.email}`}>{contacto.email}</a></li>
         <li><a href={wa} target="_blank" rel="noopener">WhatsApp {contacto.whatsappVisible}</a></li>
         <li><a href={tiktok} target="_blank" rel="noopener">TikTok @{contacto.tiktok}</a></li>
+        <li><a href="/contacto">Contacto</a></li>
         <li><a href="/terminos">Términos y condiciones</a></li>
         <li><a href="/privacidad">Política de privacidad</a></li>
       </ul>

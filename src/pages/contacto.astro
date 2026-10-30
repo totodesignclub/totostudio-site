@@ -1,0 +1,110 @@
+---
+import Base from '../layouts/Base.astro';
+import logo from '../data/logo.svg?raw';
+import { contacto, links } from '../data/site';
+
+const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const wa = `https://wa.me/${contacto.whatsapp}`;
+const tiktok = `https://www.tiktok.com/@${contacto.tiktok}`;
+const anio = new Date().getFullYear();
+
+const consulta = links.calendario || `${links.formulario}?origen=consulta`;
+---
+<Base
+  title="Contacto · Toto &Co"
+  description="Cómo contactar a Toto &Co: mail, WhatsApp y consulta gratis."
+>
+  <header class="barra">
+    <div class="envoltura barra-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <nav aria-label="Secciones">
+        <a href="/">Inicio</a>
+        <a href="/marketing">Marketing</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="envoltura doc">
+      <p class="ojo">Hablemos</p>
+      <h1>Contacto</h1>
+      <p class="suave actualizado">Escribinos y te respondemos a la brevedad.</p>
+
+      <section>
+        <h2>Toto &amp;Co</h2>
+        <p>Estudio de diseño de tiendas online y marketing para marcas. Titular: Tomás Martín Curtelo, CUIT 20-36084064-7, monotributista. Buenos Aires, Argentina.</p>
+      </section>
+      <section>
+        <h2>Cómo escribirnos</h2>
+        <ul class="datos">
+          <li><span class="suave">Mail</span> <a href={`mailto:${contacto.email}`}>{contacto.email}</a></li>
+          <li><span class="suave">WhatsApp</span> <a href={wa} target="_blank" rel="noopener">{contacto.whatsappVisible}</a></li>
+          <li><span class="suave">TikTok</span> <a href={tiktok} target="_blank" rel="noopener">@{contacto.tiktok}</a></li>
+        </ul>
+      </section>
+      <section>
+        <h2>Consulta gratis</h2>
+        <p>Reservá 30 minutos por videollamada para contarnos tu proyecto.</p>
+        <p><a class="boton" href={consulta} target="_blank" rel="noopener">Agendá una consulta</a></p>
+      </section>
+      <section>
+        <h2>Información legal</h2>
+        <p><a href="/terminos">Términos y condiciones</a> · <a href="/privacidad">Política de privacidad</a></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="pie">
+    <div class="envoltura pie-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <ul class="pie-links">
+        <li><a href={`mailto:${contacto.email}`}>{contacto.email}</a></li>
+        <li><a href={wa} target="_blank" rel="noopener">WhatsApp {contacto.whatsappVisible}</a></li>
+        <li><a href={tiktok} target="_blank" rel="noopener">TikTok @{contacto.tiktok}</a></li>
+        <li><a href="/contacto">Contacto</a></li>
+        <li><a href="/terminos">Términos y condiciones</a></li>
+        <li><a href="/privacidad">Política de privacidad</a></li>
+      </ul>
+      <p class="suave pie-copy">© {anio} Toto &amp;Co · Buenos Aires</p>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .suave { color: var(--tinta-suave); }
+  .ojo {
+    font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--sello); margin-bottom: 0.75rem;
+  }
+  .barra {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--papel) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--linea);
+  }
+  .barra-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; }
+  .marca { display: inline-flex; color: var(--tinta); width: 7.5rem; }
+  .marca :global(svg) { width: 100%; height: auto; display: block; }
+  nav { display: flex; gap: 0.25rem; font-weight: 500; font-size: 0.9375rem; }
+  nav a { text-decoration: none; color: var(--tinta-suave); padding: 0.4rem 0.8rem; border-radius: 999px; }
+  nav a:hover { color: var(--tinta); background: var(--superficie); }
+
+  .doc { max-width: 46rem; padding-block: clamp(2.5rem, 7vw, 5rem); }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); }
+  .actualizado { margin-top: 0.75rem; font-size: 0.9375rem; }
+  section { margin-top: 2.5rem; }
+  h2 { font-size: clamp(1.2rem, 2.4vw, 1.5rem); line-height: 1.15; margin-bottom: 0.75rem; }
+  section p + p { margin-top: 0.75rem; }
+  section p { color: var(--tinta); }
+
+  .pie { border-top: 1px solid var(--linea); padding-block: 2.5rem 5rem; margin-top: 2rem; }
+  .pie-in { display: grid; gap: 1.25rem; justify-items: start; }
+  .pie-links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.95rem; }
+  .pie-links a { text-decoration: none; }
+  .pie-links a:hover { text-decoration: underline; }
+  .pie-copy { font-size: 0.875rem; }
+  .datos { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+  .datos .suave { display: inline-block; min-width: 6rem; font-family: var(--mono); font-size: 0.8125rem; }
+  .boton { display: inline-flex; align-items: center; min-height: 3rem; padding: 0.75rem 1.4rem; margin-top: 0.5rem; border-radius: 999px; background: var(--tinta); color: #fff; font: 600 1rem/1.2 var(--texto); text-decoration: none; }
+  .boton:hover { background: var(--sello); }
+</style>
