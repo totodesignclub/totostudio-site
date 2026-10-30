@@ -1,18 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
 import logo from '../data/logo.svg?raw';
-import { contacto, links } from '../data/site';
+import { contacto } from '../data/site';
 
 const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
 const wa = `https://wa.me/${contacto.whatsapp}`;
 const tiktok = `https://www.tiktok.com/@${contacto.tiktok}`;
 const anio = new Date().getFullYear();
 
-const consulta = links.calendario || `${links.formulario}?origen=consulta`;
 ---
 <Base
   title="Contacto · Toto &Co"
-  description="Cómo contactar a Toto &Co: mail, WhatsApp y consulta gratis."
+  description="Cómo contactar a Toto &Co: mail y WhatsApp."
 >
   <header class="barra">
     <div class="envoltura barra-in">
@@ -39,13 +38,7 @@ const consulta = links.calendario || `${links.formulario}?origen=consulta`;
         <ul class="datos">
           <li><span class="suave">Mail</span> <a href={`mailto:${contacto.email}`}>{contacto.email}</a></li>
           <li><span class="suave">WhatsApp</span> <a href={wa} target="_blank" rel="noopener">{contacto.whatsappVisible}</a></li>
-          <li><span class="suave">TikTok</span> <a href={tiktok} target="_blank" rel="noopener">@{contacto.tiktok}</a></li>
         </ul>
-      </section>
-      <section>
-        <h2>Consulta gratis</h2>
-        <p>Reservá 30 minutos por videollamada para contarnos tu proyecto.</p>
-        <p><a class="boton" href={consulta} target="_blank" rel="noopener">Agendá una consulta</a></p>
       </section>
       <section>
         <h2>Información legal</h2>
@@ -105,6 +98,4 @@ const consulta = links.calendario || `${links.formulario}?origen=consulta`;
   .pie-copy { font-size: 0.875rem; }
   .datos { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
   .datos .suave { display: inline-block; min-width: 6rem; font-family: var(--mono); font-size: 0.8125rem; }
-  .boton { display: inline-flex; align-items: center; min-height: 3rem; padding: 0.75rem 1.4rem; margin-top: 0.5rem; border-radius: 999px; background: var(--tinta); color: #fff; font: 600 1rem/1.2 var(--texto); text-decoration: none; }
-  .boton:hover { background: var(--sello); }
 </style>
