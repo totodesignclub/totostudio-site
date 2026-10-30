@@ -1,0 +1,185 @@
+---
+import Base from '../layouts/Base.astro';
+import logo from '../data/logo.svg?raw';
+import { contacto, links } from '../data/site';
+
+const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const wa = `https://wa.me/${contacto.whatsapp}`;
+const tiktok = `https://www.tiktok.com/@${contacto.tiktok}`;
+const anio = new Date().getFullYear();
+const actualizado = '30 de octubre de 2026';
+
+const secciones = [
+  {
+    t: '1. Quiénes somos y a qué se aplican estos términos',
+    p: [
+      'Toto &Co es un estudio de diseño de tiendas online y marketing para marcas, con base en Buenos Aires, Argentina. Estos términos regulan la contratación de nuestros servicios (diseño y configuración de tiendas en Tienda Nube y Shopify, carga de productos, imágenes con IA, identidad, gestión mensual y servicios de marketing) y el uso de este sitio.',
+      'Al pagar un servicio o aprobar un presupuesto, aceptás estos términos. Si hay un acuerdo escrito particular con tu marca, ese acuerdo prevalece en lo que diga distinto.',
+    ],
+  },
+  {
+    t: '2. Servicios y alcance',
+    p: [
+      'Cada servicio tiene un alcance detallado en la web o en el presupuesto que te enviamos. Lo que no figura ahí no está incluido y se cotiza aparte. Los pedidos extra se hacen como tarea adicional, con su propio precio y plazo.',
+      'Para trabajar necesitamos que tu marca tenga su catálogo ordenado (nombre, precio, stock y descripción), los logos y materiales, y los accesos necesarios (tienda, dominio, redes y cuentas publicitarias). Los plazos empiezan cuando recibimos todo eso. Si los materiales o las respuestas se demoran, el cronograma se corre en la misma medida.',
+    ],
+  },
+  {
+    t: '3. Precios y forma de pago',
+    p: [
+      'Los precios se expresan en dólares estadounidenses (USD). La web los muestra en pesos argentinos con una cotización de referencia, que puede cambiar. El monto a pagar es el que figura en el presupuesto o link de pago al momento de contratar.',
+      'Los proyectos (por ejemplo, Lanzamiento o Rediseño) se pagan el 100% por adelantado, antes de empezar. Los servicios mensuales se pagan por adelantado, mes a mes.',
+      'Los cobros se procesan a través de Rebill u otro medio de pago que te indiquemos. No guardamos datos de tu tarjeta. Los impuestos y comisiones que cobre el medio de pago pueden sumarse según corresponda.',
+      'Emitimos la factura que corresponda por cada pago.',
+    ],
+  },
+  {
+    t: '4. Lo que paga tu marca directamente a terceros',
+    p: [
+      'No están incluidos en nuestros precios: el plan de Tienda Nube o Shopify, las aplicaciones y plantillas de terceros, el dominio, la inversión publicitaria en Google, Meta y TikTok, ni las comisiones de los medios de pago. Se pagan directo a cada plataforma. Las cuentas y el dominio son siempre de tu marca.',
+    ],
+  },
+  {
+    t: '5. Ajustes y entrega',
+    p: [
+      'Después de la entrega de un proyecto, tenés 14 días corridos para enviar una lista de ajustes dentro del alcance contratado. Pasado ese plazo, damos el proyecto por entregado y cerrado. Los cambios posteriores se cotizan como tarea adicional o se incluyen en un servicio mensual.',
+      'Una vez entregado el trabajo, la operación diaria de la tienda (productos, precios, stock, pedidos, envíos y atención a tus clientes) es responsabilidad de tu marca, salvo que contrates un servicio de gestión.',
+    ],
+  },
+  {
+    t: '6. Servicios mensuales',
+    p: [
+      'Los servicios mensuales (gestión, Google Ads y My Business, email marketing, Meta Ads o TikTok Ads) se contratan por un mínimo de 3 meses, pagados por adelantado cada mes.',
+      'Pasado el mínimo, podés cancelar avisándonos por escrito (por mail o WhatsApp) antes del inicio del siguiente mes. No se reembolsan los meses ya pagados.',
+      'No garantizamos resultados de ventas, posicionamiento ni rendimiento de anuncios. Trabajamos con buenas prácticas y te mostramos cada mes qué hicimos y qué medimos, pero el resultado depende también de tu producto, precios, stock, atención y de las plataformas.',
+    ],
+  },
+  {
+    t: '7. Cancelaciones y reembolsos',
+    p: [
+      'Si cancelás un proyecto antes de que empecemos a trabajar, te devolvemos el 100% de lo pagado, menos las comisiones del medio de pago.',
+      'Una vez iniciado el trabajo, el pago reserva nuestro lugar en la agenda y no se reembolsa. Si decidís frenar a mitad de camino, te entregamos lo realizado hasta ese momento.',
+      'Si nosotros no pudiéramos realizar el servicio contratado, te devolvemos lo pagado por la parte no realizada.',
+    ],
+  },
+  {
+    t: '8. Propiedad de los trabajos y materiales',
+    p: [
+      'Una vez abonado el total, tu marca es titular del diseño y la configuración entregados para su tienda. Seguimos pudiendo mostrar el trabajo en nuestro portfolio y redes como ejemplo, salvo que nos pidas lo contrario por escrito.',
+      'Tu marca nos garantiza que tiene los derechos sobre los textos, imágenes, logos, marcas y productos que nos entrega. Las plantillas, fuentes, íconos y aplicaciones de terceros se rigen por sus propias licencias.',
+      'Las imágenes mejoradas o generadas con inteligencia artificial se hacen a partir de las fotos o referencias que nos des. Revisalas antes de publicarlas: tu marca es responsable de que representen fielmente al producto.',
+    ],
+  },
+  {
+    t: '9. Accesos y confidencialidad',
+    p: [
+      'Usamos tus accesos únicamente para prestar el servicio. Te pedimos que no compartas contraseñas por canales inseguros: preferimos que nos invites como colaborador o que uses el sistema de accesos de cada plataforma.',
+      'Mantenemos confidencial la información comercial de tu marca. Al terminar el servicio, podés pedirnos que retiremos nuestros accesos.',
+    ],
+  },
+  {
+    t: '10. Datos personales',
+    p: [
+      'Con el formulario de contacto, la agenda o el WhatsApp recibimos datos como nombre, mail, teléfono y la información de tu marca. Los usamos para responderte, armar presupuestos, prestar el servicio y facturar. No los vendemos ni los cedemos, salvo a los proveedores necesarios para operar (por ejemplo Google, Tally, Rebill o Vercel) y cuando la ley lo exija.',
+      `Podés pedir acceso, rectificación o eliminación de tus datos escribiendo a ${contacto.email}. El titular de los datos tiene la facultad de ejercer el derecho de acceso en forma gratuita a intervalos no inferiores a seis meses (Ley 25.326). La Agencia de Acceso a la Información Pública es el órgano de control de esa ley.`,
+    ],
+  },
+  {
+    t: '11. Limitación de responsabilidad',
+    p: [
+      'Nuestra responsabilidad se limita al monto efectivamente pagado por el servicio que originó el reclamo. No respondemos por lucro cesante, caídas o cambios de las plataformas de terceros (Tienda Nube, Shopify, Google, Meta, TikTok, medios de pago), bloqueos o suspensiones de cuentas, ni por decisiones comerciales de tu marca.',
+      'Nada de lo anterior limita derechos que la ley no permita limitar.',
+    ],
+  },
+  {
+    t: '12. Cambios en estos términos',
+    p: [
+      'Podemos actualizar estos términos. La versión vigente es la publicada en esta página, con su fecha de actualización. Los cambios no afectan a los servicios ya pagados, que se rigen por los términos vigentes al momento de la contratación.',
+    ],
+  },
+  {
+    t: '13. Ley aplicable y contacto',
+    p: [
+      'Estos términos se rigen por las leyes de la República Argentina. Para cualquier controversia, las partes se someten a los tribunales ordinarios de la Ciudad Autónoma de Buenos Aires, sin perjuicio de los derechos que la ley otorgue a los consumidores.',
+      `Para consultas sobre estos términos escribinos a ${contacto.email} o por WhatsApp al ${contacto.whatsappVisible}.`,
+    ],
+  },
+];
+---
+<Base
+  title="Términos y condiciones · Toto &Co"
+  description="Condiciones de contratación de los servicios de Toto &Co: alcance, pagos, ajustes, cancelaciones, propiedad de los trabajos y datos personales."
+>
+  <header class="barra">
+    <div class="envoltura barra-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <nav aria-label="Secciones">
+        <a href="/">Inicio</a>
+        <a href="/marketing">Marketing</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="envoltura doc">
+      <p class="ojo">Legal</p>
+      <h1>Términos y condiciones</h1>
+      <p class="suave actualizado">Última actualización: {actualizado}</p>
+
+      {secciones.map((s) => (
+        <section>
+          <h2>{s.t}</h2>
+          {s.p.map((x) => <p>{x}</p>)}
+        </section>
+      ))}
+    </div>
+  </main>
+
+  <footer class="pie">
+    <div class="envoltura pie-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <ul class="pie-links">
+        <li><a href={`mailto:${contacto.email}`}>{contacto.email}</a></li>
+        <li><a href={wa} target="_blank" rel="noopener">WhatsApp {contacto.whatsappVisible}</a></li>
+        <li><a href={tiktok} target="_blank" rel="noopener">TikTok @{contacto.tiktok}</a></li>
+        <li><a href="/terminos">Términos y condiciones</a></li>
+      </ul>
+      <p class="suave pie-copy">© {anio} Toto &amp;Co · Buenos Aires</p>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .suave { color: var(--tinta-suave); }
+  .ojo {
+    font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--sello); margin-bottom: 0.75rem;
+  }
+  .barra {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--papel) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--linea);
+  }
+  .barra-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; }
+  .marca { display: inline-flex; color: var(--tinta); width: 7.5rem; }
+  .marca :global(svg) { width: 100%; height: auto; display: block; }
+  nav { display: flex; gap: 0.25rem; font-weight: 500; font-size: 0.9375rem; }
+  nav a { text-decoration: none; color: var(--tinta-suave); padding: 0.4rem 0.8rem; border-radius: 999px; }
+  nav a:hover { color: var(--tinta); background: var(--superficie); }
+
+  .doc { max-width: 46rem; padding-block: clamp(2.5rem, 7vw, 5rem); }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); }
+  .actualizado { margin-top: 0.75rem; font-size: 0.9375rem; }
+  section { margin-top: 2.5rem; }
+  h2 { font-size: clamp(1.2rem, 2.4vw, 1.5rem); line-height: 1.15; margin-bottom: 0.75rem; }
+  section p + p { margin-top: 0.75rem; }
+  section p { color: var(--tinta); }
+
+  .pie { border-top: 1px solid var(--linea); padding-block: 2.5rem 5rem; margin-top: 2rem; }
+  .pie-in { display: grid; gap: 1.25rem; justify-items: start; }
+  .pie-links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.95rem; }
+  .pie-links a { text-decoration: none; }
+  .pie-links a:hover { text-decoration: underline; }
+  .pie-copy { font-size: 0.875rem; }
+</style>

@@ -6,8 +6,8 @@
 
 export const contacto = {
   email: 'hola@toto-co.com',
-  whatsapp: '5491164679917', // sin + ni espacios, formato wa.me
-  whatsappVisible: '+54 9 11 6467-9917',
+  whatsapp: '5491173512215', // sin + ni espacios, formato wa.me
+  whatsappVisible: '+54 9 11 7351-2215',
   tiktok: 'totodesign.studio', // sin @
 };
 
