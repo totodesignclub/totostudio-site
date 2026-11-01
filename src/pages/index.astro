@@ -4,6 +4,7 @@ import logo from '../data/logo.svg?raw';
 import {
   contacto, links, ars, pesos, notaPrecios, hero, lanzamiento, rediseno, descuentoRediseno,
   extras, marketing, casos, quienSoy, preguntas,
+  reglaCarga, disenoTienda, planesGestion, serviciosMarketing,
 } from '../data/site';
 
 const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
@@ -31,32 +32,21 @@ const plataformaIcono: Record<string, string> = {
 const fmt = (n: number) => '$ ' + n.toLocaleString('es-AR');
 
 const ex = Object.fromEntries(extras.map((e) => [e.id, e]));
-const mk = Object.fromEntries(marketing.map((m) => [m.id, m]));
-type Opcion = { id: string; nombre: string; detalle: string; pesos: number; grupo?: string; desde?: boolean; definir?: boolean };
-const opcionesExtras: Opcion[] = [
-  { id: 'carga50', nombre: 'Carga de productos', detalle: 'Hasta 50 productos', pesos: pesos(ex.carga.usd), grupo: 'carga' },
-  { id: 'carga100', nombre: 'Carga de productos', detalle: 'Hasta 100 productos', pesos: pesos(ex.carga.usd) * 2, grupo: 'carga' },
-  { id: 'carga+', nombre: 'Carga de productos', detalle: 'Más de 100 productos', pesos: 0, grupo: 'carga', definir: true },
-  { id: 'fotos25', nombre: 'Edición de fotos con IA', detalle: '25 fotos', pesos: pesos(ex.fotos.usd) * 25, grupo: 'fotos' },
-  { id: 'fotos50', nombre: 'Edición de fotos con IA', detalle: '50 fotos', pesos: pesos(ex.fotos.usd) * 50, grupo: 'fotos' },
-  { id: 'fotos+', nombre: 'Edición de fotos con IA', detalle: 'Más de 50 fotos', pesos: 0, grupo: 'fotos', definir: true },
-  { id: 'identidad', nombre: 'Mini identidad de marca', detalle: 'Logo, paleta y tipografías', pesos: pesos(ex.identidad.usd) },
-];
-const opcionesMarketing: Opcion[] = [
-  { id: 'gestion', nombre: mk.gestion.nombre, detalle: 'Por mes', pesos: pesos(mk.gestion.usd) },
-  { id: 'google', nombre: mk.google.nombre, detalle: 'Por mes', pesos: pesos(mk.google.usd) },
-  { id: 'email', nombre: mk.email.nombre, detalle: 'Por mes', pesos: pesos(mk.email.usd) },
-  { id: 'meta', nombre: 'Meta Ads', detalle: 'Por mes, desde', pesos: pesos(mk.social.usd), desde: true },
-  { id: 'tiktok', nombre: 'TikTok Ads', detalle: 'Por mes, desde', pesos: pesos(mk.social.usd), desde: true },
-];
-const multis = [
-  { id: 'extras', titulo: 'Extras', vacio: 'Elegí los extras', tipo: 'unico', opciones: opcionesExtras },
-  { id: 'marketing', titulo: 'Marketing mensual', vacio: 'Elegí servicios de marketing', tipo: 'mensual', opciones: opcionesMarketing },
-];
 const sumables = [
-  { nombre: ex.carga.nombre, precio: `${ars(ex.carga.usd)} cada 50 productos` },
-  { nombre: ex.fotos.nombre, precio: `${ars(ex.fotos.usd)} por foto` },
+  { nombre: ex.carga.nombre, precio: `${ars(ex.carga.usd)} ${ex.carga.unidad}` },
+  { nombre: ex.fotos.nombre, precio: `${ars(ex.fotos.usd)} ${ex.fotos.unidad}` },
   { nombre: ex.identidad.nombre, precio: ars(ex.identidad.usd) },
+];
+const bloquesCarga = (q: number) =>
+  q <= 0 ? 0 : q <= reglaCarga.tamano + reglaCarga.tolerancia ? 1 : 1 + Math.ceil((q - reglaCarga.tamano - reglaCarga.tolerancia) / reglaCarga.tamano);
+const totalUnicoInicial = pesos(disenoTienda.usd) + bloquesCarga(reglaCarga.inicial) * pesos(ex.carga.usd);
+const totalMensualInicial = pesos(planesGestion[0].usd);
+const iconoCalendario = svg('<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>');
+const iconoWhatsapp = svg('<path d="M4 20l1.3-3.9A8.5 8.5 0 1 1 8 18.8z"/><path d="M9.2 8.6c.2-.4.6-.5 1-.4l.6 1.4c.1.3 0 .5-.2.7l-.4.4c.5 1 1.3 1.8 2.3 2.3l.4-.4c.2-.2.5-.3.7-.2l1.4.6c.1.4 0 .8-.4 1-.9.6-2.3.5-3.9-.7a8 8 0 0 1-1.9-1.9c-1.2-1.6-1.3-3-.6-3.8z"/>');
+const iconoAfuera = svg('<path d="M7 17 17 7M9 7h8v8"/>');
+const unicos = [
+  { id: 'fotos', nombre: ex.fotos.nombre, sub: 'Pack de 25 fotos · única vez', usd: ex.fotos.usd, activo: false },
+  { id: 'identidad', nombre: ex.identidad.nombre, sub: 'Logo, paleta y tipografías · única vez', usd: ex.identidad.usd, activo: false },
 ];
 ---
 <Base
@@ -193,57 +183,95 @@ const sumables = [
         </div>
 
         <!-- CALCULADORA -->
-        <form class="calc" id="calculadora" aria-labelledby="t-calc" data-form={links.formulario}>
+        <form class="calc" id="calculadora" aria-labelledby="t-calc" data-form={links.formulario} data-wa={contacto.whatsapp}>
           <h3 id="t-calc">Armá tu presupuesto</h3>
-          <p class="calc-sub">Elegí lo que necesitás y te mostramos el total.</p>
 
-          <label class="campo">
-            <span class="campo-nombre">Tu tienda</span>
-            <span class="select">
-              <select name="tienda">
-                <option value="Lanzamiento Ecommerce" data-pesos={pesos(lanzamiento.usd)} selected>Lanzamiento · {ars(lanzamiento.usd)}</option>
-                <option value="Rediseño" data-pesos={pesos(rediseno.usd)}>Rediseño · {ars(rediseno.usd)}</option>
-                <option value="" data-pesos="0">Ya tengo tienda</option>
-              </select>
-            </span>
-          </label>
-
-          {multis.map((m) => (
-            <div class="campo">
-              <span class="campo-nombre" id={`t-${m.id}`}>{m.titulo}</span>
-              <details class="multi" data-tipo={m.tipo}>
-                <summary aria-labelledby={`t-${m.id}`}>
-                  <span class="multi-texto" data-vacio={m.vacio}>{m.vacio}</span>
-                </summary>
-                <div class="multi-panel" role="group" aria-labelledby={`t-${m.id}`}>
-                  {m.opciones.map((o, i) => (
-                    <Fragment>
-                    {o.grupo && o.grupo !== m.opciones[i - 1]?.grupo && <p class="multi-grupo">{o.nombre} <span>· elegí una opción</span></p>}
-                    <label class={`multi-op${o.grupo ? ' multi-op-sub' : ''}`}>
-                      <input type="checkbox" value={o.id} data-nombre={o.nombre} data-detalle={o.detalle} data-pesos={o.pesos} data-grupo={o.grupo || ''} data-desde={o.desde ? '1' : ''} data-definir={o.definir ? '1' : ''} />
-                      <span class="multi-caja" set:html={svg('<path d="m6 12.5 4 4 8-9"/>', 'stroke-width="2.4"')} />
-                      <span class="multi-nombre">{o.grupo ? o.detalle : <Fragment>{o.nombre}<small>{o.detalle}</small></Fragment>}</span>
-                      <span class="mono">{o.definir ? 'A definir' : `${o.desde ? 'desde ' : ''}${fmt(o.pesos)}${m.tipo === 'mensual' ? '/mes' : ''}`}</span>
-                    </label>
-                    </Fragment>
-                  ))}
-                </div>
-              </details>
+          <div class="items">
+            <div class="item" data-item="diseno" data-tipo="unico" data-pesos={pesos(disenoTienda.usd)} data-nombre={disenoTienda.nombre}>
+              <div class="item-info">
+                <p class="item-nombre" data-on={disenoTienda.nombre} data-off="Ya tengo tienda">{disenoTienda.nombre}</p>
+                <p class="item-sub">Única vez</p>
+                <a class="ver-detalle" href="/servicios#diseno" target="_blank" rel="noopener">Ver detalle <span set:html={iconoAfuera} /></a>
+              </div>
+              <p class="item-precio mono"><span data-monto>{ars(disenoTienda.usd)}</span></p>
+              <label class="switch"><input type="checkbox" role="switch" checked aria-label={`Incluir ${disenoTienda.nombre}`} /><span></span></label>
             </div>
-          ))}
+
+            <div class="item" data-item="carga" data-tipo="unico" data-bloque={pesos(ex.carga.usd)} data-tamano={reglaCarga.tamano} data-tolerancia={reglaCarga.tolerancia} data-nombre={ex.carga.nombre}>
+              <div class="item-info">
+                <p class="item-nombre">{ex.carga.nombre}</p>
+                <p class="item-sub">{ars(ex.carga.usd)} cada 50 productos · única vez</p>
+                <div class="stepper">
+                  <button type="button" data-paso={-reglaCarga.paso} aria-label={`Restar ${reglaCarga.paso} productos`}>−</button>
+                  <input type="number" inputmode="numeric" min="1" max="5000" step="1" value={reglaCarga.inicial} aria-label="Cantidad de productos" data-cantidad />
+                  <button type="button" data-paso={reglaCarga.paso} aria-label={`Sumar ${reglaCarga.paso} productos`}>+</button>
+                  <span>productos</span>
+                </div>
+              </div>
+              <p class="item-precio mono"><span data-monto>{fmt(bloquesCarga(reglaCarga.inicial) * pesos(ex.carga.usd))}</span></p>
+              <label class="switch"><input type="checkbox" role="switch" checked aria-label={`Incluir ${ex.carga.nombre}`} /><span></span></label>
+            </div>
+
+            {unicos.map((u) => (
+              <div class="item" data-item={u.id} data-tipo="unico" data-pesos={pesos(u.usd)} data-nombre={u.nombre}>
+                <div class="item-info">
+                  <p class="item-nombre">{u.nombre}</p>
+                  <p class="item-sub">{u.sub}</p>
+                </div>
+                <p class="item-precio mono"><span data-monto>{ars(u.usd)}</span></p>
+                <label class="switch"><input type="checkbox" role="switch" checked={u.activo} aria-label={`Incluir ${u.nombre}`} /><span></span></label>
+              </div>
+            ))}
+
+            <div class="item" data-item="gestion" data-tipo="mensual" data-nombre="Gestión tienda">
+              <div class="item-info">
+                <p class="item-nombre">Gestión tienda</p>
+                <span class="select select-chico">
+                  <select data-plan aria-label="Plan de gestión">
+                    {planesGestion.map((g, i) => (
+                      <option value={g.corto} data-pesos={pesos(g.usd)} selected={i === 0}>{g.corto} · {ars(g.usd)}/mes</option>
+                    ))}
+                  </select>
+                </span>
+                <a class="ver-detalle" href="/servicios#gestion" target="_blank" rel="noopener">Ver detalle <span set:html={iconoAfuera} /></a>
+              </div>
+              <p class="item-precio mono"><span data-monto>{ars(planesGestion[0].usd)}</span><small>/mes</small></p>
+              <label class="switch"><input type="checkbox" role="switch" checked aria-label="Incluir gestión de tienda" /><span></span></label>
+            </div>
+          </div>
+
+          <details class="mas">
+            <summary>Ver también servicio de Marketing</summary>
+            <div class="items">
+              {serviciosMarketing.map((m) => (
+                <div class="item" data-item={m.id} data-tipo="mensual" data-pesos={pesos(m.usd)} data-nombre={m.nombre}>
+                  <div class="item-info">
+                    <p class="item-nombre">{m.nombre}</p>
+                    <p class="item-sub">Por mes</p>
+                    <a class="ver-detalle" href={`/servicios#${m.id}`} target="_blank" rel="noopener">Ver detalle <span set:html={iconoAfuera} /></a>
+                  </div>
+                  <p class="item-precio mono"><span data-monto>{ars(m.usd)}</span><small>/mes</small></p>
+                  <label class="switch"><input type="checkbox" role="switch" aria-label={`Incluir ${m.nombre}`} /><span></span></label>
+                </div>
+              ))}
+            </div>
+            <p class="nota">La inversión en anuncios se paga aparte, directo a cada plataforma.</p>
+          </details>
 
           <div class="total" aria-live="polite">
             <div>
               <p class="mono">Pago único</p>
-              <p class="total-num" data-total-unico>{ars(lanzamiento.usd)}</p>
-              <p class="definir" data-definir hidden>+ ítems a definir en la llamada</p>
+              <p class="total-num" data-total-unico>{fmt(totalUnicoInicial)}</p>
             </div>
-            <div data-fila-mensual hidden>
+            <div data-fila-mensual>
               <p class="mono">Por mes</p>
-              <p class="total-num" data-total-mensual>$ 0</p>
+              <p class="total-num" data-total-mensual>{fmt(totalMensualInicial)}</p>
             </div>
           </div>
-          <button type="submit" class="boton boton-naranja boton-ancho">Sumar</button>
+          <div class="acciones">
+            <button type="submit" class="boton boton-naranja"><span set:html={iconoCalendario} />Agendar consulta gratis</button>
+            <a class="boton boton-borde" href={wa} target="_blank" rel="noopener" data-wa-link><span set:html={iconoWhatsapp} />Consultar</a>
+          </div>
           <p class="nota">{notaPrecios}</p>
         </form>
       </div>
@@ -321,91 +349,102 @@ const sumables = [
   const form = document.getElementById('calculadora') as HTMLFormElement | null;
   if (form) {
     const destino = form.dataset.form || '';
+    const numeroWa = form.dataset.wa || '';
     const fmt = (n: number) => '$ ' + n.toLocaleString('es-AR');
     const unicoEl = form.querySelector('[data-total-unico]')!;
     const mensualEl = form.querySelector('[data-total-mensual]')!;
     const filaMensual = form.querySelector('[data-fila-mensual]') as HTMLElement;
-    const definirEl = form.querySelector('[data-definir]') as HTMLElement;
-    const multis = [...form.querySelectorAll<HTMLDetailsElement>('.multi')];
+    const waLink = form.querySelector('[data-wa-link]') as HTMLAnchorElement;
+    const items = [...form.querySelectorAll<HTMLElement>('.item')];
+    const cantidadEl = form.querySelector('[data-cantidad]') as HTMLInputElement;
+
+    const leerCantidad = () => {
+      const q = Math.max(1, Math.min(5000, Math.round(Number(cantidadEl.value) || 1)));
+      return q;
+    };
+    const bloques = (q: number, tam: number, tol: number) => (q <= tam + tol ? 1 : 1 + Math.ceil((q - tam - tol) / tam));
 
     const calcular = () => {
       let unico = 0;
       let mensual = 0;
-      let desde = false;
-      let definir = false;
-      const items: string[] = [];
+      const elegidos: string[] = [];
 
-      const tienda = form.querySelector('select[name="tienda"]') as HTMLSelectElement;
-      const op = tienda.selectedOptions[0];
-      if (op && op.value) {
-        unico += Number(op.dataset.pesos || 0);
-        items.push(op.value);
-      }
+      items.forEach((item) => {
+        const sw = item.querySelector<HTMLInputElement>('input[role="switch"]')!;
+        const montoEl = item.querySelector('[data-monto]') as HTMLElement;
+        const on = sw.checked;
+        let monto = Number(item.dataset.pesos || 0);
+        let etiqueta = item.dataset.nombre || '';
 
-      multis.forEach((m) => {
-        const marcados = [...m.querySelectorAll<HTMLInputElement>('input:checked')];
-        const texto = m.querySelector('.multi-texto') as HTMLElement;
-        texto.textContent = marcados.length
-          ? marcados.map((i) => (i.dataset.grupo ? `${i.dataset.nombre} (${i.dataset.detalle})` : i.dataset.nombre)).join(', ')
-          : texto.dataset.vacio || '';
-        m.classList.toggle('activa', marcados.length > 0);
-        marcados.forEach((i) => {
-          const monto = Number(i.dataset.pesos || 0);
-          const etiqueta = i.dataset.grupo ? `${i.dataset.nombre}: ${i.dataset.detalle}` : i.dataset.nombre || '';
-          if (i.dataset.definir) definir = true;
-          if (m.dataset.tipo === 'mensual') {
-            mensual += monto;
-            if (i.dataset.desde) desde = true;
-            items.push(`${etiqueta} (mensual)`);
-          } else {
-            unico += monto;
-            items.push(i.dataset.definir ? `${etiqueta} (a definir)` : etiqueta);
-          }
-        });
+        if (item.dataset.item === 'carga') {
+          const q = leerCantidad();
+          monto = bloques(q, Number(item.dataset.tamano), Number(item.dataset.tolerancia)) * Number(item.dataset.bloque);
+          etiqueta = `${etiqueta} (${q} productos)`;
+        }
+        if (item.dataset.item === 'gestion') {
+          const op = item.querySelector<HTMLSelectElement>('select[data-plan]')!.selectedOptions[0];
+          monto = Number(op.dataset.pesos || 0);
+          etiqueta = `${etiqueta} '${op.value}'`;
+        }
+        if (item.dataset.item === 'diseno') {
+          const nombre = item.querySelector('.item-nombre') as HTMLElement;
+          nombre.textContent = on ? nombre.dataset.on || '' : nombre.dataset.off || '';
+          if (!on) elegidos.push('Ya tengo tienda');
+        }
+
+        montoEl.textContent = fmt(monto);
+        item.classList.toggle('apagado', !on);
+        if (!on) return;
+        if (item.dataset.tipo === 'mensual') {
+          mensual += monto;
+          elegidos.push(`${etiqueta} (mensual)`);
+        } else {
+          unico += monto;
+          elegidos.push(etiqueta);
+        }
       });
 
       unicoEl.textContent = fmt(unico);
-      mensualEl.textContent = (desde ? 'desde ' : '') + fmt(mensual);
+      mensualEl.textContent = fmt(mensual);
       filaMensual.hidden = mensual === 0;
-      definirEl.hidden = !definir;
-      return { unico, mensual, desde, definir, items };
+      const total = fmt(unico) + (mensual ? ` + ${fmt(mensual)}/mes` : '');
+      const texto = `Hola, armé un presupuesto en toto-co.com:\n${elegidos.map((e) => '• ' + e).join('\n')}\nTotal: ${total}`;
+      waLink.href = `https://wa.me/${numeroWa}?text=${encodeURIComponent(texto)}`;
+      return { elegidos, total };
     };
 
-    form.addEventListener('change', (e) => {
-      const t = e.target as HTMLInputElement;
-      if (t.type === 'checkbox' && t.checked && t.dataset.grupo) {
-        form.querySelectorAll<HTMLInputElement>(`input[data-grupo="${t.dataset.grupo}"]`).forEach((o) => {
-          if (o !== t) o.checked = false;
-        });
-      }
-      calcular();
-    });
+    const activar = (el: Element) => {
+      const sw = el.closest('.item')?.querySelector<HTMLInputElement>('input[role="switch"]');
+      if (sw) sw.checked = true;
+    };
 
-    // Un solo desplegable abierto a la vez; se cierra al tocar afuera o con Escape
-    multis.forEach((m) =>
-      m.addEventListener('toggle', () => {
-        if (m.open) multis.forEach((o) => o !== m && (o.open = false));
+    form.querySelectorAll<HTMLButtonElement>('[data-paso]').forEach((b) =>
+      b.addEventListener('click', () => {
+        cantidadEl.value = String(Math.max(1, leerCantidad() + Number(b.dataset.paso)));
+        activar(b);
+        calcular();
       }),
     );
-    document.addEventListener('click', (e) => {
-      multis.forEach((m) => {
-        if (m.open && !m.contains(e.target as Node)) m.open = false;
-      });
+    cantidadEl.addEventListener('input', () => {
+      activar(cantidadEl);
+      calcular();
     });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') multis.forEach((m) => (m.open = false));
+    cantidadEl.addEventListener('blur', () => {
+      cantidadEl.value = String(leerCantidad());
+      calcular();
+    });
+    form.addEventListener('change', (e) => {
+      const t = e.target as HTMLElement;
+      if (t.matches('select[data-plan]')) activar(t);
+      calcular();
     });
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const r = calcular();
-      const total =
-        fmt(r.unico) +
-        (r.mensual ? ` + ${r.desde ? 'desde ' : ''}${fmt(r.mensual)}/mes` : '') +
-        (r.definir ? ' + ítems a definir' : '');
       const params = new URLSearchParams({
-        seleccion: r.items.join('\n') || 'Sin selección',
-        total,
+        seleccion: r.elegidos.join('\n') || 'Sin selección',
+        total: r.total,
         origen: 'calculadora',
       });
       window.open(`${destino}?${params.toString()}`, '_blank', 'noopener');
@@ -711,57 +750,96 @@ const sumables = [
       radial-gradient(16rem 12rem at 0% 100%, rgba(255, 138, 31, 0.18), transparent 70%);
   }
   .calc h3 { font-size: 1.75rem; }
-  .calc-sub { margin-top: -0.6rem; color: #b9c0dc; }
-  .campo { display: grid; gap: 0.45rem; }
-  .campo-nombre { font-weight: 600; font-size: 0.95rem; }
   .select { position: relative; display: block; }
-  .select::after, .multi summary::after {
+  .select::after {
     content: ''; position: absolute; right: 1rem; top: 50%; width: 0.45rem; height: 0.45rem;
     border-right: 1.8px solid var(--tinta); border-bottom: 1.8px solid var(--tinta);
-    transform: translateY(-70%) rotate(45deg); pointer-events: none; transition: transform 0.2s ease;
+    transform: translateY(-70%) rotate(45deg); pointer-events: none;
   }
-  select, .multi summary {
+  select {
     appearance: none; -webkit-appearance: none; width: 100%;
     min-height: 3rem; padding: 0.6rem 2.5rem 0.6rem 1rem;
     border: 2px solid transparent; border-radius: 0.85rem; background: #fff;
     font: 500 0.95rem/1.3 var(--texto); color: var(--tinta); cursor: pointer;
   }
-  select:focus-visible, .multi summary:focus-visible { outline: none; border-color: var(--cinta); }
-  .multi { position: relative; }
-  .multi summary { list-style: none; position: relative; display: flex; align-items: center; }
-  .multi summary::-webkit-details-marker { display: none; }
-  .multi[open] summary::after { transform: translateY(-20%) rotate(225deg); }
-  .multi.activa summary { border-color: var(--sello); }
-  .multi-texto { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .multi:not(.activa) .multi-texto { color: var(--tinta-suave); }
-  .multi-panel {
-    position: absolute; z-index: 10; left: 0; right: 0; top: calc(100% + 0.4rem);
-    background: #fff; color: var(--tinta); border-radius: 1rem; padding: 0.4rem;
-    box-shadow: 0 24px 50px -16px rgba(11, 19, 43, 0.5); border: 1px solid var(--linea);
-    max-height: 22rem; overflow-y: auto;
+  select:focus-visible { outline: none; border-color: var(--cinta); }
+  .select-chico { margin-top: 0.45rem; max-width: 13rem; }
+  .select-chico select { min-height: 2.25rem; padding: 0.3rem 2.2rem 0.3rem 0.8rem; font-size: 0.875rem; border-radius: 0.7rem; }
+  .select-chico::after { right: 0.85rem; }
+
+  .items { display: grid; }
+  .item {
+    display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 0.5rem 0.9rem;
+    padding: 0.9rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
-  .multi-op {
-    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.7rem;
-    padding: 0.6rem 0.7rem; border-radius: 0.7rem; cursor: pointer; font-size: 0.925rem;
+  .items > .item:first-child { padding-top: 0.2rem; }
+  @media (max-width: 520px) {
+    .item { grid-template-columns: 1fr auto; grid-template-areas: 'info sw' 'precio sw'; row-gap: 0.35rem; }
+    .item .item-info { grid-area: info; }
+    .item .item-precio { grid-area: precio; text-align: left; }
+    .item .switch { grid-area: sw; align-self: start; margin-top: 0.1rem; }
+    .select-chico { max-width: 100%; }
   }
-  .multi-op + .multi-op:not(.multi-op-sub), .multi-op-sub + .multi-op:not(.multi-op-sub) { margin-top: 0.3rem; }
-  .multi-op:hover { background: var(--papel); }
-  .multi-grupo { padding: 0.7rem 0.7rem 0.2rem; font-weight: 700; font-size: 0.875rem; }
-  .multi-grupo span { font-weight: 400; color: var(--tinta-suave); }
-  .multi-grupo:not(:first-child) { border-top: 1px solid var(--linea); margin-top: 0.3rem; }
-  .multi-op-sub .multi-nombre { font-weight: 500; }
-  .multi-op input { position: absolute; opacity: 0; pointer-events: none; }
-  .multi-caja {
-    width: 1.25rem; height: 1.25rem; border-radius: 0.4rem; border: 1.5px solid var(--linea);
-    display: grid; place-items: center; color: transparent; transition: background 0.15s ease, border-color 0.15s ease;
+  .item-info { min-width: 0; }
+  .item-nombre { font-weight: 600; line-height: 1.3; }
+  .item-sub { font-size: 0.8125rem; color: #b9c0dc; margin-top: 0.1rem; }
+  .item-precio { white-space: nowrap; font-size: 0.875rem; font-weight: 500; text-align: right; transition: opacity 0.15s ease; }
+  .item-precio small { color: #b9c0dc; font-size: 0.75rem; }
+  .item.apagado .item-precio, .item.apagado .item-sub { opacity: 0.45; }
+  .ver-detalle {
+    display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.35rem;
+    font-size: 0.8125rem; font-weight: 600; color: #a9c0ff; text-decoration: none;
   }
-  .multi-caja :global(svg) { width: 0.9rem; height: 0.9rem; }
-  .multi-op input:checked + .multi-caja { background: var(--sello); border-color: var(--sello); color: #fff; }
-  .multi-op input:focus-visible + .multi-caja { outline: 3px solid var(--sello); outline-offset: 2px; }
-  .multi-op:has(input:checked) { background: var(--azul-claro); }
-  .multi-nombre { font-weight: 600; line-height: 1.25; }
-  .multi-nombre small { display: block; font-weight: 400; color: var(--tinta-suave); font-size: 0.8125rem; }
-  .multi-op .mono { color: var(--tinta-suave); white-space: nowrap; font-size: 0.75rem; }
+  .ver-detalle:hover { text-decoration: underline; color: #fff; }
+  .ver-detalle span { display: inline-flex; }
+  .ver-detalle :global(svg) { width: 0.85rem; height: 0.85rem; }
+
+  .switch { position: relative; display: inline-block; width: 2.75rem; height: 1.6rem; flex: none; cursor: pointer; }
+  .switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
+  .switch span { position: absolute; inset: 0; border-radius: 999px; background: rgba(255, 255, 255, 0.22); transition: background 0.2s ease; }
+  .switch span::after {
+    content: ''; position: absolute; top: 0.2rem; left: 0.2rem; width: 1.2rem; height: 1.2rem;
+    border-radius: 50%; background: #fff; transition: transform 0.2s ease;
+  }
+  .switch input:checked + span { background: var(--cinta); }
+  .switch input:checked + span::after { transform: translateX(1.15rem); }
+  .switch input:focus-visible + span { outline: 3px solid #fff; outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .switch span, .switch span::after { transition: none; } }
+
+  .stepper { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap; }
+  .stepper button {
+    width: 2.1rem; height: 2.1rem; border-radius: 0.6rem; border: 1px solid rgba(255, 255, 255, 0.35);
+    background: transparent; color: #fff; font: 600 1.1rem/1 var(--texto); cursor: pointer;
+  }
+  .stepper button:hover { background: rgba(255, 255, 255, 0.12); }
+  .stepper input {
+    width: 4.25rem; height: 2.1rem; text-align: center; border: 0; border-radius: 0.6rem;
+    background: #fff; color: var(--tinta); font: 600 0.95rem/1 var(--texto); -moz-appearance: textfield; appearance: textfield;
+  }
+  .stepper input::-webkit-inner-spin-button, .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .stepper input:focus-visible { outline: 3px solid var(--cinta); outline-offset: 1px; }
+  .stepper span { font-size: 0.8125rem; color: #b9c0dc; }
+
+  .mas summary {
+    list-style: none; position: relative; cursor: pointer; font-weight: 600;
+    padding: 0.2rem 2rem 0.9rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .mas summary::-webkit-details-marker { display: none; }
+  .mas summary::after {
+    content: ''; position: absolute; right: 0.4rem; top: 35%; width: 0.45rem; height: 0.45rem;
+    border-right: 1.8px solid #fff; border-bottom: 1.8px solid #fff;
+    transform: translateY(-50%) rotate(45deg); transition: transform 0.2s ease;
+  }
+  .mas[open] summary::after { transform: translateY(-10%) rotate(225deg); }
+  .mas .nota { margin-top: 0.75rem; }
+
+  .acciones { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem; }
+  @media (max-width: 480px) { .acciones { grid-template-columns: 1fr; } }
+  .acciones .boton { gap: 0.5rem; padding-inline: 1rem; }
+  .acciones .boton span { display: inline-flex; }
+  .acciones .boton :global(svg) { width: 1.15rem; height: 1.15rem; }
+  .boton-borde { background: transparent; border-color: rgba(255, 255, 255, 0.55); color: #fff; }
+  .boton-borde:hover { background: #fff; border-color: #fff; color: var(--tinta); box-shadow: none; }
 
   .total {
     display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem;
@@ -769,7 +847,6 @@ const sumables = [
   }
   .total .mono { color: #b9c0dc; }
   .total-num { font-family: var(--display); font-weight: 800; font-size: 2.1rem; line-height: 1.1; }
-  .definir { font-size: 0.8125rem; color: var(--cinta); margin-top: 0.2rem; }
   .nota { font-size: 0.8125rem; color: #b9c0dc; }
 
   /* Quién soy */
@@ -798,20 +875,20 @@ const sumables = [
   .faq-titulo .titulo-seccion { margin-bottom: 1rem; }
   @media (max-width: 800px) { .faq-zona { grid-template-columns: 1fr; } .faq-titulo { position: static; } }
   .faq { display: grid; gap: 0.6rem; }
-  details:not(.multi) { background: var(--superficie); border: 1px solid var(--linea); border-radius: 1rem; padding: 0 1.2rem; transition: border-color 0.2s ease; }
-  details:not(.multi)[open] { border-color: var(--sello); }
-  details:not(.multi) summary {
+  details:not(.mas) { background: var(--superficie); border: 1px solid var(--linea); border-radius: 1rem; padding: 0 1.2rem; transition: border-color 0.2s ease; }
+  details:not(.mas)[open] { border-color: var(--sello); }
+  details:not(.mas) summary {
     cursor: pointer; list-style: none; padding-block: 1.05rem; font-weight: 600;
     display: flex; justify-content: space-between; align-items: center; gap: 1rem;
   }
-  details:not(.multi) summary::-webkit-details-marker { display: none; }
-  details:not(.multi) summary::after {
+  details:not(.mas) summary::-webkit-details-marker { display: none; }
+  details:not(.mas) summary::after {
     content: '+'; flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%;
     display: grid; place-items: center; background: var(--papel);
     font: 400 1.25rem/1 var(--texto); color: var(--tinta); transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
   }
-  details:not(.multi)[open] summary::after { transform: rotate(45deg); background: var(--sello); color: #fff; }
-  details:not(.multi) p { padding-bottom: 1.1rem; color: var(--tinta-suave); }
+  details:not(.mas)[open] summary::after { transform: rotate(45deg); background: var(--sello); color: #fff; }
+  details:not(.mas) p { padding-bottom: 1.1rem; color: var(--tinta-suave); }
 
   /* CTA */
   .cta {

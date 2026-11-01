@@ -66,18 +66,94 @@ export const rediseno = {
 export const descuentoRediseno = Math.round((1 - rediseno.usd / lanzamiento.usd) * 100);
 
 export const extras = [
-  { id: 'carga', nombre: 'Carga de productos', usd: 100, unidad: 'cada 50 productos', cantidad: 'bloques' },
-  { id: 'fotos', nombre: 'Edición de fotos con IA', usd: 4, unidad: 'por foto', cantidad: 'fotos' },
-  { id: 'identidad', nombre: 'Mini identidad de marca', usd: 200, unidad: 'pago único' },
+  { id: 'carga', nombre: 'Carga de productos', usd: 100, unidad: 'cada 50 productos', cantidad: 'bloques',
+    texto: 'Orden de productos, nombre, descripción, precio, stock, peso y medidas, y variantes de color, talle u otras.' },
+  { id: 'fotos', nombre: 'Edición de fotos', usd: 97.5, unidad: 'pack de 25 fotos',
+    texto: 'Edición de fotos: fondo, recorte y mejora con IA.' },
+  { id: 'identidad', nombre: 'Mini identidad', usd: 200, unidad: 'pago único',
+    texto: 'Logo, paleta y tipografías.' },
+];
+
+// Carga de productos: bloques de 50 con 29 de tolerancia (hasta 79 = 1 bloque, 80 a 129 = 2, 130 = 3)
+export const reglaCarga = { tamano: 50, tolerancia: 29, inicial: 50, paso: 10 };
+
+// ── Diseño y Configuración de Tienda (detalle en /servicios) ──
+export const disenoTienda = {
+  nombre: 'Diseño y Configuración de Tienda',
+  usd: 790,
+  items: [
+    { titulo: 'Acceso y plan de tienda', texto: 'Creamos tu cuenta y elegimos el plan en Tienda Nube o Shopify.' },
+    { titulo: 'Dirección web (tumarca.com)', texto: 'Registramos y configuramos el dominio de tu marca (tumarca.com.ar o .com).' },
+    { titulo: 'Diseño y experiencia de tienda', texto: 'Diseño de estilo, banners, tarjetas de productos y categorías.' },
+    { titulo: 'Configuración de pagos', texto: 'Conectamos Pago Nube u otra pasarela, transferencias, descuentos por medio de pago y cuotas.' },
+    { titulo: 'Configuración de envíos', texto: 'Envío Nube, Correo Argentino y otros. Zonas, tarifas, retiro en local y carga de peso y medidas.' },
+    { titulo: 'Páginas de confianza', texto: 'Nosotros, contacto, preguntas frecuentes y cómo comprar.' },
+    { titulo: 'Legales', texto: 'Términos (cambios y devoluciones) y privacidad.' },
+    { titulo: 'Atención al cliente', texto: 'Botón de WhatsApp, formulario de contacto y mail de notificaciones.' },
+    { titulo: 'Flujo de compra y avisos', texto: 'Mails automáticos del pedido: confirmación, pago y envío.' },
+    { titulo: 'Prueba, compra y gestión', texto: 'Compra de prueba completa: pago, envío y mails.' },
+  ],
+};
+
+// ── Gestión mensual de la tienda: tres planes ─────────────────
+export const planesGestion = [
+  {
+    id: 'aldia', corto: 'Al día', nombre: "Gestión tienda 'Al día'", usd: 80,
+    bajada: 'Tu tienda siempre actualizada y funcionando.',
+    incluye: [
+      'Hasta 20 productos trabajados por mes',
+      'Hasta 2 actualizaciones masivas de precio o stock',
+      '1 banner por mes',
+      'Revisión mensual básica: compra de prueba, pagos, envíos y links',
+      'Resumen mensual · respuesta en 72 h hábiles',
+    ],
+  },
+  {
+    id: 'activa', corto: 'Activa', nombre: "Gestión tienda 'Activa'", usd: 150,
+    bajada: 'Tu tienda con movimiento cada mes: productos, banners y atención.',
+    incluye: [
+      'Hasta 50 productos trabajados por mes',
+      'Actualizaciones masivas de precio y stock, sin límite',
+      '2 banners por mes',
+      'Revisión mensual completa, con formularios, mails y apps',
+      'Informe mensual · respuesta en 48 h hábiles',
+    ],
+  },
+  {
+    id: 'vende', corto: 'Vende', nombre: "Gestión tienda 'Vende'", usd: 330,
+    bajada: 'Tu tienda con campañas y mejoras para vender más.',
+    incluye: [
+      'Hasta 100 productos trabajados por mes',
+      'Actualizaciones masivas de precio y stock, sin límite',
+      '4 banners, 1 actualización de la home y 10 fotos con IA por mes',
+      'Revisión quincenal y aviso de vencimientos',
+      '1 campaña o promoción por mes',
+      '1 mejora de conversión y SEO de 10 productos por mes',
+      'Informe con recomendaciones y videollamada · respuesta en 24 h hábiles',
+    ],
+  },
+];
+export const notaGestion = 'Mínimo de 3 meses, pago adelantado mes a mes. Cada producto tocado cuenta 1 (más de 15 variantes, según la regla de carga). Lo que no se usa en el mes no se acumula.';
+
+// ── Servicios de marketing (calculadora y /servicios) ─────────
+export const serviciosMarketing = [
+  { id: 'google', nombre: 'Marketing · Google Ads + My Business', usd: 250,
+    texto: 'Gestión de campañas en Google Ads, optimización de tu ficha de Google My Business e informe mensual.' },
+  { id: 'email', nombre: 'Marketing · Email marketing', usd: 150,
+    texto: 'Carrito abandonado automatizado, newsletters mensuales e informe.' },
+  { id: 'meta', nombre: 'Marketing · Meta (Facebook + Instagram)', usd: 312,
+    texto: 'Campañas en Facebook e Instagram gestionadas por el equipo, con informe mensual.' },
+  { id: 'tiktok', nombre: 'Marketing · TikTok', usd: 312,
+    texto: 'Campañas en TikTok gestionadas por el equipo, con informe mensual.' },
 ];
 
 export const marketing = [
   {
     id: 'gestion',
-    nombre: 'Gestión ecommerce',
-    usd: 150,
-    desde: false,
-    texto: 'Hasta 50 productos trabajados por mes, dos banners nuevos, aumentos de precio masivos e informe mensual.',
+    nombre: 'Gestión de tienda',
+    usd: 80,
+    desde: true,
+    texto: 'Tres planes: Al día, Activa y Vende. Productos, banners, revisión e informe mensual.',
   },
   {
     id: 'google',
@@ -96,7 +172,7 @@ export const marketing = [
   {
     id: 'social',
     nombre: 'Meta Ads o TikTok Ads',
-    usd: 310,
+    usd: 312,
     desde: true,
     texto: 'Campañas en Instagram, Facebook o TikTok gestionadas por el equipo.',
   },
