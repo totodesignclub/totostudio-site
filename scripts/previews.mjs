@@ -3,6 +3,8 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const sitios = {
+  maslanas: 'https://maslanas.com.ar/',
+  chilu: 'https://chiluatelier.mitiendanube.com/',
   pasto: 'https://pasto.com.ar/',
   danco: 'https://www.danco.com.ar/',
   tentak: 'https://tentak.framer.website/',

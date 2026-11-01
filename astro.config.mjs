@@ -3,4 +3,5 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://toto-co.com',
   build: { inlineStylesheets: 'always' },
+  redirects: { '/servicios': '/servicios-ecommerce' },
 });

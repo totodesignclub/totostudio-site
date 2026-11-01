@@ -1,0 +1,175 @@
+---
+import Base from '../layouts/Base.astro';
+import logo from '../data/logo.svg?raw';
+import { ico } from '../data/iconos';
+import {
+  contacto, links, ars, notaPrecios, extras, disenoTienda, planesGestion, notaGestion,
+} from '../data/site';
+
+const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const wa = `https://wa.me/${contacto.whatsapp}`;
+const tiktok = `https://www.tiktok.com/@${contacto.tiktok}`;
+const anio = new Date().getFullYear();
+const consulta = links.calendario || `${links.formulario}?origen=consulta`;
+const ex = Object.fromEntries(extras.map((e) => [e.id, e]));
+const productos = [ex.carga, ex.fotos, ex.identidad];
+const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="m8 12.3 2.7 2.7L16.2 9.5"/></svg>';
+---
+<Base
+  title="Servicios ecommerce · Toto &Co"
+  description="Qué incluye cada servicio de ecommerce de Toto &Co: diseño y configuración de tienda, productos y gestión mensual, con sus precios."
+>
+  <header class="barra">
+    <div class="envoltura barra-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <div class="barra-acciones">
+        <a href={consulta} class="boton boton-chico" target="_blank" rel="noopener">Agendar consulta</a>
+        <a href={wa} class="boton boton-chico boton-claro" target="_blank" rel="noopener">Contactar</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="envoltura doc">
+      <p class="ojo">Servicios · Ecommerce</p>
+      <h1>Qué incluye cada servicio</h1>
+      <p class="suave bajada">{notaPrecios}</p>
+
+      <section id="diseno">
+        <div class="cabeza">
+          <h2>{disenoTienda.nombre}</h2>
+          <p class="precio mono">{ars(disenoTienda.usd)} <span>única vez</span></p>
+        </div>
+        <ol class="grilla">
+          {disenoTienda.items.map((it, i) => (
+            <li class="tarjeta">
+              <div class="tarjeta-top"><span class="ico tarjeta-ico" set:html={ico(it.icono)} /><span class="num mono">{String(i + 1).padStart(2, '0')}</span></div>
+              <h3>{it.titulo}</h3>
+              <p class="suave">{it.texto}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section id="productos">
+        <div class="cabeza"><h2>Productos</h2></div>
+        <ul class="grilla">
+          {productos.map((p) => (
+            <li class="tarjeta" id={p.id}>
+              <span class="ico tarjeta-ico" set:html={ico(p.icono)} />
+              <h3>{p.nombre}</h3>
+              <p class="suave">{p.texto}</p>
+              <p class="precio-chico mono">{ars(p.usd)} <span>{p.unidad}</span></p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="gestion">
+        <div class="cabeza"><h2>Gestión de tienda</h2><p class="suave">Planes mensuales para mantener tu tienda al día.</p></div>
+        <ul class="grilla planes">
+          {planesGestion.map((g) => (
+            <li class="tarjeta" id={g.id}>
+              <span class="ico tarjeta-ico" set:html={ico(g.icono)} />
+              <h3>{g.nombre}</h3>
+              <p class="precio-chico mono">{ars(g.usd)} <span>por mes</span></p>
+              <p class="suave">{g.bajada}</p>
+              <ul class="lista">
+                {g.incluye.map((x) => <li><span set:html={check} />{x}</li>)}
+              </ul>
+            </li>
+          ))}
+        </ul>
+        <p class="suave nota">{notaGestion}</p>
+      </section>
+
+
+      <div class="cta">
+        <a class="boton" href="/#precio">Armá tu presupuesto</a>
+        <a class="boton boton-claro" href="/servicios-marketing">Ver servicios de marketing</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="pie">
+    <div class="envoltura pie-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <ul class="pie-links">
+        <li><a href={tiktok} target="_blank" rel="noopener">TikTok</a></li>
+        <li><a href="/contacto">Contacto</a></li>
+        <li><a href="/terminos">Términos y condiciones</a></li>
+        <li><a href="/privacidad">Política de privacidad</a></li>
+      </ul>
+      <p class="suave pie-copy">© {anio} Toto &amp;Co · Buenos Aires</p>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .suave { color: var(--tinta-suave); }
+  .mono { font-family: var(--mono); }
+  .ojo { font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--sello); margin-bottom: 0.75rem; }
+  .barra {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--papel) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--linea);
+  }
+  .barra-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; }
+  .marca { display: inline-flex; color: var(--tinta); width: 7.5rem; }
+  .marca :global(svg) { width: 100%; height: auto; display: block; }
+  .barra-acciones { display: flex; gap: 0.5rem; }
+  .barra .boton-chico { min-height: 2.5rem; padding: 0.45rem 1.05rem; font-size: 0.9rem; white-space: nowrap; }
+  @media (max-width: 420px) {
+    .barra .marca { width: 5.5rem; }
+    .barra-acciones { gap: 0.35rem; }
+    .barra .boton-chico { min-height: 2.25rem; padding-inline: 0.7rem; font-size: 0.8125rem; }
+  }
+  .tarjeta-ico { width: 2.6rem; height: 2.6rem; padding: 0.6rem; border-radius: 0.8rem; background: var(--azul-claro); color: var(--sello); margin-bottom: 0.35rem; }
+  .tarjeta-top { display: flex; align-items: center; justify-content: space-between; }
+
+  .doc { max-width: 64rem; padding-block: clamp(2.5rem, 7vw, 5rem); }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); }
+  .bajada { margin-top: 0.9rem; max-width: 40rem; }
+  section { margin-top: clamp(2.5rem, 6vw, 4rem); scroll-margin-top: 5.5rem; }
+  .cabeza { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1.5rem; margin-bottom: 1.25rem; }
+  .cabeza p.suave { width: 100%; }
+  h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+  .precio { font-size: 1.05rem; font-weight: 500; white-space: nowrap; }
+  .precio span, .precio-chico span { color: var(--tinta-suave); font-size: 0.8125rem; }
+  .grilla { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+  .dos { grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
+  .tarjeta {
+    background: var(--superficie); border: 1px solid var(--linea); border-radius: 1.1rem;
+    padding: 1.15rem 1.2rem; display: grid; gap: 0.4rem; align-content: start; scroll-margin-top: 5.5rem;
+  }
+  .tarjeta:target { border-color: var(--sello); box-shadow: 0 0 0 3px var(--azul-claro); }
+  .tarjeta h3 { font-size: 1.1rem; line-height: 1.2; }
+  .tarjeta .suave { font-size: 0.95rem; }
+  .num { color: var(--sello); font-size: 0.75rem; }
+  .precio-chico { font-weight: 500; font-size: 0.95rem; }
+  .planes .tarjeta { gap: 0.55rem; }
+  .lista { list-style: none; padding: 0; margin: 0.3rem 0 0; display: grid; gap: 0.45rem; font-size: 0.925rem; }
+  .lista li { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem; align-items: start; }
+  .lista span { display: inline-flex; color: var(--verde); margin-top: 0.15rem; }
+  .lista :global(svg) { width: 1rem; height: 1rem; }
+  .nota { margin-top: 1rem; font-size: 0.875rem; }
+  .nota a { color: var(--sello); font-weight: 600; }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: clamp(2.5rem, 6vw, 4rem); }
+  .boton {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0.75rem 1.4rem;
+    border-radius: 999px; border: 1.5px solid var(--tinta); background: var(--tinta); color: #fff;
+    font: 600 1rem/1.2 var(--texto); text-decoration: none;
+  }
+  .boton:hover { background: var(--sello); border-color: var(--sello); }
+  .boton-claro { background: transparent; color: var(--tinta); }
+  .boton-claro:hover { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+
+  .pie { border-top: 1px solid var(--linea); padding-block: 2.5rem 5rem; margin-top: 2rem; }
+  .pie-in { display: grid; gap: 1.25rem; justify-items: start; }
+  .pie-links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.95rem; }
+  .pie-links a { text-decoration: none; }
+  .pie-links a:hover { text-decoration: underline; }
+  .pie-copy { font-size: 0.875rem; }
+</style>

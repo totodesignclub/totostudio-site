@@ -33,7 +33,7 @@ export const notaPrecios = 'El plan de Tienda Nube, las apps y la pauta publicit
 // ── Hero ──────────────────────────────────────────────────────
 export const hero = {
   bajada:
-    'Creamos tiendas online con las tendencias del 2026. Diseño personalizado, configuración completa y soporte continuo.',
+    'Creamos tiendas online. Diseño personalizado, configuración completa y soporte continuo.',
   plataformas: ['Tienda Nube', 'Shopify'],
   puntos: [
     'Diseño 100% enfocado en tu usuario',
@@ -48,12 +48,12 @@ export const lanzamiento = {
   usd: 790,
   bajada: 'Tu tienda diseñada a medida y lista para vender.',
   incluye: [
-    { icono: 'home', texto: 'Home diseñada a medida para tu marca' },
-    { icono: 'paginas', texto: 'Categorías, páginas y políticas' },
-    { icono: 'pagos', texto: 'Pagos, envíos, dominio, WhatsApp y redes' },
-    { icono: 'productos', texto: '10 productos de muestra cargados' },
-    { icono: 'video', texto: 'Capacitación de 1 hora grabada' },
-    { icono: 'ajustes', texto: '14 días de ajustes después del lanzamiento' },
+    { icono: 'house', texto: 'Home diseñada a medida para tu marca' },
+    { icono: 'files', texto: 'Categorías, páginas y políticas' },
+    { icono: 'credit-card', texto: 'Pagos, envíos, dominio, WhatsApp y redes' },
+    { icono: 'package', texto: '10 productos de muestra cargados' },
+    { icono: 'circle-play', texto: 'Capacitación de 1 hora grabada' },
+    { icono: 'sliders-horizontal', texto: '14 días de ajustes después del lanzamiento' },
   ],
 };
 
@@ -66,11 +66,11 @@ export const rediseno = {
 export const descuentoRediseno = Math.round((1 - rediseno.usd / lanzamiento.usd) * 100);
 
 export const extras = [
-  { id: 'carga', nombre: 'Carga de productos', usd: 100, unidad: 'cada 50 productos', cantidad: 'bloques',
+  { id: 'carga', icono: 'package', nombre: 'Carga de productos', usd: 100, unidad: 'cada 50 productos', cantidad: 'bloques',
     texto: 'Orden de productos, nombre, descripción, precio, stock, peso y medidas, y variantes de color, talle u otras.' },
-  { id: 'fotos', nombre: 'Edición de fotos', usd: 97.5, unidad: 'pack de 25 fotos',
+  { id: 'fotos', icono: 'sparkles', nombre: 'Edición de fotos', usd: 97.5, unidad: 'pack de 25 fotos',
     texto: 'Edición de fotos: fondo, recorte y mejora con IA.' },
-  { id: 'identidad', nombre: 'Mini identidad', usd: 200, unidad: 'pago único',
+  { id: 'identidad', icono: 'pen-tool', nombre: 'Mini identidad', usd: 200, unidad: 'pago único',
     texto: 'Logo, paleta y tipografías.' },
 ];
 
@@ -82,23 +82,23 @@ export const disenoTienda = {
   nombre: 'Diseño y Configuración de Tienda',
   usd: 790,
   items: [
-    { titulo: 'Acceso y plan de tienda', texto: 'Creamos tu cuenta y elegimos el plan en Tienda Nube o Shopify.' },
-    { titulo: 'Dirección web (tumarca.com)', texto: 'Registramos y configuramos el dominio de tu marca (tumarca.com.ar o .com).' },
-    { titulo: 'Diseño y experiencia de tienda', texto: 'Diseño de estilo, banners, tarjetas de productos y categorías.' },
-    { titulo: 'Configuración de pagos', texto: 'Conectamos Pago Nube u otra pasarela, transferencias, descuentos por medio de pago y cuotas.' },
-    { titulo: 'Configuración de envíos', texto: 'Envío Nube, Correo Argentino y otros. Zonas, tarifas, retiro en local y carga de peso y medidas.' },
-    { titulo: 'Páginas de confianza', texto: 'Nosotros, contacto, preguntas frecuentes y cómo comprar.' },
-    { titulo: 'Legales', texto: 'Términos (cambios y devoluciones) y privacidad.' },
-    { titulo: 'Atención al cliente', texto: 'Botón de WhatsApp, formulario de contacto y mail de notificaciones.' },
-    { titulo: 'Flujo de compra y avisos', texto: 'Mails automáticos del pedido: confirmación, pago y envío.' },
-    { titulo: 'Prueba, compra y gestión', texto: 'Compra de prueba completa: pago, envío y mails.' },
+    { icono: 'key-round', titulo: 'Acceso y plan de tienda', texto: 'Creamos tu cuenta y elegimos el plan en Tienda Nube o Shopify.' },
+    { icono: 'globe', titulo: 'Dirección web (tumarca.com)', texto: 'Registramos y configuramos el dominio de tu marca (tumarca.com.ar o .com).' },
+    { icono: 'palette', titulo: 'Diseño y experiencia de tienda', texto: 'Diseño de estilo, banners, tarjetas de productos y categorías.' },
+    { icono: 'credit-card', titulo: 'Configuración de pagos', texto: 'Conectamos Pago Nube u otra pasarela, transferencias, descuentos por medio de pago y cuotas.' },
+    { icono: 'truck', titulo: 'Configuración de envíos', texto: 'Envío Nube, Correo Argentino y otros. Zonas, tarifas, retiro en local y carga de peso y medidas.' },
+    { icono: 'badge-check', titulo: 'Páginas de confianza', texto: 'Nosotros, contacto, preguntas frecuentes y cómo comprar.' },
+    { icono: 'scale', titulo: 'Legales', texto: 'Términos (cambios y devoluciones) y privacidad.' },
+    { icono: 'message-circle', titulo: 'Atención al cliente', texto: 'Botón de WhatsApp, formulario de contacto y mail de notificaciones.' },
+    { icono: 'mail', titulo: 'Flujo de compra y avisos', texto: 'Mails automáticos del pedido: confirmación, pago y envío.' },
+    { icono: 'shopping-cart', titulo: 'Prueba, compra y gestión', texto: 'Compra de prueba completa: pago, envío y mails.' },
   ],
 };
 
 // ── Gestión mensual de la tienda: tres planes ─────────────────
 export const planesGestion = [
   {
-    id: 'aldia', corto: 'Al día', nombre: "Gestión tienda 'Al día'", usd: 80,
+    id: 'aldia', icono: 'calendar-check', corto: 'Al día', nombre: "Gestión tienda 'Al día'", usd: 80,
     bajada: 'Tu tienda siempre actualizada y funcionando.',
     incluye: [
       'Hasta 20 productos trabajados por mes',
@@ -109,7 +109,7 @@ export const planesGestion = [
     ],
   },
   {
-    id: 'activa', corto: 'Activa', nombre: "Gestión tienda 'Activa'", usd: 150,
+    id: 'activa', icono: 'activity', corto: 'Activa', nombre: "Gestión tienda 'Activa'", usd: 150,
     bajada: 'Tu tienda con movimiento cada mes: productos, banners y atención.',
     incluye: [
       'Hasta 50 productos trabajados por mes',
@@ -120,7 +120,7 @@ export const planesGestion = [
     ],
   },
   {
-    id: 'vende', corto: 'Vende', nombre: "Gestión tienda 'Vende'", usd: 330,
+    id: 'vende', icono: 'trending-up', corto: 'Vende', nombre: "Gestión tienda 'Vende'", usd: 330,
     bajada: 'Tu tienda con campañas y mejoras para vender más.',
     incluye: [
       'Hasta 100 productos trabajados por mes',
@@ -137,13 +137,13 @@ export const notaGestion = 'Mínimo de 3 meses, pago adelantado mes a mes. Cada 
 
 // ── Servicios de marketing (calculadora y /servicios) ─────────
 export const serviciosMarketing = [
-  { id: 'google', nombre: 'Marketing · Google Ads + My Business', usd: 250,
+  { id: 'google', icono: 'search', nombre: 'Marketing · Google Ads + My Business', usd: 250,
     texto: 'Gestión de campañas en Google Ads, optimización de tu ficha de Google My Business e informe mensual.' },
-  { id: 'email', nombre: 'Marketing · Email marketing', usd: 150,
+  { id: 'email', icono: 'mail', nombre: 'Marketing · Email marketing', usd: 150,
     texto: 'Carrito abandonado automatizado, newsletters mensuales e informe.' },
-  { id: 'meta', nombre: 'Marketing · Meta (Facebook + Instagram)', usd: 312,
+  { id: 'meta', icono: 'megaphone', nombre: 'Marketing · Meta (Facebook + Instagram)', usd: 312,
     texto: 'Campañas en Facebook e Instagram gestionadas por el equipo, con informe mensual.' },
-  { id: 'tiktok', nombre: 'Marketing · TikTok', usd: 312,
+  { id: 'tiktok', icono: 'clapperboard', nombre: 'Marketing · TikTok', usd: 312,
     texto: 'Campañas en TikTok gestionadas por el equipo, con informe mensual.' },
 ];
 
@@ -180,6 +180,8 @@ export const marketing = [
 
 // ── Diseños realizados ────────────────────────────────────────
 export const casos = [
+  { marca: 'Más Lanas', rubro: 'Lanas y tejido', url: 'https://maslanas.com.ar/', slug: 'maslanas', dominio: 'maslanas.com.ar', color: '#F6E6EC', tinta: '#7A2343' },
+  { marca: 'Chilu Atelier', rubro: 'Indumentaria', url: 'https://chiluatelier.mitiendanube.com/', slug: 'chilu', dominio: 'chiluatelier.mitiendanube.com', color: '#EFE7DC', tinta: '#4A3A2A' },
   { marca: 'Pasto', rubro: 'Almacén natural', url: 'https://pasto.com.ar/', slug: 'pasto', dominio: 'pasto.com.ar', color: '#E7EBD8', tinta: '#2E3A1F' },
   { marca: 'Danco', rubro: 'Industria B2B', url: 'https://www.danco.com.ar/', slug: 'danco', dominio: 'danco.com.ar', color: '#1C2B45', tinta: '#F1F3FA' },
   { marca: 'Tentak', rubro: 'Software gastronómico', url: 'https://tentak.framer.website/', slug: 'tentak', dominio: 'tentak.com', color: '#FFE3D3', tinta: '#7A2E0E' },
