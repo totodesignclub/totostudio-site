@@ -102,7 +102,7 @@ const urlImagen = new URL(image, base).href;
   :focus-visible { outline: 3px solid var(--sello); outline-offset: 3px; border-radius: 4px; }
   h1, h2, h3 {
     font-family: var(--display);
-    font-weight: 800;
+    font-weight: 500;
     line-height: 1.02;
     letter-spacing: -0.02em;
     text-wrap: balance;
@@ -128,4 +128,12 @@ const urlImagen = new URL(image, base).href;
   li:nth-child(3n + 2) .ico svg { animation-delay: -1.2s; }
   li:nth-child(3n + 3) .ico svg { animation-delay: -2.4s; }
   @media (prefers-reduced-motion: reduce) { .ico svg { animation: none; } }
+
+  /* Logo: el ojito parpadea cada tanto */
+  .logo-ojo { transform-box: fill-box; transform-origin: 50% 65%; animation: parpadeo 5.5s ease-in-out infinite; }
+  @keyframes parpadeo {
+    0%, 46%, 54%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.12); }
+  }
+  @media (prefers-reduced-motion: reduce) { .logo-ojo { animation: none; } }
 </style>

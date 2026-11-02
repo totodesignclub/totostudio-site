@@ -52,7 +52,6 @@ export const lanzamiento = {
     { icono: 'files', texto: 'Categorías, páginas y políticas' },
     { icono: 'credit-card', texto: 'Pagos, envíos, dominio, WhatsApp y redes' },
     { icono: 'package', texto: '10 productos de muestra cargados' },
-    { icono: 'circle-play', texto: 'Capacitación de 1 hora grabada' },
     { icono: 'sliders-horizontal', texto: '14 días de ajustes después del lanzamiento' },
   ],
 };
@@ -219,7 +218,7 @@ export const preguntas = [
   },
   {
     p: '¿El dominio queda a mi nombre?',
-    r: 'Siempre. Lo registramos con tu clave fiscal y acceso para configurarlo. Es tuyo desde el primer día.',
+    r: 'Siempre, es tuyo desde el primer día.',
   },
   {
     p: '¿Qué pasa después del lanzamiento?',
