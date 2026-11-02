@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Barra from '../components/Barra.astro';
 import logo from '../data/logo.svg?raw';
 import { contacto } from '../data/site';
 
@@ -13,19 +14,10 @@ const anio = new Date().getFullYear();
   title="Contacto · Toto &Co"
   description="Cómo contactar a Toto &Co: mail y WhatsApp."
 >
-  <header class="barra">
-    <div class="envoltura barra-in">
-      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
-      <nav aria-label="Secciones">
-        <a href="/">Inicio</a>
-        <a href="/marketing">Marketing</a>
-      </nav>
-    </div>
-  </header>
+  <Barra />
 
   <main>
     <div class="envoltura doc">
-      <p class="ojo">Hablemos</p>
       <h1>Contacto</h1>
       <p class="suave actualizado">Escribinos y te respondemos a la brevedad.</p>
 

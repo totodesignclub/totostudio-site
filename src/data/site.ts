@@ -180,13 +180,10 @@ export const marketing = [
 
 // ── Diseños realizados ────────────────────────────────────────
 export const casos = [
-  { marca: 'Más Lanas', rubro: 'Lanas y tejido', url: 'https://maslanas.com.ar/', slug: 'maslanas', dominio: 'maslanas.com.ar', color: '#F6E6EC', tinta: '#7A2343' },
+  { marca: 'Más Lanas', rubro: 'Tejidos & Deco', url: 'https://maslanas.com.ar/', slug: 'maslanas', dominio: 'maslanas.com.ar', color: '#F6E6EC', tinta: '#7A2343' },
   { marca: 'Chilu Atelier', rubro: 'Indumentaria', url: 'https://chiluatelier.mitiendanube.com/', slug: 'chilu', dominio: 'chiluatelier.mitiendanube.com', color: '#EFE7DC', tinta: '#4A3A2A' },
   { marca: 'Pasto', rubro: 'Almacén natural', url: 'https://pasto.com.ar/', slug: 'pasto', dominio: 'pasto.com.ar', color: '#E7EBD8', tinta: '#2E3A1F' },
   { marca: 'Danco', rubro: 'Industria B2B', url: 'https://www.danco.com.ar/', slug: 'danco', dominio: 'danco.com.ar', color: '#1C2B45', tinta: '#F1F3FA' },
-  { marca: 'Tentak', rubro: 'Software gastronómico', url: 'https://tentak.framer.website/', slug: 'tentak', dominio: 'tentak.com', color: '#FFE3D3', tinta: '#7A2E0E' },
-  { marca: 'Fixi', rubro: 'Servicios para el hogar', url: 'https://fixijobs.netlify.app/', slug: 'fixi', dominio: 'fixijobs.com', color: '#DDF4E7', tinta: '#0F5132' },
-  { marca: 'Finerio Connect', rubro: 'Open finance', url: 'https://finerioconnect.com/en', slug: 'finerio', dominio: 'finerioconnect.com', color: '#E6E3FF', tinta: '#2C1F8F' },
 ];
 
 // ── Quién soy ─────────────────────────────────────────────────

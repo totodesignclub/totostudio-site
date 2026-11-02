@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Barra from '../components/Barra.astro';
 import logo from '../data/logo.svg?raw';
 import { ico, icoWhatsapp } from '../data/iconos';
 import {
@@ -30,25 +31,22 @@ const bloquesCarga = (q: number) =>
 const totalUnicoInicial = pesos(disenoTienda.usd) + bloquesCarga(reglaCarga.inicial) * pesos(ex.carga.usd);
 const totalMensualInicial = pesos(planesGestion[0].usd);
 const iconoCalendario = ico('calendar');
-const iconoAfuera = ico('arrow-up-right');
 const unicos = [
-  { id: 'fotos', nombre: `${ex.fotos.nombre} x25`, usd: ex.fotos.usd, activo: false },
   { id: 'identidad', nombre: ex.identidad.nombre, usd: ex.identidad.usd, activo: false },
+];
+const pack = 25;
+type Modal = { id: string; titulo: string; precio: string; texto?: string; icono?: string; lista?: { icono: string; titulo: string; texto: string }[]; planes?: boolean; enlace: string };
+const modales: Modal[] = [
+  { id: 'diseno', titulo: disenoTienda.nombre, precio: `${ars(disenoTienda.usd)} única vez`, lista: disenoTienda.items, enlace: '/servicios-ecommerce#diseno' },
+  { id: 'gestion', titulo: 'Gestión de tienda', precio: `desde ${ars(planesGestion[0].usd)}/mes`, planes: true, enlace: '/servicios-ecommerce#gestion' },
+  ...serviciosMarketing.map((m) => ({ id: m.id, titulo: m.nombre, precio: `${ars(m.usd)}/mes`, texto: m.texto, icono: m.icono, enlace: `/servicios-marketing#${m.id}` })),
 ];
 ---
 <Base
   title={"Toto &Co · Diseño de tiendas online"}
   description="Diseñamos la experiencia de tu ecommerce. Tiendas en Tienda Nube y Shopify con diseño personalizado, configuración completa y soporte continuo."
 >
-  <header class="barra">
-    <div class="envoltura barra-in">
-      <a href="#inicio" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
-      <div class="barra-acciones">
-        <a href={consulta} class="boton boton-chico" target="_blank" rel="noopener">Agendar consulta</a>
-        <a href={wa} class="boton boton-chico boton-claro" target="_blank" rel="noopener">Contactar</a>
-      </div>
-    </div>
-  </header>
+  <Barra inicio />
 
   <main id="inicio">
     <!-- HERO -->
@@ -56,15 +54,16 @@ const unicos = [
       <div class="hero envoltura">
         <div class="hero-texto">
           <h1>Diseñamos la experiencia de tu <span class="azul">ecommerce</span></h1>
-          <p class="bajada">{hero.bajada}</p>
-          <ul class="checks">
-            {hero.puntos.map((p) => <li><span class="check" set:html={check} />{p}</li>)}
-          </ul>
         </div>
 
-        <aside class="hero-tarjeta" aria-labelledby="potencia-1">
+        <aside class="hero-tarjeta" aria-labelledby="potencia-1" data-hero-card>
           <h2 id="potencia-1">Potenciá tu marca</h2>
-          <p class="suave hero-sub">Partnership</p>
+          <ul class="sr-only">{hero.puntos.map((p) => <li>{p}</li>)}</ul>
+          <p class="rotador" aria-hidden="true">
+            <span class="rotador-pista">
+              {[...hero.puntos, hero.puntos[0]].map((p) => <span class="rotador-item"><span class="check" set:html={check} />{p}</span>)}
+            </span>
+          </p>
           <ul class="chips" aria-label="Plataformas">
             {hero.plataformas.map((p) => <li class="chip"><span class="chip-icono" set:html={plataformaIcono[p]} />{p}</li>)}
           </ul>
@@ -83,11 +82,11 @@ const unicos = [
       </div>
       <div class="carrusel" aria-label="Sitios de clientes">
         <div class="pista">
-          {[0, 1].map((vuelta) => (
-            <ul class="grupo-casos" aria-hidden={vuelta === 1 ? 'true' : undefined}>
+          {[0, 1, 2].map((vuelta) => (
+            <ul class="grupo-casos" aria-hidden={vuelta > 0 ? 'true' : undefined}>
               {casos.map((c) => (
                 <li>
-                  <a class="caso" href={c.url} target="_blank" rel="noopener" tabindex={vuelta === 1 ? -1 : undefined}>
+                  <a class="caso" href={c.url} target="_blank" rel="noopener" tabindex={vuelta > 0 ? -1 : undefined}>
                     <div class="navegador">
                       <span class="caso-puntos" aria-hidden="true"><i></i><i></i><i></i></span>
                       <span class="url mono">{c.dominio}</span>
@@ -129,23 +128,40 @@ const unicos = [
             <div class="item" data-item="diseno" data-tipo="unico" data-pesos={pesos(disenoTienda.usd)} data-nombre={disenoTienda.nombre}>
               <div class="item-info">
                 <p class="item-nombre" data-on={disenoTienda.nombre} data-off="Ya tengo tienda">{disenoTienda.nombre}</p>
-                <a class="ver-detalle" href="/servicios-ecommerce#diseno" target="_blank" rel="noopener">Ver detalle <span set:html={iconoAfuera} /></a>
+                <button type="button" class="ver-detalle" data-modal="diseno">Ver detalle</button>
               </div>
               <p class="item-precio mono"><span data-monto>{ars(disenoTienda.usd)}</span><small> única vez</small></p>
               <label class="switch"><input type="checkbox" role="switch" checked aria-label={`Incluir ${disenoTienda.nombre}`} /><span></span></label>
             </div>
 
             <div class="item" data-item="carga" data-tipo="unico" data-bloque={pesos(ex.carga.usd)} data-tamano={reglaCarga.tamano} data-tolerancia={reglaCarga.tolerancia} data-nombre={ex.carga.nombre}>
-              <div class="item-info item-fila">
-                <p class="item-nombre">{ex.carga.nombre}</p>
-                <div class="stepper">
-                  <button type="button" data-paso={-reglaCarga.paso} aria-label={`Restar ${reglaCarga.paso} productos`}>−</button>
-                  <input type="number" inputmode="numeric" min="1" max="5000" step="1" value={reglaCarga.inicial} aria-label="Cantidad de productos" data-cantidad />
-                  <button type="button" data-paso={reglaCarga.paso} aria-label={`Sumar ${reglaCarga.paso} productos`}>+</button>
+              <div class="item-info">
+                <div class="item-fila">
+                  <p class="item-nombre">{ex.carga.nombre}</p>
+                  <div class="stepper">
+                    <button type="button" data-paso={-reglaCarga.paso} aria-label={`Restar ${reglaCarga.paso} productos`}>−</button>
+                    <input type="number" inputmode="numeric" min="1" max="5000" step="1" value={reglaCarga.inicial} aria-label="Cantidad de productos" data-cantidad data-min="1" />
+                    <button type="button" data-paso={reglaCarga.paso} aria-label={`Sumar ${reglaCarga.paso} productos`}>+</button>
+                  </div>
                 </div>
               </div>
               <p class="item-precio mono"><span data-monto>{fmt(bloquesCarga(reglaCarga.inicial) * pesos(ex.carga.usd))}</span><small> única vez</small></p>
               <label class="switch"><input type="checkbox" role="switch" checked aria-label={`Incluir ${ex.carga.nombre}`} /><span></span></label>
+            </div>
+
+            <div class="item" data-item="fotos" data-tipo="unico" data-pack={pack} data-pesos-pack={pesos(ex.fotos.usd)} data-nombre={ex.fotos.nombre}>
+              <div class="item-info">
+                <div class="item-fila">
+                  <p class="item-nombre">{ex.fotos.nombre}</p>
+                  <div class="stepper">
+                    <button type="button" data-paso={-pack} aria-label={`Restar ${pack} fotos`}>−</button>
+                    <input type="number" inputmode="numeric" min={pack} max="2000" step={pack} value={pack} aria-label="Cantidad de fotos" data-cantidad data-min={pack} />
+                    <button type="button" data-paso={pack} aria-label={`Sumar ${pack} fotos`}>+</button>
+                  </div>
+                </div>
+              </div>
+              <p class="item-precio mono"><span data-monto>{ars(ex.fotos.usd)}</span><small> única vez</small></p>
+              <label class="switch"><input type="checkbox" role="switch" aria-label={`Incluir ${ex.fotos.nombre}`} /><span></span></label>
             </div>
 
             {unicos.map((u) => (
@@ -168,7 +184,7 @@ const unicos = [
                     </select>
                   </span>
                 </div>
-                <a class="ver-detalle" href="/servicios-ecommerce#gestion" target="_blank" rel="noopener">Ver detalle <span set:html={iconoAfuera} /></a>
+                <button type="button" class="ver-detalle" data-modal="gestion">Ver detalle</button>
               </div>
               <p class="item-precio mono"><span data-monto>{ars(planesGestion[0].usd)}</span><small>/mes</small></p>
               <label class="switch"><input type="checkbox" role="switch" checked aria-label="Incluir gestión de tienda" /><span></span></label>
@@ -176,13 +192,16 @@ const unicos = [
           </div>
 
           <details class="mas">
-            <summary>Ver también Marketing</summary>
+            <summary>
+              <span class="ico mas-ico" set:html={ico('megaphone')} />
+              <span class="mas-texto"><strong>Ver también Marketing</strong><small>Servicios mensuales opcionales</small></span>
+            </summary>
             <div class="items">
               {serviciosMarketing.map((m) => (
                 <div class="item" data-item={m.id} data-tipo="mensual" data-pesos={pesos(m.usd)} data-nombre={m.nombre}>
                   <div class="item-info">
                     <p class="item-nombre">{m.nombre}</p>
-                    <a class="ver-detalle" href={`/servicios-marketing#${m.id}`} target="_blank" rel="noopener">Ver detalle <span set:html={iconoAfuera} /></a>
+                    <button type="button" class="ver-detalle" data-modal={m.id}>Ver detalle</button>
                   </div>
                   <p class="item-precio mono"><span data-monto>{ars(m.usd)}</span><small>/mes</small></p>
                   <label class="switch"><input type="checkbox" role="switch" aria-label={`Incluir ${m.nombre}`} /><span></span></label>
@@ -207,6 +226,43 @@ const unicos = [
           </div>
           <p class="nota">{notaPrecios}</p>
         </form>
+
+        {modales.map((m) => (
+          <dialog class="modal" id={`modal-${m.id}`} aria-labelledby={`modal-t-${m.id}`}>
+            <div class="modal-in">
+              <div class="modal-cab">
+                <div>
+                  <h3 id={`modal-t-${m.id}`}>{m.titulo}</h3>
+                  <p class="mono modal-precio">{m.precio}</p>
+                </div>
+                <button type="button" class="modal-cerrar" data-cerrar aria-label="Cerrar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+                </button>
+              </div>
+              {m.lista && (
+                <ul class="modal-lista">
+                  {m.lista.map((it) => (
+                    <li><span class="ico modal-ico" set:html={ico(it.icono)} /><div><p class="modal-item">{it.titulo}</p><p class="suave">{it.texto}</p></div></li>
+                  ))}
+                </ul>
+              )}
+              {m.planes && (
+                <ul class="modal-planes">
+                  {planesGestion.map((g) => (
+                    <li>
+                      <div class="modal-plan-cab"><span class="ico modal-ico" set:html={ico(g.icono)} /><div><p class="modal-item">{g.corto}</p><p class="mono modal-precio">{ars(g.usd)}/mes</p></div></div>
+                      <ul class="modal-incluye">{g.incluye.map((x) => <li>{x}</li>)}</ul>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {m.texto && (
+                <div class="modal-texto"><span class="ico modal-ico" set:html={ico(m.icono || 'sparkles')} /><p>{m.texto}</p></div>
+              )}
+              <a class="modal-enlace" href={m.enlace}>Ver la página completa</a>
+            </div>
+          </dialog>
+        ))}
       </div>
     </section>
 
@@ -214,7 +270,6 @@ const unicos = [
     <section id="faq" class="seccion envoltura faq-zona" aria-labelledby="t-faq">
       <div class="faq-titulo">
         <h2 id="t-faq" class="titulo-seccion">FAQ's</h2>
-        <p class="suave">¿No encontrás tu respuesta? Escribinos por <a href={wa} target="_blank" rel="noopener">WhatsApp</a>.</p>
       </div>
       <div class="faq">
         {preguntas.map((q) => (
@@ -273,11 +328,14 @@ const unicos = [
     const filaMensual = form.querySelector('[data-fila-mensual]') as HTMLElement;
     const waLink = form.querySelector('[data-wa-link]') as HTMLAnchorElement;
     const items = [...form.querySelectorAll<HTMLElement>('.item')];
-    const cantidadEl = form.querySelector('[data-cantidad]') as HTMLInputElement;
 
-    const leerCantidad = () => {
-      const q = Math.max(1, Math.min(5000, Math.round(Number(cantidadEl.value) || 1)));
-      return q;
+    // Cantidad válida de un contador: entero, mínimo propio y, si tiene paso (pack), múltiplo de ese paso
+    const leer = (input: HTMLInputElement) => {
+      const min = Number(input.dataset.min || 1);
+      const paso = Number(input.step || 1);
+      let q = Math.round(Number(input.value) || min);
+      if (paso > 1) q = Math.ceil(q / paso) * paso;
+      return Math.max(min, Math.min(Number(input.max || 5000), q));
     };
     const bloques = (q: number, tam: number, tol: number) => (q <= tam + tol ? 1 : 1 + Math.ceil((q - tam - tol) / tam));
 
@@ -289,14 +347,20 @@ const unicos = [
       items.forEach((item) => {
         const sw = item.querySelector<HTMLInputElement>('input[role="switch"]')!;
         const montoEl = item.querySelector('[data-monto]') as HTMLElement;
+        const cantidad = item.querySelector<HTMLInputElement>('[data-cantidad]');
         const on = sw.checked;
         let monto = Number(item.dataset.pesos || 0);
         let etiqueta = item.dataset.nombre || '';
 
-        if (item.dataset.item === 'carga') {
-          const q = leerCantidad();
+        if (item.dataset.item === 'carga' && cantidad) {
+          const q = leer(cantidad);
           monto = bloques(q, Number(item.dataset.tamano), Number(item.dataset.tolerancia)) * Number(item.dataset.bloque);
           etiqueta = `${etiqueta} (${q} productos)`;
+        }
+        if (item.dataset.item === 'fotos' && cantidad) {
+          const q = leer(cantidad);
+          monto = (q / Number(item.dataset.pack)) * Number(item.dataset.pesosPack);
+          etiqueta = `${etiqueta} (${q} fotos)`;
         }
         if (item.dataset.item === 'gestion') {
           const op = item.querySelector<HTMLSelectElement>('select[data-plan]')!.selectedOptions[0];
@@ -337,18 +401,22 @@ const unicos = [
 
     form.querySelectorAll<HTMLButtonElement>('[data-paso]').forEach((b) =>
       b.addEventListener('click', () => {
-        cantidadEl.value = String(Math.max(1, leerCantidad() + Number(b.dataset.paso)));
+        const input = b.parentElement!.querySelector<HTMLInputElement>('[data-cantidad]')!;
+        input.value = String(leer(input) + Number(b.dataset.paso));
+        input.value = String(leer(input));
         activar(b);
         calcular();
       }),
     );
-    cantidadEl.addEventListener('input', () => {
-      activar(cantidadEl);
-      calcular();
-    });
-    cantidadEl.addEventListener('blur', () => {
-      cantidadEl.value = String(leerCantidad());
-      calcular();
+    form.querySelectorAll<HTMLInputElement>('[data-cantidad]').forEach((input) => {
+      input.addEventListener('input', () => {
+        activar(input);
+        calcular();
+      });
+      input.addEventListener('blur', () => {
+        input.value = String(leer(input));
+        calcular();
+      });
     });
     form.addEventListener('change', (e) => {
       const t = e.target as HTMLElement;
@@ -369,6 +437,20 @@ const unicos = [
     calcular();
   }
 
+  // Modales de "Ver detalle": se cierran con la cruz, con Escape o tocando afuera
+  document.querySelectorAll<HTMLButtonElement>('[data-modal]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const d = document.getElementById(`modal-${b.dataset.modal}`) as HTMLDialogElement | null;
+      d?.showModal();
+    }),
+  );
+  document.querySelectorAll<HTMLDialogElement>('dialog.modal').forEach((d) => {
+    d.querySelector('[data-cerrar]')?.addEventListener('click', () => d.close());
+    d.addEventListener('click', (e) => {
+      if (e.target === d) d.close();
+    });
+  });
+
   const arriba = document.querySelector('.arriba') as HTMLElement | null;
   if (arriba) {
     const mostrar = () => arriba.classList.toggle('visible', window.scrollY > 600);
@@ -382,7 +464,7 @@ const unicos = [
     carrusel.classList.add('js');
     const velocidad = 70; // px por segundo
     let x = 0;
-    let mitad = pista.scrollWidth / 2;
+    let mitad = pista.scrollWidth / 3;
     let pausado = false;
     let arrastre: { id: number; inicio: number; base: number; movio: boolean } | null = null;
     let anterior = performance.now();
@@ -400,7 +482,7 @@ const unicos = [
       requestAnimationFrame(cuadro);
     };
     requestAnimationFrame(cuadro);
-    addEventListener('resize', () => (mitad = pista.scrollWidth / 2));
+    addEventListener('resize', () => (mitad = pista.scrollWidth / 3));
 
     carrusel.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') pausado = true; });
     carrusel.addEventListener('pointerleave', () => (pausado = false));
@@ -538,8 +620,20 @@ const unicos = [
     box-shadow: 0 6px 14px -6px rgba(11, 19, 43, 0.35);
   }
   .hero-tarjeta h2 { font-size: clamp(2rem, 3.6vw, 2.75rem); }
-  .hero-sub { margin-top: 1.25rem; font-size: 0.95rem; }
-  .chips { list-style: none; padding: 0; margin: 0.6rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .rotador { margin-top: 1rem; height: 1.6rem; overflow: hidden; font-weight: 500; }
+  .rotador-pista { display: grid; animation: rotar 9s cubic-bezier(0.7, 0, 0.3, 1) infinite; }
+  .rotador-item { display: flex; align-items: center; gap: 0.55rem; height: 1.6rem; white-space: nowrap; }
+  .rotador .check { display: inline-flex; color: var(--verde); }
+  .rotador .check :global(svg) { width: 1.15rem; height: 1.15rem; }
+  @keyframes rotar {
+    0%, 28% { transform: translateY(0); }
+    33%, 61% { transform: translateY(-25%); }
+    66%, 94% { transform: translateY(-50%); }
+    100% { transform: translateY(-75%); }
+  }
+  @media (prefers-reduced-motion: reduce) { .rotador-pista { animation: none; } }
+  .chips { list-style: none; padding: 0; margin: 1.25rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .chip {
     display: inline-flex; align-items: center; gap: 0.45rem;
     padding: 0.5rem 1rem 0.5rem 0.75rem; border-radius: 999px;
@@ -649,7 +743,7 @@ const unicos = [
   .select-chico { flex: none; }
 
   .items { display: grid; gap: 1.15rem; }
-  .item { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 0.4rem 0.75rem; }
+  .item { display: grid; grid-template-columns: 1fr auto auto; align-items: start; gap: 0.4rem 0.75rem; }
   @media (max-width: 520px) {
     .item { grid-template-columns: 1fr auto; grid-template-areas: 'info sw' 'precio sw'; row-gap: 0.3rem; }
     .item .item-info { grid-area: info; }
@@ -657,20 +751,19 @@ const unicos = [
     .item .switch { grid-area: sw; align-self: start; }
   }
   .item-info { min-width: 0; }
-  .item-fila { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.5rem; }
-  .item-nombre { font-weight: 600; line-height: 1.3; }
-  .item-precio { white-space: nowrap; font-size: 0.8125rem; font-weight: 500; text-align: right; transition: opacity 0.15s ease; }
+  .item-fila { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.5rem; min-height: 1.75rem; }
+  .item-nombre { font-weight: 600; line-height: 1.3; padding-top: 0.2rem; }
+  .item-fila .item-nombre { padding-top: 0; }
+  .item-precio { white-space: nowrap; font-size: 0.8125rem; font-weight: 500; text-align: right; line-height: 1.75rem; transition: opacity 0.15s ease; }
   .item-precio small { color: #b9c0dc; font-size: 0.6875rem; }
   .item.apagado .item-precio { opacity: 0.45; }
   .ver-detalle {
-    display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.15rem;
-    font-size: 0.8125rem; font-weight: 600; color: #a9c0ff; text-decoration: none;
+    display: inline-block; margin-top: 0.15rem; padding: 0; border: 0; background: none; cursor: pointer;
+    font: 100 0.875rem/1.3 var(--texto); color: #c8d4ff; text-decoration: underline; text-underline-offset: 0.2em;
   }
-  .ver-detalle:hover { text-decoration: underline; color: #fff; }
-  .ver-detalle span { display: inline-flex; }
-  .ver-detalle :global(svg) { width: 0.85rem; height: 0.85rem; }
+  .ver-detalle:hover { color: #fff; }
 
-  .switch { position: relative; display: inline-block; width: 2.75rem; height: 1.6rem; flex: none; cursor: pointer; }
+  .switch { position: relative; display: inline-block; width: 2.75rem; height: 1.6rem; flex: none; cursor: pointer; margin-top: 0.075rem; }
   .switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
   .switch span { position: absolute; inset: 0; border-radius: 999px; background: rgba(255, 255, 255, 0.22); transition: background 0.2s ease; }
   .switch span::after {
@@ -682,28 +775,73 @@ const unicos = [
   .switch input:focus-visible + span { outline: 3px solid #fff; outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { .switch span, .switch span::after { transition: none; } }
 
-  .stepper { display: inline-flex; align-items: center; height: 1.9rem; border-radius: 0.55rem; background: #fff; color: var(--tinta); overflow: hidden; }
-  .stepper button {
-    width: 1.5rem; height: 100%; border: 0; background: transparent; color: var(--tinta);
-    font: 600 1rem/1 var(--texto); cursor: pointer;
+  .stepper {
+    display: inline-flex; align-items: center; height: 1.6rem; border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.4); color: #fff;
   }
-  .stepper button:hover { background: var(--azul-claro); }
+  .stepper button {
+    width: 1.3rem; height: 100%; border: 0; background: transparent; color: #fff;
+    font: 500 0.9rem/1 var(--texto); cursor: pointer; border-radius: 0.45rem;
+  }
+  .stepper button:hover { background: rgba(255, 255, 255, 0.12); }
   .stepper input {
-    width: 2.4rem; height: 100%; text-align: center; border: 0; background: transparent; color: var(--tinta);
-    font: 600 0.875rem/1 var(--texto); -moz-appearance: textfield; appearance: textfield;
+    width: 2.1rem; height: 100%; padding: 0; text-align: center; border: 0; background: transparent; color: #fff;
+    font: 600 0.8125rem/1 var(--texto); -moz-appearance: textfield; appearance: textfield;
   }
   .stepper input::-webkit-inner-spin-button, .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   .stepper :focus-visible { outline: 2px solid var(--cinta); outline-offset: -2px; }
 
-  .mas summary { list-style: none; position: relative; cursor: pointer; font-weight: 600; padding: 0.4rem 2rem 0.2rem 0; }
+  /* "Ver también Marketing": caja propia para no confundirla con un concepto */
+  .mas { border: 1px dashed rgba(255, 255, 255, 0.3); border-radius: 1rem; background: rgba(255, 255, 255, 0.05); }
+  .mas[open] { border-style: solid; border-color: rgba(255, 255, 255, 0.18); }
+  .mas summary {
+    list-style: none; position: relative; cursor: pointer;
+    display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 2.6rem 0.75rem 0.8rem;
+  }
   .mas summary::-webkit-details-marker { display: none; }
   .mas summary::after {
-    content: ''; position: absolute; right: 0.4rem; top: 50%; width: 0.45rem; height: 0.45rem;
+    content: ''; position: absolute; right: 1.1rem; top: 50%; width: 0.45rem; height: 0.45rem;
     border-right: 1.8px solid #fff; border-bottom: 1.8px solid #fff;
     transform: translateY(-70%) rotate(45deg); transition: transform 0.2s ease;
   }
   .mas[open] summary::after { transform: translateY(-25%) rotate(225deg); }
-  .mas .items { margin-top: 1.15rem; }
+  .mas-ico { width: 2.1rem; height: 2.1rem; padding: 0.45rem; border-radius: 0.65rem; background: rgba(255, 138, 31, 0.16); color: var(--cinta); }
+  .mas-texto { display: grid; line-height: 1.25; }
+  .mas-texto small { color: #b9c0dc; font-size: 0.8125rem; }
+  .mas .items { padding: 0.35rem 0.8rem 0.9rem; }
+
+  /* Modales de detalle */
+  .modal {
+    width: min(38rem, calc(100% - 2rem)); max-height: calc(100dvh - 2rem); padding: 0;
+    border: 0; border-radius: 1.25rem; background: var(--superficie); color: var(--tinta);
+    box-shadow: 0 30px 80px -20px rgba(11, 19, 43, 0.55);
+  }
+  .modal::backdrop { background: rgba(11, 19, 43, 0.55); backdrop-filter: blur(3px); }
+  .modal[open] { animation: modal-entra 0.22s ease-out; }
+  @keyframes modal-entra { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
+  @media (prefers-reduced-motion: reduce) { .modal[open] { animation: none; } }
+  .modal-in { padding: clamp(1.25rem, 3vw, 1.75rem); display: grid; gap: 1.1rem; }
+  .modal-cab { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .modal-cab h3 { font-size: clamp(1.35rem, 3vw, 1.7rem); line-height: 1.15; }
+  .modal-precio { font-size: 0.875rem; color: var(--tinta-suave); margin-top: 0.3rem; }
+  .modal-cerrar {
+    flex: none; width: 2.25rem; height: 2.25rem; border-radius: 50%; border: 1px solid var(--linea);
+    background: var(--superficie); color: var(--tinta); display: grid; place-items: center; cursor: pointer;
+  }
+  .modal-cerrar:hover { background: var(--papel); }
+  .modal-cerrar svg { width: 1.05rem; height: 1.05rem; }
+  .modal-lista, .modal-planes, .modal-incluye { list-style: none; padding: 0; margin: 0; }
+  .modal-lista { display: grid; gap: 0.9rem; }
+  .modal-lista > li, .modal-texto, .modal-plan-cab { display: flex; gap: 0.8rem; align-items: flex-start; }
+  .modal-ico { width: 2.2rem; height: 2.2rem; padding: 0.5rem; border-radius: 0.7rem; background: var(--azul-claro); color: var(--sello); }
+  .modal-item { font-weight: 600; }
+  .modal-lista .suave, .modal-texto p { font-size: 0.95rem; }
+  .modal-planes { display: grid; gap: 0.9rem; }
+  .modal-planes > li { border: 1px solid var(--linea); border-radius: 1rem; padding: 0.9rem 1rem; }
+  .modal-incluye { margin-top: 0.6rem; display: grid; gap: 0.3rem; font-size: 0.9rem; color: var(--tinta-suave); }
+  .modal-incluye li::before { content: '· '; color: var(--sello); font-weight: 700; }
+  .modal-texto p { color: var(--tinta-suave); padding-top: 0.25rem; }
+  .modal-enlace { justify-self: start; font-weight: 600; font-size: 0.9rem; color: var(--sello); }
 
   .acciones { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem; }
   @media (max-width: 480px) { .acciones { grid-template-columns: 1fr; } }

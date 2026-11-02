@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Barra from '../components/Barra.astro';
 import logo from '../data/logo.svg?raw';
 import {
   contacto, links, ars, marketing,
@@ -47,18 +48,7 @@ const chipsHero = paginaMarketing.hero.canales;
   {paginaMarketing.borrador && (
     <p class="borrador">Borrador para revisar · esta página todavía no está publicada ni indexada</p>
   )}
-  <header class="barra">
-    <div class="envoltura barra-in">
-      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
-      <nav aria-label="Secciones">
-        <a href="/">Inicio</a>
-        <a href="#metodo">Método</a>
-        <a href="#canales">Qué hacemos</a>
-        <a href="#factura">Qué se factura</a>
-        <a href="#faq">FAQ</a>
-      </nav>
-    </div>
-  </header>
+  <Barra />
 
   <main id="inicio">
     <!-- HERO -->
@@ -169,7 +159,6 @@ const chipsHero = paginaMarketing.hero.canales;
       <div class="faq-titulo">
         <p class="ojo">04 · Dudas</p>
         <h2 id="t-faq" class="titulo-seccion">FAQ's</h2>
-        <p class="suave">¿No encontrás tu respuesta? Escribinos por <a href={wa} target="_blank" rel="noopener">WhatsApp</a>.</p>
       </div>
       <div class="faq">
         {preguntasMarketing.map((q) => (

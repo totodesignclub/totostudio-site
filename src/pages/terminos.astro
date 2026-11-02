@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Barra from '../components/Barra.astro';
 import logo from '../data/logo.svg?raw';
 import { contacto, links } from '../data/site';
 
@@ -118,19 +119,10 @@ const secciones = [
   title="Términos y condiciones · Toto &Co"
   description="Condiciones de contratación de los servicios de Toto &Co: alcance, pagos, ajustes, cancelaciones, propiedad de los trabajos y datos personales."
 >
-  <header class="barra">
-    <div class="envoltura barra-in">
-      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
-      <nav aria-label="Secciones">
-        <a href="/">Inicio</a>
-        <a href="/marketing">Marketing</a>
-      </nav>
-    </div>
-  </header>
+  <Barra />
 
   <main>
     <div class="envoltura doc">
-      <p class="ojo">Legal</p>
       <h1>Términos y condiciones</h1>
       <p class="suave actualizado">Última actualización: {actualizado}</p>
 

@@ -7,9 +7,6 @@ const sitios = {
   chilu: 'https://chiluatelier.mitiendanube.com/',
   pasto: 'https://pasto.com.ar/',
   danco: 'https://www.danco.com.ar/',
-  tentak: 'https://tentak.framer.website/',
-  fixi: 'https://fixijobs.netlify.app/',
-  finerio: 'https://finerioconnect.com/en',
 };
 
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));

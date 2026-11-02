@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Barra from '../components/Barra.astro';
 import logo from '../data/logo.svg?raw';
 import { ico } from '../data/iconos';
 import {
@@ -19,19 +20,10 @@ const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   title="Servicios ecommerce · Toto &Co"
   description="Qué incluye cada servicio de ecommerce de Toto &Co: diseño y configuración de tienda, productos y gestión mensual, con sus precios."
 >
-  <header class="barra">
-    <div class="envoltura barra-in">
-      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
-      <div class="barra-acciones">
-        <a href={consulta} class="boton boton-chico" target="_blank" rel="noopener">Agendar consulta</a>
-        <a href={wa} class="boton boton-chico boton-claro" target="_blank" rel="noopener">Contactar</a>
-      </div>
-    </div>
-  </header>
+  <Barra />
 
   <main>
     <div class="envoltura doc">
-      <p class="ojo">Servicios · Ecommerce</p>
       <h1>Qué incluye cada servicio</h1>
       <p class="suave bajada">{notaPrecios}</p>
 
