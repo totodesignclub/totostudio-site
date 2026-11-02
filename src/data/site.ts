@@ -38,7 +38,7 @@ export const hero = {
   puntos: [
     'Diseño 100% enfocado en tu usuario',
     'Configuración completa y optimizada',
-    'Soporte y capacitación incluida',
+    'Te acompañamos en el lanzamiento',
   ],
 };
 

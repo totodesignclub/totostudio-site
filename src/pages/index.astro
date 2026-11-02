@@ -135,14 +135,16 @@ const detalles: Detalle[] = [
         <form class="calc" id="calculadora" aria-label="Armá tu presupuesto" data-form={links.formulario} data-wa={contacto.whatsapp}>
           <div class="items">
             <div class="item sel" data-item="diseno" data-tipo="unico" data-pesos={pesos(disenoTienda.usd)} data-nombre={disenoTienda.nombre}>
+              <span class="ico item-ico" set:html={ico('palette')} />
               <div class="item-info">
                 <button type="button" class="item-nombre item-sel" data-sel="diseno" data-on={disenoTienda.nombre} data-off="Ya tengo tienda">{disenoTienda.nombre}</button>
               </div>
-              <p class="item-precio mono"><span data-monto>{ars(disenoTienda.usd)}</span><small>única vez</small></p>
+              <p class="item-precio mono"><span class="precio-linea"><span class="info-ico" set:html={ico('info')} /><span data-monto>{ars(disenoTienda.usd)}</span></span><small>única vez</small></p>
               <label class="switch"><input type="checkbox" role="switch" checked aria-label={`Incluir ${disenoTienda.nombre}`} /><span></span></label>
             </div>
 
             <div class="item" data-item="carga" data-tipo="unico" data-bloque={pesos(ex.carga.usd)} data-tamano={reglaCarga.tamano} data-tolerancia={reglaCarga.tolerancia} data-nombre={ex.carga.nombre}>
+              <span class="ico item-ico" set:html={ico(ex.carga.icono)} />
               <div class="item-info">
                 <div class="item-fila">
                   <button type="button" class="item-nombre item-sel" data-sel="carga">{ex.carga.nombre}</button>
@@ -153,11 +155,12 @@ const detalles: Detalle[] = [
                   </div>
                 </div>
               </div>
-              <p class="item-precio mono"><span data-monto>{fmt(bloquesCarga(reglaCarga.inicial) * pesos(ex.carga.usd))}</span><small>única vez</small></p>
+              <p class="item-precio mono"><span class="precio-linea"><span class="info-ico" set:html={ico('info')} /><span data-monto>{fmt(bloquesCarga(reglaCarga.inicial) * pesos(ex.carga.usd))}</span></span><small>única vez</small></p>
               <label class="switch"><input type="checkbox" role="switch" checked aria-label={`Incluir ${ex.carga.nombre}`} /><span></span></label>
             </div>
 
             <div class="item" data-item="fotos" data-tipo="unico" data-pack={pack} data-pesos-pack={pesos(ex.fotos.usd)} data-nombre={ex.fotos.nombre}>
+              <span class="ico item-ico" set:html={ico(ex.fotos.icono)} />
               <div class="item-info">
                 <div class="item-fila">
                   <button type="button" class="item-nombre item-sel" data-sel="fotos">{ex.fotos.nombre}</button>
@@ -168,19 +171,21 @@ const detalles: Detalle[] = [
                   </div>
                 </div>
               </div>
-              <p class="item-precio mono"><span data-monto>{ars(ex.fotos.usd)}</span><small>única vez</small></p>
+              <p class="item-precio mono"><span class="precio-linea"><span class="info-ico" set:html={ico('info')} /><span data-monto>{ars(ex.fotos.usd)}</span></span><small>única vez</small></p>
               <label class="switch"><input type="checkbox" role="switch" aria-label={`Incluir ${ex.fotos.nombre}`} /><span></span></label>
             </div>
 
             {unicos.map((u) => (
               <div class="item" data-item={u.id} data-tipo="unico" data-pesos={pesos(u.usd)} data-nombre={u.nombre}>
+                <span class="ico item-ico" set:html={ico(ex.identidad.icono)} />
                 <div class="item-info"><button type="button" class="item-nombre item-sel" data-sel={u.id}>{u.nombre}</button></div>
-                <p class="item-precio mono"><span data-monto>{ars(u.usd)}</span><small>única vez</small></p>
+                <p class="item-precio mono"><span class="precio-linea"><span class="info-ico" set:html={ico('info')} /><span data-monto>{ars(u.usd)}</span></span><small>única vez</small></p>
                 <label class="switch"><input type="checkbox" role="switch" checked={u.activo} aria-label={`Incluir ${u.nombre}`} /><span></span></label>
               </div>
             ))}
 
             <div class="item" data-item="gestion" data-tipo="mensual" data-nombre="Gestión tienda">
+              <span class="ico item-ico" set:html={ico('calendar-check')} />
               <div class="item-info">
                 <div class="item-fila">
                   <button type="button" class="item-nombre item-sel" data-sel="gestion">Gestión tienda</button>
@@ -201,7 +206,7 @@ const detalles: Detalle[] = [
                   </div>
                 </div>
               </div>
-              <p class="item-precio mono"><span data-monto>{ars(planesGestion[0].usd)}</span><small>por mes</small></p>
+              <p class="item-precio mono"><span class="precio-linea"><span class="info-ico" set:html={ico('info')} /><span data-monto>{ars(planesGestion[0].usd)}</span></span><small>por mes</small></p>
               <label class="switch"><input type="checkbox" role="switch" checked aria-label="Incluir gestión de tienda" /><span></span></label>
             </div>
           </div>
@@ -209,15 +214,16 @@ const detalles: Detalle[] = [
           <details class="mas">
             <summary>
               <span class="ico mas-ico" set:html={ico('megaphone')} />
-              <span class="mas-texto"><strong>Ver también Marketing</strong><small>Servicios mensuales opcionales</small></span>
+              <span class="mas-texto">Ver también Marketing</span>
             </summary>
             <div class="items">
               {serviciosMarketing.map((m) => (
                 <div class="item" data-item={m.id} data-tipo="mensual" data-pesos={pesos(m.usd)} data-nombre={m.nombre}>
+                  <span class="ico item-ico" set:html={ico(m.icono)} />
                   <div class="item-info">
                     <button type="button" class="item-nombre item-sel" data-sel={m.id}>{m.nombre}</button>
                   </div>
-                  <p class="item-precio mono"><span data-monto>{ars(m.usd)}</span><small>por mes</small></p>
+                  <p class="item-precio mono"><span class="precio-linea"><span class="info-ico" set:html={ico('info')} /><span data-monto>{ars(m.usd)}</span></span><small>por mes</small></p>
                   <label class="switch"><input type="checkbox" role="switch" aria-label={`Incluir ${m.nombre}`} /><span></span></label>
                 </div>
               ))}
@@ -944,7 +950,7 @@ const detalles: Detalle[] = [
 
   .items { display: grid; gap: 0.35rem; }
   .item {
-    display: grid; grid-template-columns: 1fr auto auto; align-items: start; gap: 0.4rem 0.75rem;
+    display: grid; grid-template-columns: auto 1fr auto auto; align-items: start; gap: 0.4rem 0.75rem;
     margin-inline: -0.6rem; padding: 0.5rem 0.6rem; border-radius: 0.8rem; transition: background 0.15s ease;
   }
   .item { cursor: pointer; }
@@ -955,17 +961,26 @@ const detalles: Detalle[] = [
   .item-sel:focus-visible { outline: 2px solid var(--cinta); outline-offset: 3px; border-radius: 0.3rem; }
   @media (max-width: 900px) {
     .item.sel { background: none; }
-    .item-sel { text-decoration: underline dotted rgba(255, 255, 255, 0.4); text-underline-offset: 0.25em; }
   }
   @media (max-width: 520px) {
-    .item { grid-template-columns: 1fr auto; grid-template-areas: 'info sw' 'precio sw'; row-gap: 0.3rem; }
+    .item { grid-template-columns: auto 1fr auto; grid-template-areas: 'ico info sw' 'ico precio sw'; row-gap: 0.3rem; }
+    .item .item-ico { grid-area: ico; }
     .item .item-info { grid-area: info; }
-    .item .item-precio { grid-area: precio; display: flex; align-items: baseline; gap: 0.35rem; }
+    .item .item-precio { grid-area: precio; display: flex; align-items: center; gap: 0.35rem; }
     .item .switch { grid-area: sw; align-self: start; }
   }
   .item-info { min-width: 0; }
   .item-fila { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.5rem; min-height: 1.75rem; }
-  .item-nombre { font-weight: 600; line-height: 1.3; padding-top: 0.2rem; }
+  .item-nombre { font-weight: 600; font-size: 0.9375rem; line-height: 1.3; padding-top: 0.2rem; }
+  .item-ico {
+    width: 1.75rem; height: 1.75rem; padding: 0.35rem; border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.18); color: #c8d4ff;
+  }
+  .item.sel .item-ico { border-color: rgba(255, 138, 31, 0.6); color: var(--cinta); }
+  .precio-linea { display: inline-flex; align-items: center; gap: 0.3rem; }
+  .info-ico { display: inline-flex; width: 0.8rem; height: 0.8rem; opacity: 0.4; }
+  .info-ico :global(svg) { width: 100%; height: 100%; }
+  .item:hover .info-ico, .item.sel .info-ico { opacity: 0.75; }
   .item-fila .item-nombre { padding-top: 0; }
   .item-precio { display: grid; justify-items: end; white-space: nowrap; font-size: 0.8125rem; font-weight: 500; line-height: 1.75rem; transition: opacity 0.15s ease; }
   .item-precio small { color: #b9c0dc; font-size: 0.6875rem; line-height: 1.1; }
@@ -1017,9 +1032,8 @@ const detalles: Detalle[] = [
     transform: translateY(-70%) rotate(45deg); transition: transform 0.2s ease;
   }
   .mas[open] summary::after { transform: translateY(-25%) rotate(225deg); }
-  .mas-ico { width: 2.1rem; height: 2.1rem; padding: 0.45rem; border-radius: 0.65rem; background: rgba(255, 138, 31, 0.16); color: var(--cinta); }
-  .mas-texto { display: grid; line-height: 1.25; }
-  .mas-texto small { color: #b9c0dc; font-size: 0.8125rem; }
+  .mas-ico { width: 1.75rem; height: 1.75rem; padding: 0.35rem; border-radius: 0.5rem; background: rgba(255, 138, 31, 0.16); color: var(--cinta); }
+  .mas-texto { font-weight: 400; font-size: 0.9375rem; line-height: 1.25; }
   .mas .items { padding: 0.1rem 0.8rem 0.7rem; }
 
   /* Panel de detalle (derecha) y conector con la fila elegida */
@@ -1107,9 +1121,12 @@ const detalles: Detalle[] = [
   .boton-borde { background: transparent; border-color: rgba(255, 255, 255, 0.55); color: #fff; }
   .boton-borde:hover { background: #fff; border-color: #fff; color: var(--tinta); box-shadow: none; }
 
-  .total { display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; padding-top: 0.6rem; }
+  .total { display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: flex-end; gap: 1rem; padding-top: 0.6rem; }
   .total .mono { color: #b9c0dc; }
-  .total-num { font-family: var(--display); font-weight: 800; font-size: 2.1rem; line-height: 1.1; }
+  .total-num { font-family: var(--display); font-weight: 800; font-size: clamp(1.35rem, 3.6vw, 1.7rem); line-height: 1.1; white-space: nowrap; }
+  [data-fila-mensual] { text-align: right; padding: 0.55rem 0.8rem; border-radius: 0.9rem; background: rgba(255, 138, 31, 0.14); box-shadow: inset 0 0 0 1px rgba(255, 138, 31, 0.35); }
+  [data-fila-mensual] .mono { color: #ffd2a8; }
+  [data-fila-mensual] .total-num { color: var(--cinta); font-size: clamp(1.6rem, 4.4vw, 2.2rem); }
   .nota { font-size: 0.8125rem; color: #b9c0dc; }
 
   /* FAQ */
