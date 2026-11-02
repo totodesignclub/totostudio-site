@@ -30,7 +30,7 @@ const bloquesCarga = (q: number) =>
   q <= 0 ? 0 : q <= reglaCarga.tamano + reglaCarga.tolerancia ? 1 : 1 + Math.ceil((q - reglaCarga.tamano - reglaCarga.tolerancia) / reglaCarga.tamano);
 const totalUnicoInicial = pesos(disenoTienda.usd) + bloquesCarga(reglaCarga.inicial) * pesos(ex.carga.usd);
 const totalMensualInicial = pesos(planesGestion[0].usd);
-const iconoCalendario = ico('calendar');
+const iconoCalendario = ico('phone');
 const unicos = [
   { id: 'identidad', nombre: ex.identidad.nombre, usd: ex.identidad.usd, activo: false },
 ];
@@ -85,7 +85,7 @@ const detalles: Detalle[] = [
           </ul>
           <div class="botones">
             <a href="#precio" class="boton boton-claro">Ver precios</a>
-            <a href={consulta} class="boton" target="_blank" rel="noopener">Agendá consulta gratis</a>
+            <a href={consulta} class="boton boton-con-ico" target="_blank" rel="noopener"><span class="boton-ico" set:html={ico('phone')} />Agendá consulta gratis</a>
           </div>
         </aside>
       </div>
@@ -536,9 +536,11 @@ const detalles: Detalle[] = [
     modal.scrollTop = 0;
   };
 
-  document.querySelectorAll<HTMLButtonElement>('[data-sel]').forEach((b) =>
-    b.addEventListener('click', () => {
-      const id = b.dataset.sel || 'diseno';
+  // Toda la fila del concepto es cliqueable, salvo los controles (switch, contador y selector)
+  document.querySelectorAll<HTMLElement>('.calc .item').forEach((item) =>
+    item.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('.switch, .stepper, .dd')) return;
+      const id = item.dataset.item || 'diseno';
       if (esMovil()) abrirModal(id);
       else seleccionar(id);
     }),
@@ -945,6 +947,7 @@ const detalles: Detalle[] = [
     display: grid; grid-template-columns: 1fr auto auto; align-items: start; gap: 0.4rem 0.75rem;
     margin-inline: -0.6rem; padding: 0.5rem 0.6rem; border-radius: 0.8rem; transition: background 0.15s ease;
   }
+  .item { cursor: pointer; }
   .item:hover { background: rgba(255, 255, 255, 0.05); }
   .item.sel { background: rgba(255, 255, 255, 0.09); }
   .item-sel { padding: 0; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; font: inherit; }
@@ -1098,6 +1101,7 @@ const detalles: Detalle[] = [
   .acciones { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem; }
   @media (max-width: 480px) { .acciones { grid-template-columns: 1fr; } }
   .acciones .boton { gap: 0.55rem; padding-inline: 1.1rem; }
+  .boton-con-ico { gap: 0.5rem; }
   .boton-ico { display: inline-grid; place-items: center; width: 1.2rem; height: 1.2rem; flex: none; }
   .boton-ico :global(svg) { width: 100%; height: 100%; display: block; }
   .boton-borde { background: transparent; border-color: rgba(255, 255, 255, 0.55); color: #fff; }

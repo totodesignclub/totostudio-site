@@ -203,7 +203,7 @@ export const preguntas = [
   },
   {
     p: '¿Qué plan de Tienda Nube necesito?',
-    r: 'Recomendamos el plan Esencial: $ 27.999 por mes, o $ 20.999 por mes si lo pagás anual (precios de Tienda Nube a noviembre de 2026). Permite dominio propio, cualquier plantilla y estilos personalizados. Lo pagás directo a Tienda Nube.',
+    r: 'Recomendamos el plan Esencial: $ 27.999 por mes. Permite dominio propio, cualquier plantilla y estilos personalizados. Lo pagás directo a Tienda Nube.',
   },
   {
     p: '¿Qué necesito para empezar?',
@@ -219,7 +219,7 @@ export const preguntas = [
   },
   {
     p: '¿El dominio queda a mi nombre?',
-    r: 'Siempre. Lo registrás con tu clave fiscal y nos das acceso para configurarlo. Es tuyo desde el primer día, quedate tranquilo, lo hacemos juntos.',
+    r: 'Siempre. Lo registramos con tu clave fiscal y acceso para configurarlo. Es tuyo desde el primer día.',
   },
   {
     p: '¿Qué pasa después del lanzamiento?',
