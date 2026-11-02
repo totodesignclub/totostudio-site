@@ -203,11 +203,11 @@ export const preguntas = [
   },
   {
     p: '¿Qué plan de Tienda Nube necesito?',
-    r: 'Recomendamos el plan Esencial: permite dominio propio, cualquier plantilla y estilos personalizados. Lo pagás directo a Tienda Nube.',
+    r: 'Recomendamos el plan Esencial: $ 27.999 por mes, o $ 20.999 por mes si lo pagás anual (precios de Tienda Nube a noviembre de 2026). Permite dominio propio, cualquier plantilla y estilos personalizados. Lo pagás directo a Tienda Nube.',
   },
   {
     p: '¿Qué necesito para empezar?',
-    r: 'Estar inscripto en ARCA, tener tu catálogo ordenado (nombre, precio, stock y descripción) y un canal de atención como WhatsApp Business. Si no tenés fotos de producto, las resolvemos con la edición con IA.',
+    r: 'Estar inscripto en ARCA, tener tu catálogo ordenado (nombre, precio, stock y descripción) y un canal de atención como WhatsApp. Si no tenés fotos de producto, las resolvemos con la edición con IA.',
   },
   {
     p: '¿Por qué se paga el 100% por adelantado?',
@@ -219,7 +219,7 @@ export const preguntas = [
   },
   {
     p: '¿El dominio queda a mi nombre?',
-    r: 'Siempre. Lo registrás con tu clave fiscal y nos das acceso para configurarlo. Es tuyo desde el primer día.',
+    r: 'Siempre. Lo registrás con tu clave fiscal y nos das acceso para configurarlo. Es tuyo desde el primer día, quedate tranquilo, lo hacemos juntos.',
   },
   {
     p: '¿Qué pasa después del lanzamiento?',
