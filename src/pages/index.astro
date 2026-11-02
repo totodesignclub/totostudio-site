@@ -6,7 +6,7 @@ import { ico, icoWhatsapp } from '../data/iconos';
 import {
   contacto, links, ars, pesos, notaPrecios, hero, lanzamiento,
   extras, casos, preguntas,
-  reglaCarga, disenoTienda, planesGestion, serviciosMarketing,
+  reglaCarga, disenoTienda, planesGestion, notaGestion, serviciosMarketing,
 } from '../data/site';
 
 const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
@@ -35,11 +35,27 @@ const unicos = [
   { id: 'identidad', nombre: ex.identidad.nombre, usd: ex.identidad.usd, activo: false },
 ];
 const pack = 25;
-type Modal = { id: string; titulo: string; precio: string; texto?: string; icono?: string; lista?: { icono: string; titulo: string; texto: string }[]; planes?: boolean; enlace: string };
-const modales: Modal[] = [
-  { id: 'diseno', titulo: disenoTienda.nombre, precio: `${ars(disenoTienda.usd)} única vez`, lista: disenoTienda.items, enlace: '/servicios-ecommerce#diseno' },
-  { id: 'gestion', titulo: 'Gestión de tienda', precio: `desde ${ars(planesGestion[0].usd)}/mes`, planes: true, enlace: '/servicios-ecommerce#gestion' },
-  ...serviciosMarketing.map((m) => ({ id: m.id, titulo: m.nombre, precio: `${ars(m.usd)}/mes`, texto: m.texto, icono: m.icono, enlace: `/servicios-marketing#${m.id}` })),
+type Detalle = {
+  id: string; titulo: string; precio: string; frecuencia: string; icono: string; enlace: string;
+  texto?: string; lista?: { icono: string; titulo: string; texto: string }[]; puntos?: string[]; planes?: boolean; extra?: { icono: string; texto: string }[];
+};
+const detalles: Detalle[] = [
+  { id: 'diseno', titulo: disenoTienda.nombre, precio: ars(disenoTienda.usd), frecuencia: 'única vez', icono: 'palette', enlace: '/servicios-ecommerce#diseno',
+    lista: disenoTienda.items, extra: lanzamiento.incluye.slice(3) },
+  { id: 'carga', titulo: ex.carga.nombre, precio: ars(ex.carga.usd), frecuencia: 'cada 50 productos · única vez', icono: ex.carga.icono, enlace: '/servicios-ecommerce#carga',
+    texto: ex.carga.texto,
+    puntos: ['Se cobra por bloques de 50 productos: hasta 79 es 1 bloque, de 80 a 129 son 2.', 'Cada producto incluye hasta 15 variantes; cada 15 variantes extra cuentan como 1 producto más.', 'Los datos y las fotos los entrega la marca.'] },
+  { id: 'fotos', titulo: ex.fotos.nombre, precio: ars(ex.fotos.usd), frecuencia: 'cada 25 fotos · única vez', icono: ex.fotos.icono, enlace: '/servicios-ecommerce#fotos',
+    texto: ex.fotos.texto,
+    puntos: ['Se cobra por pack de 25 fotos.', 'Fondo limpio o ambientado, a partir de las fotos de la marca.', 'No incluye producción fotográfica.'] },
+  { id: 'identidad', titulo: ex.identidad.nombre, precio: ars(ex.identidad.usd), frecuencia: 'única vez', icono: ex.identidad.icono, enlace: '/servicios-ecommerce#identidad',
+    texto: 'Para marcas que todavía no tienen una identidad definida o necesitan ordenarla antes de lanzar.',
+    puntos: ['Logo prolijo.', 'Paleta de colores.', 'Tipografías.', 'No incluye manual de marca completo.'] },
+  { id: 'gestion', titulo: 'Gestión de tienda', precio: `desde ${ars(planesGestion[0].usd)}`, frecuencia: 'por mes', icono: 'calendar-check', enlace: '/servicios-ecommerce#gestion', planes: true },
+  ...serviciosMarketing.map((m) => ({
+    id: m.id, titulo: m.nombre, precio: ars(m.usd), frecuencia: 'por mes', icono: m.icono, enlace: `/servicios-marketing#${m.id}`,
+    texto: m.texto, puntos: ['La inversión en anuncios se paga aparte, directo a cada plataforma.', 'Mínimo de 3 meses, pago adelantado mes a mes.'],
+  })),
 ];
 ---
 <Base
@@ -57,7 +73,7 @@ const modales: Modal[] = [
         </div>
 
         <aside class="hero-tarjeta" aria-labelledby="potencia-1" data-hero-card>
-          <h2 id="potencia-1">Potenciá tu marca</h2>
+          <h2 id="potencia-1">Empezá hoy</h2>
           <ul class="sr-only">{hero.puntos.map((p) => <li>{p}</li>)}</ul>
           <p class="rotador" aria-hidden="true">
             <span class="rotador-pista">
@@ -115,29 +131,21 @@ const modales: Modal[] = [
     <section id="precio" class="seccion envoltura" aria-labelledby="t-precio">
       <h2 id="t-precio" class="titulo-seccion">Precio</h2>
 
-      <div class="precio-grilla">
-        <div class="precio-col">
-          <ul class="incluye tarjeta">
-            {lanzamiento.incluye.map((i) => <li><span class="ico incluye-icono" set:html={ico(i.icono)} />{i.texto}</li>)}
-          </ul>
-        </div>
-
-        <!-- CALCULADORA -->
+      <div class="precio-grilla" data-grilla>
         <form class="calc" id="calculadora" aria-label="Armá tu presupuesto" data-form={links.formulario} data-wa={contacto.whatsapp}>
           <div class="items">
-            <div class="item" data-item="diseno" data-tipo="unico" data-pesos={pesos(disenoTienda.usd)} data-nombre={disenoTienda.nombre}>
+            <div class="item sel" data-item="diseno" data-tipo="unico" data-pesos={pesos(disenoTienda.usd)} data-nombre={disenoTienda.nombre}>
               <div class="item-info">
-                <p class="item-nombre" data-on={disenoTienda.nombre} data-off="Ya tengo tienda">{disenoTienda.nombre}</p>
-                <button type="button" class="ver-detalle" data-modal="diseno">Ver detalle</button>
+                <button type="button" class="item-nombre item-sel" data-sel="diseno" data-on={disenoTienda.nombre} data-off="Ya tengo tienda">{disenoTienda.nombre}</button>
               </div>
-              <p class="item-precio mono"><span data-monto>{ars(disenoTienda.usd)}</span><small> única vez</small></p>
+              <p class="item-precio mono"><span data-monto>{ars(disenoTienda.usd)}</span><small>única vez</small></p>
               <label class="switch"><input type="checkbox" role="switch" checked aria-label={`Incluir ${disenoTienda.nombre}`} /><span></span></label>
             </div>
 
             <div class="item" data-item="carga" data-tipo="unico" data-bloque={pesos(ex.carga.usd)} data-tamano={reglaCarga.tamano} data-tolerancia={reglaCarga.tolerancia} data-nombre={ex.carga.nombre}>
               <div class="item-info">
                 <div class="item-fila">
-                  <p class="item-nombre">{ex.carga.nombre}</p>
+                  <button type="button" class="item-nombre item-sel" data-sel="carga">{ex.carga.nombre}</button>
                   <div class="stepper">
                     <button type="button" data-paso={-reglaCarga.paso} aria-label={`Restar ${reglaCarga.paso} productos`}>−</button>
                     <input type="number" inputmode="numeric" min="1" max="5000" step="1" value={reglaCarga.inicial} aria-label="Cantidad de productos" data-cantidad data-min="1" />
@@ -145,14 +153,14 @@ const modales: Modal[] = [
                   </div>
                 </div>
               </div>
-              <p class="item-precio mono"><span data-monto>{fmt(bloquesCarga(reglaCarga.inicial) * pesos(ex.carga.usd))}</span><small> única vez</small></p>
+              <p class="item-precio mono"><span data-monto>{fmt(bloquesCarga(reglaCarga.inicial) * pesos(ex.carga.usd))}</span><small>única vez</small></p>
               <label class="switch"><input type="checkbox" role="switch" checked aria-label={`Incluir ${ex.carga.nombre}`} /><span></span></label>
             </div>
 
             <div class="item" data-item="fotos" data-tipo="unico" data-pack={pack} data-pesos-pack={pesos(ex.fotos.usd)} data-nombre={ex.fotos.nombre}>
               <div class="item-info">
                 <div class="item-fila">
-                  <p class="item-nombre">{ex.fotos.nombre}</p>
+                  <button type="button" class="item-nombre item-sel" data-sel="fotos">{ex.fotos.nombre}</button>
                   <div class="stepper">
                     <button type="button" data-paso={-pack} aria-label={`Restar ${pack} fotos`}>−</button>
                     <input type="number" inputmode="numeric" min={pack} max="2000" step={pack} value={pack} aria-label="Cantidad de fotos" data-cantidad data-min={pack} />
@@ -160,14 +168,14 @@ const modales: Modal[] = [
                   </div>
                 </div>
               </div>
-              <p class="item-precio mono"><span data-monto>{ars(ex.fotos.usd)}</span><small> única vez</small></p>
+              <p class="item-precio mono"><span data-monto>{ars(ex.fotos.usd)}</span><small>única vez</small></p>
               <label class="switch"><input type="checkbox" role="switch" aria-label={`Incluir ${ex.fotos.nombre}`} /><span></span></label>
             </div>
 
             {unicos.map((u) => (
               <div class="item" data-item={u.id} data-tipo="unico" data-pesos={pesos(u.usd)} data-nombre={u.nombre}>
-                <div class="item-info"><p class="item-nombre">{u.nombre}</p></div>
-                <p class="item-precio mono"><span data-monto>{ars(u.usd)}</span><small> única vez</small></p>
+                <div class="item-info"><button type="button" class="item-nombre item-sel" data-sel={u.id}>{u.nombre}</button></div>
+                <p class="item-precio mono"><span data-monto>{ars(u.usd)}</span><small>única vez</small></p>
                 <label class="switch"><input type="checkbox" role="switch" checked={u.activo} aria-label={`Incluir ${u.nombre}`} /><span></span></label>
               </div>
             ))}
@@ -175,7 +183,7 @@ const modales: Modal[] = [
             <div class="item" data-item="gestion" data-tipo="mensual" data-nombre="Gestión tienda">
               <div class="item-info">
                 <div class="item-fila">
-                  <p class="item-nombre">Gestión tienda</p>
+                  <button type="button" class="item-nombre item-sel" data-sel="gestion">Gestión tienda</button>
                   <span class="select select-chico">
                     <select data-plan aria-label="Plan de gestión">
                       {planesGestion.map((g, i) => (
@@ -184,9 +192,8 @@ const modales: Modal[] = [
                     </select>
                   </span>
                 </div>
-                <button type="button" class="ver-detalle" data-modal="gestion">Ver detalle</button>
               </div>
-              <p class="item-precio mono"><span data-monto>{ars(planesGestion[0].usd)}</span><small>/mes</small></p>
+              <p class="item-precio mono"><span data-monto>{ars(planesGestion[0].usd)}</span><small>por mes</small></p>
               <label class="switch"><input type="checkbox" role="switch" checked aria-label="Incluir gestión de tienda" /><span></span></label>
             </div>
           </div>
@@ -200,10 +207,9 @@ const modales: Modal[] = [
               {serviciosMarketing.map((m) => (
                 <div class="item" data-item={m.id} data-tipo="mensual" data-pesos={pesos(m.usd)} data-nombre={m.nombre}>
                   <div class="item-info">
-                    <p class="item-nombre">{m.nombre}</p>
-                    <button type="button" class="ver-detalle" data-modal={m.id}>Ver detalle</button>
+                    <button type="button" class="item-nombre item-sel" data-sel={m.id}>{m.nombre}</button>
                   </div>
-                  <p class="item-precio mono"><span data-monto>{ars(m.usd)}</span><small>/mes</small></p>
+                  <p class="item-precio mono"><span data-monto>{ars(m.usd)}</span><small>por mes</small></p>
                   <label class="switch"><input type="checkbox" role="switch" aria-label={`Incluir ${m.nombre}`} /><span></span></label>
                 </div>
               ))}
@@ -227,43 +233,59 @@ const modales: Modal[] = [
           <p class="nota">{notaPrecios}</p>
         </form>
 
-        {modales.map((m) => (
-          <dialog class="modal" id={`modal-${m.id}`} aria-labelledby={`modal-t-${m.id}`}>
-            <div class="modal-in">
-              <div class="modal-cab">
+        <aside class="detalle-panel" data-panel aria-live="polite" aria-label="Detalle del concepto">
+          {detalles.map((d, k) => (
+            <section class="detalle" data-detalle={d.id} hidden={k !== 0}>
+              <div class="detalle-cab">
+                <span class="ico detalle-ico" set:html={ico(d.icono)} />
                 <div>
-                  <h3 id={`modal-t-${m.id}`}>{m.titulo}</h3>
-                  <p class="mono modal-precio">{m.precio}</p>
+                  <h3>{d.titulo}</h3>
+                  <p class="mono detalle-precio">{d.precio} <span>{d.frecuencia}</span></p>
                 </div>
-                <button type="button" class="modal-cerrar" data-cerrar aria-label="Cerrar">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-                </button>
               </div>
-              {m.lista && (
+              {d.texto && <p class="detalle-texto">{d.texto}</p>}
+              {d.lista && (
                 <ul class="modal-lista">
-                  {m.lista.map((it) => (
+                  {d.lista.map((it) => (
                     <li><span class="ico modal-ico" set:html={ico(it.icono)} /><div><p class="modal-item">{it.titulo}</p><p class="suave">{it.texto}</p></div></li>
                   ))}
                 </ul>
               )}
-              {m.planes && (
-                <ul class="modal-planes">
-                  {planesGestion.map((g) => (
-                    <li>
-                      <div class="modal-plan-cab"><span class="ico modal-ico" set:html={ico(g.icono)} /><div><p class="modal-item">{g.corto}</p><p class="mono modal-precio">{ars(g.usd)}/mes</p></div></div>
-                      <ul class="modal-incluye">{g.incluye.map((x) => <li>{x}</li>)}</ul>
-                    </li>
-                  ))}
-                </ul>
+              {d.extra && (
+                <div class="detalle-extra">
+                  <p class="modal-item">También incluye</p>
+                  <ul>{d.extra.map((x) => <li><span class="ico" set:html={ico(x.icono)} />{x.texto}</li>)}</ul>
+                </div>
               )}
-              {m.texto && (
-                <div class="modal-texto"><span class="ico modal-ico" set:html={ico(m.icono || 'sparkles')} /><p>{m.texto}</p></div>
+              {d.puntos && <ul class="detalle-puntos">{d.puntos.map((x) => <li>{x}</li>)}</ul>}
+              {d.planes && (
+                <Fragment>
+                  <ul class="modal-planes">
+                    {planesGestion.map((g, n) => (
+                      <li class:list={['plan-gestion', { activo: n === 0 }]} data-plan-detalle={g.corto}>
+                        <div class="modal-plan-cab"><span class="ico modal-ico" set:html={ico(g.icono)} /><div><p class="modal-item">{g.corto}</p><p class="mono modal-precio">{ars(g.usd)} por mes</p></div></div>
+                        <ul class="modal-incluye">{g.incluye.map((x) => <li>{x}</li>)}</ul>
+                      </li>
+                    ))}
+                  </ul>
+                  <p class="detalle-nota">{notaGestion}</p>
+                </Fragment>
               )}
-              <a class="modal-enlace" href={m.enlace}>Ver la página completa</a>
-            </div>
-          </dialog>
-        ))}
+              <a class="modal-enlace" href={d.enlace}>Ver la página completa</a>
+            </section>
+          ))}
+        </aside>
+        <svg class="conector" data-conector aria-hidden="true"><path d="" /><circle r="4" /><circle r="4" /></svg>
       </div>
+
+      <dialog class="modal" id="modal-detalle" aria-label="Detalle del concepto">
+        <div class="modal-in">
+          <button type="button" class="modal-cerrar" data-cerrar aria-label="Cerrar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+          <div data-modal-cuerpo></div>
+        </div>
+      </dialog>
     </section>
 
     <!-- FAQ -->
@@ -437,19 +459,104 @@ const modales: Modal[] = [
     calcular();
   }
 
-  // Modales de "Ver detalle": se cierran con la cruz, con Escape o tocando afuera
-  document.querySelectorAll<HTMLButtonElement>('[data-modal]').forEach((b) =>
+  // Detalle de cada concepto: en escritorio se muestra a la derecha, unido a la fila con un conector;
+  // en celular se abre en un modal con scroll.
+  const grilla = document.querySelector<HTMLElement>('[data-grilla]');
+  const panel = document.querySelector<HTMLElement>('[data-panel]');
+  const conector = document.querySelector<SVGSVGElement>('[data-conector]');
+  const modal = document.getElementById('modal-detalle') as HTMLDialogElement | null;
+  const cuerpo = modal?.querySelector<HTMLElement>('[data-modal-cuerpo]');
+  const esMovil = () => matchMedia('(max-width: 900px)').matches;
+  let seleccion = 'diseno';
+
+  const dibujar = () => {
+    if (!grilla || !panel || !conector) return;
+    const fila = grilla.querySelector<HTMLElement>(`.item[data-item="${seleccion}"]`);
+    const calc = grilla.querySelector<HTMLElement>('.calc');
+    if (esMovil() || !fila || !calc || fila.offsetParent === null) {
+      conector.classList.remove('visible');
+      return;
+    }
+    const g = grilla.getBoundingClientRect();
+    const f = fila.getBoundingClientRect();
+    const c = calc.getBoundingClientRect();
+    const pa = panel.getBoundingClientRect();
+    const x0 = c.right - g.left - 10;
+    const x1 = pa.left - g.left + 1;
+    const xm = (x0 + 10 + x1) / 2;
+    const y0 = f.top - g.top + Math.min(f.height / 2, 18);
+    const y1 = Math.max(pa.top - g.top + 34, Math.min(y0, pa.bottom - g.top - 34));
+    const r = Math.min(10, Math.abs(y1 - y0) / 2);
+    const dir = y1 > y0 ? 1 : -1;
+    const d = Math.abs(y1 - y0) < 1
+      ? `M${x0} ${y0} H${x1}`
+      : `M${x0} ${y0} H${xm - r} Q${xm} ${y0} ${xm} ${y0 + r * dir} V${y1 - r * dir} Q${xm} ${y1} ${xm + r} ${y1} H${x1}`;
+    conector.setAttribute('width', String(g.width));
+    conector.setAttribute('height', String(g.height));
+    conector.querySelector('path')!.setAttribute('d', d);
+    const [a, b] = conector.querySelectorAll('circle');
+    a.setAttribute('cx', String(x0)); a.setAttribute('cy', String(y0));
+    b.setAttribute('cx', String(x1)); b.setAttribute('cy', String(y1));
+    conector.classList.add('visible');
+  };
+
+  const marcarPlan = () => {
+    const plan = document.querySelector<HTMLSelectElement>('select[data-plan]')?.value;
+    document.querySelectorAll<HTMLElement>('[data-plan-detalle]').forEach((li) => li.classList.toggle('activo', li.dataset.planDetalle === plan));
+  };
+
+  const seleccionar = (id: string) => {
+    seleccion = id;
+    document.querySelectorAll<HTMLElement>('.calc .item').forEach((it) => it.classList.toggle('sel', it.dataset.item === id));
+    document.querySelectorAll<HTMLElement>('[data-detalle]').forEach((d) => (d.hidden = d.dataset.detalle !== id));
+    marcarPlan();
+    dibujar();
+  };
+
+  const abrirModal = (id: string) => {
+    const fuente = document.querySelector<HTMLElement>(`[data-detalle="${id}"]`);
+    if (!modal || !cuerpo || !fuente) return;
+    marcarPlan();
+    const copia = fuente.cloneNode(true) as HTMLElement;
+    copia.hidden = false;
+    copia.querySelectorAll('.ico').forEach((i) => i.classList.add('visto', 'listo'));
+    cuerpo.replaceChildren(copia);
+    modal.showModal();
+    modal.scrollTop = 0;
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('[data-sel]').forEach((b) =>
     b.addEventListener('click', () => {
-      const d = document.getElementById(`modal-${b.dataset.modal}`) as HTMLDialogElement | null;
-      d?.showModal();
+      const id = b.dataset.sel || 'diseno';
+      if (esMovil()) abrirModal(id);
+      else seleccionar(id);
     }),
   );
-  document.querySelectorAll<HTMLDialogElement>('dialog.modal').forEach((d) => {
-    d.querySelector('[data-cerrar]')?.addEventListener('click', () => d.close());
-    d.addEventListener('click', (e) => {
-      if (e.target === d) d.close();
-    });
+  document.querySelector('select[data-plan]')?.addEventListener('change', marcarPlan);
+  modal?.querySelector('[data-cerrar]')?.addEventListener('click', () => modal.close());
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) modal.close();
   });
+
+  let pendiente = false;
+  const programar = () => {
+    if (pendiente) return;
+    pendiente = true;
+    requestAnimationFrame(() => {
+      pendiente = false;
+      dibujar();
+    });
+  };
+  addEventListener('scroll', programar, { passive: true });
+  addEventListener('resize', programar);
+  if (grilla && 'ResizeObserver' in window) new ResizeObserver(programar).observe(grilla);
+  document.querySelector('.mas')?.addEventListener('toggle', () => {
+    const mas = document.querySelector<HTMLDetailsElement>('.mas')!;
+    if (!mas.open && serviciosMarketingIds.includes(seleccion)) seleccionar('diseno');
+    programar();
+  });
+  const serviciosMarketingIds = [...document.querySelectorAll<HTMLElement>('.mas .item')].map((i) => i.dataset.item || '');
+  dibujar();
 
   const arriba = document.querySelector('.arriba') as HTMLElement | null;
   if (arriba) {
@@ -586,7 +693,8 @@ const modales: Modal[] = [
     padding-block: clamp(3rem, 8vw, 6.5rem);
   }
   @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } }
-  h1 { font-size: clamp(2.6rem, 6.2vw, 4.75rem); isolation: isolate; }
+  h1 { font-size: clamp(2.6rem, 6.2vw, 4.75rem); isolation: isolate; font-weight: 300; letter-spacing: -0.03em; }
+  h1 .azul { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; }
   .azul { position: relative; white-space: nowrap; }
   h1 .azul::after {
     content: ''; position: absolute; left: 0; right: 0; bottom: 0.02em; height: 0.14em;
@@ -598,20 +706,29 @@ const modales: Modal[] = [
   .check { color: var(--verde); flex: none; width: 1.4rem; height: 1.4rem; display: inline-flex; }
   .check :global(svg) { width: 100%; height: 100%; }
 
+  /* Tarjeta "Empezá hoy": degradado con los colores de Toto &Co */
   .hero-tarjeta {
-    position: relative;
-    background: var(--superficie);
-    border-radius: 1.75rem;
-    padding: clamp(1.5rem, 3.5vw, 2.25rem);
-    border: 1px solid var(--linea);
-    box-shadow: 0 1px 0 #fff inset, 0 40px 80px -40px rgba(31, 91, 255, 0.45);
+    position: relative; overflow: hidden; isolation: isolate; color: #fff;
+    border-radius: 1.75rem; padding: clamp(1.5rem, 3.5vw, 2.25rem);
+    background:
+      radial-gradient(55% 60% at 92% 8%, rgba(255, 138, 31, 0.95), transparent 70%),
+      radial-gradient(60% 70% at 70% 100%, rgba(255, 92, 168, 0.55), transparent 70%),
+      radial-gradient(70% 80% at 0% 100%, rgba(124, 155, 255, 0.9), transparent 70%),
+      radial-gradient(80% 90% at 25% 15%, #3b52ff, transparent 75%),
+      linear-gradient(160deg, var(--sello) 0%, #1a2a8f 55%, var(--tinta) 100%);
+    box-shadow: 0 40px 80px -40px rgba(31, 91, 255, 0.6);
   }
   .hero-tarjeta::before {
-    content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px;
-    background: linear-gradient(140deg, var(--sello), transparent 40%, transparent 65%, var(--cinta));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0.35;
+    background: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.35) 1px, transparent 0) 0 0 / 18px 18px;
+    -webkit-mask: linear-gradient(200deg, #000, transparent 60%); mask: linear-gradient(200deg, #000, transparent 60%);
   }
+  .hero-tarjeta .chip { background: rgba(255, 255, 255, 0.16); color: #fff; border-color: rgba(255, 255, 255, 0.25); }
+  .hero-tarjeta .rotador .check { color: #fff; }
+  .hero-tarjeta .boton-claro { background: #fff; border-color: #fff; color: var(--tinta); }
+  .hero-tarjeta .boton-claro:hover { background: var(--papel); border-color: var(--papel); color: var(--tinta); box-shadow: none; }
+  .hero-tarjeta .boton:not(.boton-claro) { background: transparent; border-color: rgba(255, 255, 255, 0.75); color: #fff; }
+  .hero-tarjeta .boton:not(.boton-claro):hover { background: #fff; border-color: #fff; color: var(--tinta); box-shadow: none; }
   .cinta {
     position: absolute; top: -0.9rem; right: 1.5rem; rotate: 4deg;
     background: var(--cinta); color: var(--tinta);
@@ -708,7 +825,7 @@ const modales: Modal[] = [
   }
 
   /* Precio: características y presupuesto, mitad y mitad */
-  .precio-grilla { display: grid; gap: 1.25rem; grid-template-columns: 1fr 1fr; align-items: start; }
+  .precio-grilla { position: relative; display: grid; gap: 1.25rem 3.5rem; grid-template-columns: 1fr 1fr; align-items: start; }
   @media (max-width: 900px) { .precio-grilla { grid-template-columns: 1fr; } }
   .precio-col { display: grid; gap: 1.25rem; }
   .incluye { list-style: none; margin: 0; display: grid; gap: 1.1rem; font-size: 1.05rem; }
@@ -729,33 +846,45 @@ const modales: Modal[] = [
   }
   .select { position: relative; display: block; }
   .select::after {
-    content: ''; position: absolute; right: 0.7rem; top: 50%; width: 0.4rem; height: 0.4rem;
-    border-right: 1.6px solid var(--tinta); border-bottom: 1.6px solid var(--tinta);
+    content: ''; position: absolute; right: 0.6rem; top: 50%; width: 0.35rem; height: 0.35rem;
+    border-right: 1.5px solid #fff; border-bottom: 1.5px solid #fff;
     transform: translateY(-70%) rotate(45deg); pointer-events: none;
   }
   select {
     appearance: none; -webkit-appearance: none;
-    border: 0; border-radius: 0.55rem; background: #fff;
-    font: 500 0.875rem/1.2 var(--texto); color: var(--tinta); cursor: pointer;
-    height: 1.9rem; padding: 0 1.9rem 0 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 0.5rem; background: transparent;
+    font: 500 0.8125rem/1.2 var(--texto); color: #fff; cursor: pointer;
+    height: 1.6rem; padding: 0 1.6rem 0 0.55rem;
   }
-  select:focus-visible { outline: 3px solid var(--cinta); outline-offset: 1px; }
+  select option { color: var(--tinta); }
+  select:focus-visible { outline: 2px solid var(--cinta); outline-offset: 1px; }
   .select-chico { flex: none; }
 
-  .items { display: grid; gap: 1.15rem; }
-  .item { display: grid; grid-template-columns: 1fr auto auto; align-items: start; gap: 0.4rem 0.75rem; }
+  .items { display: grid; gap: 0.35rem; }
+  .item {
+    display: grid; grid-template-columns: 1fr auto auto; align-items: start; gap: 0.4rem 0.75rem;
+    margin-inline: -0.6rem; padding: 0.5rem 0.6rem; border-radius: 0.8rem; transition: background 0.15s ease;
+  }
+  .item.sel { background: rgba(255, 255, 255, 0.08); box-shadow: inset 3px 0 0 var(--cinta); }
+  .item-sel { padding: 0; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+  .item-sel:hover { color: #ffd2a8; }
+  .item-sel:focus-visible { outline: 2px solid var(--cinta); outline-offset: 3px; border-radius: 0.3rem; }
+  @media (max-width: 900px) {
+    .item.sel { background: none; box-shadow: none; }
+    .item-sel { text-decoration: underline dotted rgba(255, 255, 255, 0.4); text-underline-offset: 0.25em; }
+  }
   @media (max-width: 520px) {
     .item { grid-template-columns: 1fr auto; grid-template-areas: 'info sw' 'precio sw'; row-gap: 0.3rem; }
     .item .item-info { grid-area: info; }
-    .item .item-precio { grid-area: precio; text-align: left; }
+    .item .item-precio { grid-area: precio; justify-items: start; }
     .item .switch { grid-area: sw; align-self: start; }
   }
   .item-info { min-width: 0; }
   .item-fila { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.5rem; min-height: 1.75rem; }
   .item-nombre { font-weight: 600; line-height: 1.3; padding-top: 0.2rem; }
   .item-fila .item-nombre { padding-top: 0; }
-  .item-precio { white-space: nowrap; font-size: 0.8125rem; font-weight: 500; text-align: right; line-height: 1.75rem; transition: opacity 0.15s ease; }
-  .item-precio small { color: #b9c0dc; font-size: 0.6875rem; }
+  .item-precio { display: grid; justify-items: end; white-space: nowrap; font-size: 0.8125rem; font-weight: 500; line-height: 1.75rem; transition: opacity 0.15s ease; }
+  .item-precio small { color: #b9c0dc; font-size: 0.6875rem; line-height: 1.1; }
   .item.apagado .item-precio { opacity: 0.45; }
   .ver-detalle {
     display: inline-block; margin-top: 0.15rem; padding: 0; border: 0; background: none; cursor: pointer;
@@ -792,8 +921,7 @@ const modales: Modal[] = [
   .stepper :focus-visible { outline: 2px solid var(--cinta); outline-offset: -2px; }
 
   /* "Ver también Marketing": caja propia para no confundirla con un concepto */
-  .mas { border: 1px dashed rgba(255, 255, 255, 0.3); border-radius: 1rem; background: rgba(255, 255, 255, 0.05); }
-  .mas[open] { border-style: solid; border-color: rgba(255, 255, 255, 0.18); }
+  .mas { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 1rem; background: rgba(255, 255, 255, 0.05); margin-top: 0.4rem; }
   .mas summary {
     list-style: none; position: relative; cursor: pointer;
     display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 2.6rem 0.75rem 0.8rem;
@@ -808,9 +936,44 @@ const modales: Modal[] = [
   .mas-ico { width: 2.1rem; height: 2.1rem; padding: 0.45rem; border-radius: 0.65rem; background: rgba(255, 138, 31, 0.16); color: var(--cinta); }
   .mas-texto { display: grid; line-height: 1.25; }
   .mas-texto small { color: #b9c0dc; font-size: 0.8125rem; }
-  .mas .items { padding: 0.35rem 0.8rem 0.9rem; }
+  .mas .items { padding: 0.1rem 0.8rem 0.7rem; }
 
-  /* Modales de detalle */
+  /* Panel de detalle (derecha) y conector con la fila elegida */
+  .detalle-panel {
+    position: sticky; top: 5.5rem; max-height: calc(100vh - 7rem); overflow-y: auto; overscroll-behavior: contain;
+    background: var(--superficie); border: 1px solid var(--linea); border-radius: 1.5rem;
+    padding: clamp(1.25rem, 2.5vw, 1.75rem); box-shadow: 0 30px 60px -40px rgba(11, 19, 43, 0.35);
+  }
+  @media (max-width: 900px) { .detalle-panel { display: none; } }
+  .detalle { display: grid; gap: 1rem; }
+  .detalle[hidden] { display: none; }
+  .detalle:not([hidden]) { animation: detalle-entra 0.25s ease-out; }
+  @keyframes detalle-entra { from { opacity: 0; transform: translateY(6px); } }
+  @media (prefers-reduced-motion: reduce) { .detalle:not([hidden]) { animation: none; } }
+  .detalle-cab { display: flex; gap: 0.9rem; align-items: center; padding-right: 2.75rem; }
+  .detalle-panel .detalle-cab { padding-right: 0; }
+  .detalle-cab h3 { font-size: clamp(1.25rem, 2.2vw, 1.55rem); line-height: 1.15; }
+  .detalle-ico { width: 2.75rem; height: 2.75rem; padding: 0.65rem; border-radius: 0.85rem; background: var(--tinta); color: var(--cinta); }
+  .detalle-precio { margin-top: 0.25rem; font-size: 0.9rem; }
+  .detalle-precio span { color: var(--tinta-suave); font-size: 0.8125rem; }
+  .detalle-texto { color: var(--tinta-suave); }
+  .detalle-puntos { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.35rem; font-size: 0.95rem; color: var(--tinta-suave); }
+  .detalle-puntos li::marker { color: var(--sello); }
+  .detalle-extra { border-top: 1px solid var(--linea); padding-top: 0.9rem; }
+  .detalle-extra ul { list-style: none; padding: 0; margin: 0.5rem 0 0; display: grid; gap: 0.45rem; font-size: 0.95rem; }
+  .detalle-extra li { display: flex; align-items: center; gap: 0.6rem; }
+  .detalle-extra .ico { width: 1.25rem; height: 1.25rem; color: var(--sello); }
+  .detalle-nota { font-size: 0.8125rem; color: var(--tinta-suave); }
+  .plan-gestion { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+  .plan-gestion.activo { border-color: var(--sello); box-shadow: 0 0 0 3px var(--azul-claro); }
+
+  .conector { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; opacity: 0; transition: opacity 0.2s ease; z-index: 2; }
+  .conector.visible { opacity: 1; }
+  .conector path { fill: none; stroke: var(--cinta); stroke-width: 2; stroke-linecap: round; }
+  .conector circle { fill: var(--cinta); stroke: var(--papel); stroke-width: 2; }
+  @media (max-width: 900px) { .conector { display: none; } }
+
+  /* Modal (celular) */
   .modal {
     width: min(38rem, calc(100% - 2rem)); max-height: calc(100dvh - 2rem); padding: 0;
     border: 0; border-radius: 1.25rem; background: var(--superficie); color: var(--tinta);
@@ -820,7 +983,8 @@ const modales: Modal[] = [
   .modal[open] { animation: modal-entra 0.22s ease-out; }
   @keyframes modal-entra { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
   @media (prefers-reduced-motion: reduce) { .modal[open] { animation: none; } }
-  .modal-in { padding: clamp(1.25rem, 3vw, 1.75rem); display: grid; gap: 1.1rem; }
+  .modal-in { position: relative; padding: clamp(1.25rem, 3vw, 1.75rem); }
+  .modal .modal-cerrar { position: absolute; top: 1rem; right: 1rem; z-index: 1; }
   .modal-cab { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
   .modal-cab h3 { font-size: clamp(1.35rem, 3vw, 1.7rem); line-height: 1.15; }
   .modal-precio { font-size: 0.875rem; color: var(--tinta-suave); margin-top: 0.3rem; }

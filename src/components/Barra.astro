@@ -13,8 +13,7 @@ const consulta = links.calendario || `${links.formulario}?origen=consulta`;
   <div class="envoltura barra-in">
     <a href={inicio ? '#inicio' : '/'} class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
     <div class="barra-acciones">
-      <a href={inicio ? '#precio' : '/#precio'} class="b b-claro">Ver precios</a>
-      <a href={consulta} class="b" target="_blank" rel="noopener">Agendar consulta</a>
+      <a href={consulta} class="b b-claro" target="_blank" rel="noopener">Agendar consulta</a>
     </div>
   </div>
 </header>
