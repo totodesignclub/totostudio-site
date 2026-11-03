@@ -45,7 +45,7 @@ export const hero = {
 // ── Precio ────────────────────────────────────────────────────
 export const lanzamiento = {
   nombre: 'Lanzamiento Ecommerce',
-  usd: 790,
+  usd: 643,
   bajada: 'Tu tienda diseñada a medida y lista para vender.',
   incluye: [
     { icono: 'house', texto: 'Home diseñada a medida para tu marca' },
@@ -79,7 +79,7 @@ export const reglaCarga = { tamano: 50, tolerancia: 29, inicial: 50, paso: 10 };
 // ── Diseño y Configuración de Tienda (detalle en /servicios) ──
 export const disenoTienda = {
   nombre: 'Diseño y Configuración de Tienda',
-  usd: 790,
+  usd: 643,
   items: [
     { icono: 'key-round', titulo: 'Acceso y plan de tienda', texto: 'Creamos tu cuenta y elegimos el plan en Tienda Nube o Shopify.' },
     { icono: 'globe', titulo: 'Dirección web (tumarca.com)', texto: 'Registramos y configuramos el dominio de tu marca (tumarca.com.ar o .com).' },
@@ -136,13 +136,15 @@ export const notaGestion = 'Mínimo de 3 meses, pago adelantado mes a mes. Cada 
 
 // ── Servicios de marketing (calculadora y /servicios) ─────────
 export const serviciosMarketing = [
-  { id: 'google', icono: 'search', nombre: 'Marketing · Google Ads + My Business', usd: 250,
-    texto: 'Gestión de campañas en Google Ads, optimización de tu ficha de Google My Business e informe mensual.' },
-  { id: 'email', icono: 'mail', nombre: 'Marketing · Email marketing', usd: 150,
+  { id: 'mybusiness', canal: 'mybusiness', icono: 'map-pin', nombre: 'Marketing · Google My Business', usd: 65,
+    texto: 'Tu ficha de Google al día: fotos, horarios, novedades y respuestas a reseñas, con informe mensual.' },
+  { id: 'google', canal: 'googleads', icono: 'search', nombre: 'Marketing · Google Ads', usd: 200,
+    texto: 'Gestión de campañas en Google Ads: búsquedas, textos de los anuncios y páginas de destino, con informe mensual.' },
+  { id: 'email', canal: 'email', icono: 'mail', nombre: 'Marketing · Email marketing', usd: 100,
     texto: 'Carrito abandonado automatizado, newsletters mensuales e informe.' },
-  { id: 'meta', icono: 'megaphone', nombre: 'Marketing · Meta (Facebook + Instagram)', usd: 312,
+  { id: 'meta', canal: 'instagram', icono: 'megaphone', nombre: 'Marketing · Meta (Facebook + Instagram)', usd: 312,
     texto: 'Campañas en Facebook e Instagram gestionadas por el equipo, con informe mensual.' },
-  { id: 'tiktok', icono: 'clapperboard', nombre: 'Marketing · TikTok', usd: 312,
+  { id: 'tiktok', canal: 'tiktok', icono: 'clapperboard', nombre: 'Marketing · TikTok', usd: 312,
     texto: 'Campañas en TikTok gestionadas por el equipo, con informe mensual.' },
 ];
 
@@ -157,14 +159,14 @@ export const marketing = [
   {
     id: 'google',
     nombre: 'Google Ads y My Business',
-    usd: 250,
-    desde: false,
+    usd: 65,
+    desde: true,
     texto: 'Campañas de búsqueda y Shopping, y tu ficha de Google al día.',
   },
   {
     id: 'email',
     nombre: 'Email marketing',
-    usd: 150,
+    usd: 100,
     desde: false,
     texto: 'Carrito abandonado automatizado y newsletters mensuales.',
   },
