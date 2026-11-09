@@ -1,0 +1,66 @@
+---
+export const prerender = false;
+import Panel from '../../../layouts/Panel.astro';
+import { crearCobro, configurado } from '../../../lib/rebill';
+import { emailValido } from '../../../lib/auth';
+
+if (!Astro.locals.admin) return Astro.redirect('/admin/invoices');
+
+let resultado: { url: string; email: string } | null = null;
+let error = '';
+const v = { email: '', titulo: '', monto: '', nombre: '' };
+
+if (Astro.request.method === 'POST') {
+  const d = await Astro.request.formData();
+  v.email = String(d.get('email') ?? '').trim().toLowerCase();
+  v.titulo = String(d.get('titulo') ?? '').trim();
+  v.monto = String(d.get('monto') ?? '').trim();
+  v.nombre = String(d.get('nombre') ?? '').trim();
+  const monto = Number(v.monto.replace(/\./g, '').replace(',', '.'));
+  if (!emailValido(v.email)) error = 'El mail del cliente no es válido.';
+  else if (v.titulo.length < 3 || v.titulo.length > 120) error = 'Poné un concepto de 3 a 120 caracteres.';
+  else if (!Number.isFinite(monto) || monto < 100 || monto > 50_000_000) error = 'El monto en pesos no es válido.';
+  else if (!configurado()) error = 'Falta configurar Rebill.';
+  else {
+    try {
+      const r = await crearCobro({ email: v.email, titulo: v.titulo, monto, nombre: v.nombre || undefined, origen: Astro.url.origin });
+      resultado = { url: r.url, email: v.email };
+    } catch (e: any) {
+      console.error('crearCobro', e?.estado, JSON.stringify(e?.cuerpo ?? String(e)));
+      error = `Rebill no aceptó el cobro (${e?.estado ?? 'error'}). Revisá el Diagnóstico.`;
+    }
+  }
+}
+---
+<Panel titulo="Nuevo cobro">
+  <section class="nuevo">
+    <p><a href="/admin/invoices">← Volver</a></p>
+    <h1>Nuevo cobro</h1>
+    <p class="p-suave">Crea un link de pago en Rebill para un cliente. Le aparece en su panel como “Para pagar” y vence en 30 días.</p>
+
+    {resultado ? (
+      <div class="p-caja ok-caja">
+        <p><strong>Cobro creado.</strong> Ya figura en el panel de {resultado.email}.</p>
+        <p class="p-suave">Link directo de pago:</p>
+        <p class="link"><a href={resultado.url} target="_blank" rel="noopener">{resultado.url}</a></p>
+        <p><a class="pbtn pbtn-linea" href="/admin/charges/new">Crear otro</a></p>
+      </div>
+    ) : (
+      <form method="post" class="p-caja form">
+        <div class="p-campo"><label for="email">Mail del cliente</label><input id="email" name="email" type="email" required value={v.email} /></div>
+        <div class="p-campo"><label for="nombre">Nombre y apellido (opcional)</label><input id="nombre" name="nombre" value={v.nombre} /></div>
+        <div class="p-campo"><label for="titulo">Concepto</label><input id="titulo" name="titulo" required maxlength="120" placeholder="Diseño y configuración de tienda" value={v.titulo} /></div>
+        <div class="p-campo"><label for="monto">Monto en pesos</label><input id="monto" name="monto" inputmode="decimal" required placeholder="990000" value={v.monto} /></div>
+        {error && <p class="p-aviso error" role="alert">{error}</p>}
+        <button class="pbtn" type="submit">Crear cobro</button>
+      </form>
+    )}
+  </section>
+</Panel>
+
+<style>
+  .nuevo { max-width: 34rem; display: grid; gap: 1rem; }
+  .form { display: grid; gap: 1rem; padding: 1.4rem; }
+  .ok-caja { display: grid; gap: 0.6rem; background: #ecfaf1; }
+  .link { word-break: break-all; }
+</style>

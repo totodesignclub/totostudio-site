@@ -1,0 +1,63 @@
+---
+export const prerender = false;
+import Panel from '../../layouts/Panel.astro';
+import { firmar, emailValido, esAdmin, esDev, limitar, enviarEnlace, DURACION_ENLACE, env, COOKIE, verificar } from '../../lib/auth';
+import { clienteExiste, configurado } from '../../lib/rebill';
+
+if (verificar(Astro.cookies.get(COOKIE)?.value, 'sesion')) return Astro.redirect('/admin/invoices');
+
+let mensaje: { tipo: 'ok' | 'error'; texto: string } | null = null;
+let enlaceDev: string | null = null;
+let email = '';
+
+if (Astro.request.method === 'POST') {
+  const datos = await Astro.request.formData();
+  email = String(datos.get('email') ?? '').trim().toLowerCase();
+  const ip = Astro.request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'x';
+  const mismoTexto = { tipo: 'ok' as const, texto: 'Si ese mail tiene un servicio con nosotros, te enviamos un enlace para entrar. Revisá tu bandeja (y el spam). Vence en 15 minutos.' };
+
+  if (!emailValido(email)) {
+    mensaje = { tipo: 'error', texto: 'Revisá el mail: parece incompleto.' };
+  } else if (!limitar(`ip:${ip}`, 10) || !limitar(`mail:${email}`, 3)) {
+    mensaje = { tipo: 'error', texto: 'Hiciste varios intentos seguidos. Probá de nuevo en unos minutos.' };
+  } else if (!configurado() && !esAdmin(email)) {
+    mensaje = { tipo: 'error', texto: 'El panel todavía no está habilitado.' };
+  } else {
+    try {
+      // Misma respuesta exista o no el mail, para no revelar quién es cliente.
+      const permitido = esAdmin(email) || (await clienteExiste(email));
+      if (permitido) {
+        const token = firmar('enlace', email, DURACION_ENLACE);
+        const url = `${Astro.url.origin}/admin/verify?t=${encodeURIComponent(token)}`;
+        const r = await enviarEnlace(email, url);
+        if (r === 'sin-servicio' && esDev()) enlaceDev = url;
+        else if (r === 'sin-servicio') console.error('Falta RESEND_API_KEY: no se puede enviar el enlace de acceso.');
+      }
+      mensaje = mismoTexto;
+    } catch (e) {
+      console.error('login', e);
+      mensaje = { tipo: 'error', texto: 'No pudimos procesar el pedido. Probá de nuevo en un rato.' };
+    }
+  }
+}
+---
+<Panel titulo="Ingresar">
+  <section class="login">
+    <h1>Tu panel</h1>
+    <p class="p-suave">Ingresá tu mail y te enviamos un enlace para ver tus pagos, descargar comprobantes y pagar lo pendiente.</p>
+    <form method="post" class="p-caja formulario">
+      <div class="p-campo">
+        <label for="email">Mail</label>
+        <input id="email" name="email" type="email" required autocomplete="email" inputmode="email" value={email} placeholder="vos@tumarca.com" />
+      </div>
+      <button class="pbtn" type="submit">Enviarme el enlace</button>
+    </form>
+    {mensaje && <p class={`p-aviso ${mensaje.tipo}`} role="status">{mensaje.texto}</p>}
+    {enlaceDev && <p class="p-aviso">Solo en local (sin servicio de mail): <a href={enlaceDev}>entrar ahora</a></p>}
+  </section>
+</Panel>
+
+<style>
+  .login { max-width: 30rem; margin: 2vh auto 0; display: grid; gap: 1.1rem; }
+  .formulario { display: grid; gap: 1rem; padding: 1.4rem; }
+</style>

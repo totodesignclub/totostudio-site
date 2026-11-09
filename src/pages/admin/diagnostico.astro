@@ -1,0 +1,31 @@
+---
+export const prerender = false;
+import Panel from '../../layouts/Panel.astro';
+import { diagnostico } from '../../lib/rebill';
+import { env } from '../../lib/auth';
+
+if (!Astro.locals.admin) return Astro.redirect('/admin/invoices');
+const rebill = await diagnostico();
+const entorno = {
+  AUTH_SECRET: (env('AUTH_SECRET')?.length ?? 0) >= 32 ? 'ok' : 'falta o es corto',
+  ADMIN_EMAILS: env('ADMIN_EMAILS') ? 'ok' : 'falta',
+  RESEND_API_KEY: env('RESEND_API_KEY') ? 'ok' : 'falta',
+  AUTH_FROM: env('AUTH_FROM') ?? '(usa hola@toto-co.com)',
+};
+---
+<Panel titulo="Diagnóstico">
+  <section class="diag">
+    <p><a href="/admin/invoices">← Volver</a></p>
+    <h1>Diagnóstico</h1>
+    <p class="p-suave">Estado de la conexión. No muestra claves.</p>
+    <h2>Variables de entorno</h2>
+    <pre class="p-caja">{JSON.stringify(entorno, null, 2)}</pre>
+    <h2>Rebill</h2>
+    <pre class="p-caja">{JSON.stringify(rebill, null, 2)}</pre>
+  </section>
+</Panel>
+
+<style>
+  .diag { display: grid; gap: 1rem; }
+  pre { margin: 0; overflow: auto; font: 0.85rem/1.5 var(--mono); white-space: pre-wrap; word-break: break-word; }
+</style>

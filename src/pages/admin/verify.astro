@@ -1,0 +1,44 @@
+---
+export const prerender = false;
+import Panel from '../../layouts/Panel.astro';
+import { verificar, firmar, COOKIE, DURACION_SESION } from '../../lib/auth';
+
+const token = Astro.url.searchParams.get('t') ?? '';
+let email = verificar(token, 'enlace');
+
+// Se confirma con un botón (POST) para que los escáneres de mail no consuman el enlace al previsualizarlo.
+if (Astro.request.method === 'POST') {
+  const datos = await Astro.request.formData();
+  email = verificar(String(datos.get('t') ?? ''), 'enlace');
+  if (email) {
+    Astro.cookies.set(COOKIE, firmar('sesion', email, DURACION_SESION), {
+      httpOnly: true, secure: Astro.url.protocol === 'https:', sameSite: 'lax', path: '/', maxAge: DURACION_SESION,
+    });
+    return Astro.redirect('/admin/invoices');
+  }
+}
+---
+<Panel titulo="Confirmar acceso">
+  <section class="verif">
+    {email ? (
+      <>
+        <h1>Entrar al panel</h1>
+        <p class="p-suave">Vas a ingresar como <strong>{email}</strong>.</p>
+        <form method="post" class="acciones">
+          <input type="hidden" name="t" value={token} />
+          <button class="pbtn" type="submit">Entrar</button>
+        </form>
+      </>
+    ) : (
+      <>
+        <h1>El enlace no sirve</h1>
+        <p class="p-suave">Venció o ya no es válido. Pedí uno nuevo y entrá desde el mail más reciente.</p>
+        <p><a class="pbtn" href="/admin/login">Pedir otro enlace</a></p>
+      </>
+    )}
+  </section>
+</Panel>
+
+<style>
+  .verif { max-width: 30rem; margin: 4vh auto 0; display: grid; gap: 1rem; justify-items: start; }
+</style>

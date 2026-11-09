@@ -1,0 +1,156 @@
+---
+export const prerender = false;
+import Panel from '../../layouts/Panel.astro';
+import { pagosDe, suscripcionesDe, cobrosPendientes, configurado, modoDemo, type Pago } from '../../lib/rebill';
+import { emailValido } from '../../lib/auth';
+
+const admin = Astro.locals.admin;
+const propio = Astro.locals.email!;
+// Un admin puede mirar el panel como cualquier cliente (?cliente=mail). Un cliente, nunca.
+const pedido = (Astro.url.searchParams.get('cliente') ?? '').trim().toLowerCase();
+const email = admin && emailValido(pedido) ? pedido : propio;
+
+const dinero = (n: number, m = 'ARS') =>
+  new Intl.NumberFormat('es-AR', { style: 'currency', currency: m, maximumFractionDigits: 0 }).format(n);
+const fecha = (iso?: string | null) =>
+  iso ? new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'America/Argentina/Buenos_Aires' }).format(new Date(iso)) : '';
+
+const ESTADOS: Record<string, [string, string]> = {
+  approved: ['Pagado', 'ok'], pending: ['Pendiente', 'pend'], rejected: ['Rechazado', 'mal'],
+  refunded: ['Reintegrado', 'neutro'], partially_refunded: ['Reintegro parcial', 'neutro'],
+  cancelled: ['Cancelado', 'neutro'], chargeback: ['Contracargo', 'mal'],
+};
+const ESTADOS_SUB: Record<string, string> = {
+  active: 'Activa', paused: 'Pausada', retrying: 'Reintentando cobro', cancelled: 'Cancelada',
+  finished: 'Finalizada', processing: 'Procesando', defaulted: 'Con deuda',
+};
+
+let error = '';
+let pagos: Pago[] = [], subs: Awaited<ReturnType<typeof suscripcionesDe>> = [], cobros: Awaited<ReturnType<typeof cobrosPendientes>> = [];
+if (!configurado()) {
+  error = 'La conexión con Rebill todavía no está configurada.';
+} else {
+  const [a, b, c] = await Promise.allSettled([pagosDe(email), suscripcionesDe(email), cobrosPendientes(email)]);
+  if (a.status === 'fulfilled') pagos = a.value; else error = 'No pudimos traer tus pagos en este momento.';
+  if (b.status === 'fulfilled') subs = b.value;
+  if (c.status === 'fulfilled') cobros = c.value;
+  [a, b, c].forEach((r) => r.status === 'rejected' && console.error('panel', r.reason));
+}
+const pagoOk = Astro.url.searchParams.get('pago') === 'ok';
+---
+<Panel titulo="Pagos y comprobantes">
+  <div class="cab">
+    <h1>Pagos y comprobantes</h1>
+    <p class="p-suave">Lo que pagaste, lo que está por vencer y tus comprobantes, en un solo lugar.</p>
+  </div>
+
+  {admin && (
+    <form class="p-caja admin" method="get">
+      <strong>Vista de administrador</strong>
+      <label class="sr" for="cliente">Ver como cliente</label>
+      <input id="cliente" name="cliente" type="email" placeholder="mail del cliente" value={email === propio ? '' : email} />
+      <button class="pbtn pbtn-linea" type="submit">Ver</button>
+      <a class="pbtn pbtn-linea" href="/admin/charges/new">Nuevo cobro</a>
+      <a class="pbtn pbtn-linea" href="/admin/diagnostico">Diagnóstico</a>
+      {modoDemo() && <span class="p-suave">Datos de demostración</span>}
+    </form>
+  )}
+  {admin && email !== propio && <p class="p-aviso">Estás viendo el panel de <strong>{email}</strong>.</p>}
+
+  {pagoOk && <p class="p-aviso ok" role="status">Recibimos tu pago. El comprobante aparece abajo en cuanto se acredita; puede demorar unos minutos.</p>}
+  {error && <p class="p-aviso error" role="alert">{error}</p>}
+
+  {cobros.length > 0 && (
+    <section class="bloque">
+      <h2>Para pagar</h2>
+      <ul class="lista">
+        {cobros.map((c) => (
+          <li class="p-caja fila">
+            <div>
+              <strong>{c.titulo}</strong>
+              {c.vence && <span class="p-suave sub">Vence el {fecha(c.vence)}</span>}
+            </div>
+            <div class="der">
+              {c.monto != null && <span class="monto">{dinero(c.monto, c.moneda)}</span>}
+              <a class="pbtn pbtn-pago" href={c.url} target="_blank" rel="noopener noreferrer">Pagar ahora</a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {subs.length > 0 && (
+    <section class="bloque">
+      <h2>Servicios mensuales</h2>
+      <ul class="lista">
+        {subs.map((s) => (
+          <li class="p-caja fila">
+            <div>
+              <strong>{s.nombre}</strong>
+              <span class="p-suave sub">
+                {ESTADOS_SUB[s.estado] ?? s.estado}{s.proximoCobro && s.estado === 'active' ? ` · próximo cobro el ${fecha(s.proximoCobro)}` : ''}
+              </span>
+            </div>
+            <div class="der"><span class="monto">{dinero(s.monto, s.moneda)}<small> /mes</small></span></div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section class="bloque">
+    <h2>Historial de pagos</h2>
+    {pagos.length === 0 && !error ? (
+      <p class="p-caja p-suave">Todavía no hay pagos registrados.</p>
+    ) : (
+      <ul class="lista">
+        {pagos.map((p) => {
+          const [txt, clase] = ESTADOS[p.estado] ?? [p.estado, 'neutro'];
+          return (
+            <li class="p-caja fila">
+              <div>
+                <strong>{p.descripcion || 'Pago'}</strong>
+                <span class="p-suave sub">{fecha(p.fecha)}</span>
+              </div>
+              <div class="der">
+                <span class="monto">{dinero(p.monto, p.moneda)}</span>
+                <span class={`estado ${clase}`}>{txt}</span>
+                {p.estado === 'approved' || p.estado === 'refunded' || p.estado === 'partially_refunded'
+                  ? <a class="pbtn pbtn-linea" href={`/admin/invoice/${p.id}`} target="_blank" rel="noopener">Comprobante</a>
+                  : <span class="vacio" aria-hidden="true"></span>}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </section>
+
+  <p class="p-suave pie">¿Dudas con un pago? Escribinos por WhatsApp o a <a href="mailto:hola@toto-co.com">hola@toto-co.com</a>.</p>
+</Panel>
+
+<style>
+  .cab { display: grid; gap: 0.6rem; }
+  .bloque { display: grid; gap: 0.9rem; }
+  .lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+  .fila { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .fila > div:first-child { display: grid; gap: 0.15rem; min-width: 0; }
+  .sub { font-size: 0.9rem; }
+  .der { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; justify-content: flex-end; }
+  .monto { font: 500 1.15rem/1 var(--display); letter-spacing: -0.01em; }
+  .monto small { font-size: 0.8rem; color: var(--tinta-suave); font-weight: 400; }
+  .estado { font-size: 0.8rem; font-weight: 600; padding: 0.25rem 0.65rem; border-radius: 999px; background: #eceef5; color: var(--tinta-suave); }
+  .estado.ok { background: #e3f7ea; color: #11703a; }
+  .estado.pend { background: #fff3df; color: #9a5a00; }
+  .estado.mal { background: #ffe9e5; color: #b3261e; }
+  .vacio { width: 7rem; }
+  .admin { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .admin input { font: inherit; padding: 0.5rem 0.8rem; border-radius: 0.7rem; border: 1.5px solid var(--linea); min-height: 2.5rem; flex: 1 1 14rem; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .pie { font-size: 0.95rem; }
+  @media (max-width: 600px) {
+    .der { justify-content: space-between; width: 100%; }
+    .vacio { display: none; }
+  }
+</style>
