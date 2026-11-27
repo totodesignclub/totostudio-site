@@ -2,27 +2,27 @@
 import Base from '../layouts/Base.astro';
 import Barra from '../components/Barra.astro';
 import logo from '../data/logo.svg?raw';
-import { ico, icoWhatsapp } from '../data/iconos';
+import { ico } from '../data/iconos';
 import { contacto, planesHoras, incluyeHoras } from '../data/site';
 
 const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
 const anio = new Date().getFullYear();
 const pesos = (n: number) => '$ ' + n.toLocaleString('es-AR');
-const descuento = (p: { precio: number; precioPasto: number }) => Math.round((1 - p.precioPasto / p.precio) * 100);
+const descuento = (p: { precio: number; precioOferta: number }) => Math.round((1 - p.precioOferta / p.precio) * 100);
 const wa = (texto: string) => `https://wa.me/${contacto.whatsapp}?text=${encodeURIComponent(texto)}`;
 const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="m8 12.3 2.7 2.7L16.2 9.5"/></svg>';
 ---
 <Base
-  title="Planes mensuales para Pasto · Toto &Co"
-  description="Planes de 20, 40 y 80 horas por mes de diseño UI/UX, ecommerce y automatizaciones, con precio especial para Pasto."
+  title="Planes mensuales · Toto &Co"
+  description="Planes de 20, 40 y 80 horas por mes de diseño UI/UX, ecommerce y automatizaciones, con precio especial."
   noindex
 >
-  <Barra titulo="Planes para Pasto" />
+  <Barra titulo="Planes mensuales" />
 
   <main>
     <div class="envoltura doc">
       <header class="intro">
-        <p class="ojo">Propuesta de servicio · Pasto</p>
+        <p class="ojo">Planes mensuales</p>
         <h1>Tu socio técnico en experiencia digital</h1>
         <p class="suave bajada">
           Diseño UI/UX, ecommerce y automatizaciones. Horas reservadas cada mes y trabajo reportado semana a semana,
@@ -33,10 +33,10 @@ const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
       <section id="planes" aria-label="Planes">
         <ul class="planes">
           {planesHoras.map((p) => {
-            const href = p.linkPago || wa(`Hola! Quiero contratar el plan ${p.nombre} (${p.horas} hs) para Pasto.`);
+            const href = p.linkPago || wa(`Hola! Quiero contratar el plan ${p.nombre} (${p.horas} hs).`);
             return (
               <li class="plan" id={p.id}>
-                <span class="cinta mono">-{descuento(p)}% Pasto</span>
+                <span class="cinta mono">-{descuento(p)}% off</span>
                 <div class="plan-top">
                   <span class="ico plan-ico" set:html={ico(p.icono)} />
                   <span class="horas mono">{p.horas} hs / mes</span>
@@ -44,10 +44,10 @@ const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
                 <h2>{p.nombre}</h2>
                 <div class="precios">
                   <p class="antes mono"><span class="sr-only">Precio de lista: </span><s>{pesos(p.precio)}</s></p>
-                  <p class="ahora"><span class="sr-only">Precio para Pasto: </span>{pesos(p.precioPasto)} <span class="mes">por mes</span></p>
+                  <p class="ahora"><span class="sr-only">Precio con descuento: </span>{pesos(p.precioOferta)} <span class="mes">por mes</span></p>
                 </div>
                 <a class="boton" href={href} target="_blank" rel="noopener">
-                  {p.linkPago ? 'Contratar y pagar' : <><span class="b-ico" set:html={icoWhatsapp} />Contratar</>}
+                  Contratar<span class="b-ico" set:html={ico('credit-card')} />
                 </a>
               </li>
             );
@@ -78,7 +78,7 @@ const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
         <div class="bloque bloque-azul">
           <h2 class="titulo">¿Necesitás más horas en un mes puntual?</h2>
           <p>Si en algún mes tu plan no alcanza, se puede cotizar un valor para el trabajo en sí mismo.</p>
-          <a class="boton boton-claro" href={wa('Hola! Necesito cotizar horas extra para Pasto.')} target="_blank" rel="noopener">Pedir cotización</a>
+          <a class="boton boton-claro" href={wa('Hola! Necesito cotizar horas extra.')} target="_blank" rel="noopener">Pedir cotización</a>
         </div>
       </section>
     </div>

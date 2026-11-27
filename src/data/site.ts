@@ -370,13 +370,13 @@ export const preguntasMarketing = [
   },
 ];
 
-// ── Planes por horas (página /planes-pasto) ───────────────────
+// ── Planes por horas (página /planes) ─────────────────────────
 // Fuente: Propuesta_TotoDesign.pdf. Precios en pesos, por mes.
-// linkPago: link de pago (Rebill o Mercado Pago). Si queda vacío, el botón abre WhatsApp.
+// precioOferta: precio con descuento. linkPago: link de pago de Rebill (si queda vacío, el botón abre WhatsApp).
 export const planesHoras = [
-  { id: 'mantenimiento', icono: 'calendar-check', nombre: 'Mantenimiento y Mejora', horas: 20, precio: 634000, precioPasto: 412000, linkPago: '' },
-  { id: 'crecimiento', icono: 'activity', nombre: 'Crecimiento', horas: 40, precio: 1147000, precioPasto: 756000, linkPago: '' },
-  { id: 'impulso', icono: 'trending-up', nombre: 'Impulso', horas: 80, precio: 1931000, precioPasto: 1256000, linkPago: '' },
+  { id: 'mantenimiento', icono: 'calendar-check', nombre: 'Mantenimiento', horas: 20, precio: 634000, precioOferta: 412000, linkPago: 'https://pay.rebill.com/toto-co/pl_495d4ac9e01749a4af758eedacc14eeb' },
+  { id: 'crecimiento', icono: 'activity', nombre: 'Crecimiento', horas: 40, precio: 1147000, precioOferta: 756000, linkPago: 'https://pay.rebill.com/toto-co/pl_b8ddb2c17ec34c3a90be2d3a29b8634d' },
+  { id: 'impulso', icono: 'trending-up', nombre: 'Impulso', horas: 80, precio: 1931000, precioOferta: 1256000, linkPago: 'https://pay.rebill.com/toto-co/pl_529745c6a12b4cfeb256190a8b0fb104' },
 ];
 
 export const incluyeHoras = [
