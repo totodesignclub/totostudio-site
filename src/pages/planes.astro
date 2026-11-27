@@ -113,16 +113,15 @@ const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
   .planes { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); padding-top: 0.9rem; }
   .plan {
     position: relative; display: grid; gap: 0.75rem; align-content: start;
-    background: var(--superficie); border: 1px solid var(--linea); border-radius: 1.25rem;
+    background: var(--tinta); border: 1px solid var(--tinta); border-radius: 1.25rem; color: #fff;
     padding: 1.5rem 1.4rem 1.4rem;
   }
-  .plan:nth-child(2) { background: var(--tinta); border-color: var(--tinta); color: #fff; }
-  .plan:nth-child(2) .antes { color: #9aa3c4; }
-  .plan:nth-child(2) .mes { color: #c3cae3; }
-  .plan:nth-child(2) .plan-ico { background: rgba(255, 255, 255, 0.12); color: #fff; }
-  .plan:nth-child(2) .horas { background: rgba(255, 255, 255, 0.12); color: #fff; }
-  .plan:nth-child(2) .boton { background: #fff; border-color: #fff; color: var(--tinta); }
-  .plan:nth-child(2) .boton:hover { background: var(--cinta); border-color: var(--cinta); }
+  .plan .antes { color: #9aa3c4; }
+  .plan .mes { color: #c3cae3; }
+  .plan .plan-ico { background: rgba(255, 255, 255, 0.12); color: #fff; }
+  .plan .horas { background: rgba(255, 255, 255, 0.12); color: #fff; }
+  .plan .boton { background: #fff; border-color: #fff; color: var(--tinta); }
+  .plan .boton:hover { background: var(--cinta); border-color: var(--cinta); }
   .cinta {
     position: absolute; top: -0.85rem; right: 1.25rem; rotate: 4deg;
     background: var(--cinta); color: var(--tinta);
