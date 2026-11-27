@@ -369,3 +369,18 @@ export const preguntasMarketing = [
     r: 'Los servicios mensuales se contratan por un mínimo de 3 meses, pagados por adelantado cada mes.',
   },
 ];
+
+// ── Planes por horas (página /planes-pasto) ───────────────────
+// Fuente: Propuesta_TotoDesign.pdf. Precios en pesos, por mes.
+// linkPago: link de pago (Rebill o Mercado Pago). Si queda vacío, el botón abre WhatsApp.
+export const planesHoras = [
+  { id: 'mantenimiento', icono: 'calendar-check', nombre: 'Mantenimiento y Mejora', horas: 20, precio: 634000, precioPasto: 412000, linkPago: '' },
+  { id: 'crecimiento', icono: 'activity', nombre: 'Crecimiento', horas: 40, precio: 1147000, precioPasto: 756000, linkPago: '' },
+  { id: 'impulso', icono: 'trending-up', nombre: 'Impulso', horas: 80, precio: 1931000, precioPasto: 1256000, linkPago: '' },
+];
+
+export const incluyeHoras = [
+  { icono: 'sliders-horizontal', texto: 'Horas de trabajo dedicadas a ecommerce, diseño UI/UX y automatizaciones o tareas técnicas, según lo que necesites cada mes.' },
+  { icono: 'files', texto: 'Reporte semanal con el detalle de las horas trabajadas y las tareas realizadas en ese período.' },
+  { icono: 'calendar', texto: 'Hasta 3 visitas mensuales, presenciales o virtuales, para relevamiento, seguimiento o definición de tareas.' },
+];

@@ -1,0 +1,178 @@
+---
+import Base from '../layouts/Base.astro';
+import Barra from '../components/Barra.astro';
+import logo from '../data/logo.svg?raw';
+import { ico, icoWhatsapp } from '../data/iconos';
+import { contacto, planesHoras, incluyeHoras } from '../data/site';
+
+const logoSvg = logo.replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const anio = new Date().getFullYear();
+const pesos = (n: number) => '$ ' + n.toLocaleString('es-AR');
+const descuento = (p: { precio: number; precioPasto: number }) => Math.round((1 - p.precioPasto / p.precio) * 100);
+const wa = (texto: string) => `https://wa.me/${contacto.whatsapp}?text=${encodeURIComponent(texto)}`;
+const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="m8 12.3 2.7 2.7L16.2 9.5"/></svg>';
+---
+<Base
+  title="Planes mensuales para Pasto · Toto &Co"
+  description="Planes de 20, 40 y 80 horas por mes de diseño UI/UX, ecommerce y automatizaciones, con precio especial para Pasto."
+  noindex
+>
+  <Barra titulo="Planes para Pasto" />
+
+  <main>
+    <div class="envoltura doc">
+      <header class="intro">
+        <p class="ojo">Propuesta de servicio · Pasto</p>
+        <h1>Tu socio técnico en experiencia digital</h1>
+        <p class="suave bajada">
+          Diseño UI/UX, ecommerce y automatizaciones. Horas reservadas cada mes y trabajo reportado semana a semana,
+          para que sepas exactamente en qué estamos trabajando.
+        </p>
+      </header>
+
+      <section id="planes" aria-label="Planes">
+        <ul class="planes">
+          {planesHoras.map((p) => {
+            const href = p.linkPago || wa(`Hola! Quiero contratar el plan ${p.nombre} (${p.horas} hs) para Pasto.`);
+            return (
+              <li class="plan" id={p.id}>
+                <span class="cinta mono">-{descuento(p)}% Pasto</span>
+                <div class="plan-top">
+                  <span class="ico plan-ico" set:html={ico(p.icono)} />
+                  <span class="horas mono">{p.horas} hs / mes</span>
+                </div>
+                <h2>{p.nombre}</h2>
+                <div class="precios">
+                  <p class="antes mono"><span class="sr-only">Precio de lista: </span><s>{pesos(p.precio)}</s></p>
+                  <p class="ahora"><span class="sr-only">Precio para Pasto: </span>{pesos(p.precioPasto)} <span class="mes">por mes</span></p>
+                </div>
+                <a class="boton" href={href} target="_blank" rel="noopener">
+                  {p.linkPago ? 'Contratar y pagar' : <><span class="b-ico" set:html={icoWhatsapp} />Contratar</>}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section id="incluye">
+        <h2 class="titulo">Qué incluye cada plan</h2>
+        <ul class="grilla">
+          {incluyeHoras.map((x) => (
+            <li class="tarjeta">
+              <span class="ico tarjeta-ico" set:html={ico(x.icono)} />
+              <p>{x.texto}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="flexibilidad" class="dos-col">
+        <div class="bloque">
+          <h2 class="titulo">Flexibilidad e independencia</h2>
+          <ul class="lista">
+            <li><span set:html={check} />Podés cancelar la suscripción en el momento que quieras.</li>
+            <li><span set:html={check} />Las horas no utilizadas quedan a tu favor para el mes siguiente, o se liquidan al finalizar, según prefieras.</li>
+          </ul>
+        </div>
+        <div class="bloque bloque-azul">
+          <h2 class="titulo">¿Necesitás más horas en un mes puntual?</h2>
+          <p>Si en algún mes tu plan no alcanza, se puede cotizar un valor para el trabajo en sí mismo.</p>
+          <a class="boton boton-claro" href={wa('Hola! Necesito cotizar horas extra para Pasto.')} target="_blank" rel="noopener">Pedir cotización</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="pie">
+    <div class="envoltura pie-in">
+      <a href="/" class="marca" aria-label="Toto &amp;Co, inicio" set:html={logoSvg} />
+      <ul class="pie-links">
+        <li><a href="/contacto">Contacto</a></li>
+        <li><a href="/terminos">Términos y condiciones</a></li>
+        <li><a href="/privacidad">Política de privacidad</a></li>
+      </ul>
+      <p class="suave pie-copy">© {anio} Toto &amp;Co · Buenos Aires</p>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .suave { color: var(--tinta-suave); }
+  .mono { font-family: var(--mono); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .ojo { font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--sello); margin-bottom: 0.75rem; }
+
+  .doc { max-width: 68rem; padding-block: clamp(2.5rem, 7vw, 5rem); }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); max-width: 16ch; }
+  .bajada { margin-top: 0.9rem; max-width: 40rem; }
+  section { margin-top: clamp(2.5rem, 6vw, 4rem); }
+  .titulo { font-size: clamp(1.4rem, 2.8vw, 1.9rem); margin-bottom: 1.1rem; }
+
+  /* Planes */
+  .planes { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); padding-top: 0.9rem; }
+  .plan {
+    position: relative; display: grid; gap: 0.75rem; align-content: start;
+    background: var(--superficie); border: 1px solid var(--linea); border-radius: 1.25rem;
+    padding: 1.5rem 1.4rem 1.4rem;
+  }
+  .plan:nth-child(2) { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+  .plan:nth-child(2) .antes { color: #9aa3c4; }
+  .plan:nth-child(2) .mes { color: #c3cae3; }
+  .plan:nth-child(2) .plan-ico { background: rgba(255, 255, 255, 0.12); color: #fff; }
+  .plan:nth-child(2) .horas { background: rgba(255, 255, 255, 0.12); color: #fff; }
+  .plan:nth-child(2) .boton { background: #fff; border-color: #fff; color: var(--tinta); }
+  .plan:nth-child(2) .boton:hover { background: var(--cinta); border-color: var(--cinta); }
+  .cinta {
+    position: absolute; top: -0.85rem; right: 1.25rem; rotate: 4deg;
+    background: var(--cinta); color: var(--tinta);
+    font-weight: 600; font-size: 0.72rem; line-height: 1; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.5rem 0.8rem; border-radius: 0.3rem;
+    box-shadow: 0 6px 14px -6px rgba(11, 19, 43, 0.35);
+  }
+  .plan-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .plan-ico { width: 2.6rem; height: 2.6rem; padding: 0.6rem; border-radius: 0.8rem; background: var(--azul-claro); color: var(--sello); }
+  .horas { font-size: 0.8125rem; font-weight: 500; padding: 0.3rem 0.65rem; border-radius: 999px; background: var(--azul-claro); color: var(--sello); }
+  .plan h2 { font-size: 1.45rem; line-height: 1.15; }
+  .precios { display: grid; gap: 0.1rem; margin-block: 0.25rem 0.5rem; }
+  .antes { font-size: 0.95rem; color: var(--tinta-suave); }
+  .ahora { font: 500 clamp(1.9rem, 3.6vw, 2.4rem)/1.05 var(--display); letter-spacing: -0.02em; }
+  .mes { font: 400 0.875rem/1 var(--texto); color: var(--tinta-suave); letter-spacing: 0; }
+
+  /* Incluye */
+  .grilla { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+  .tarjeta { background: var(--superficie); border: 1px solid var(--linea); border-radius: 1.1rem; padding: 1.15rem 1.2rem; display: grid; gap: 0.6rem; align-content: start; }
+  .tarjeta p { font-size: 0.975rem; }
+  .tarjeta-ico { width: 2.6rem; height: 2.6rem; padding: 0.6rem; border-radius: 0.8rem; background: var(--azul-claro); color: var(--sello); }
+
+  /* Flexibilidad y horas extra */
+  .dos-col { display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+  .bloque { background: var(--superficie); border: 1px solid var(--linea); border-radius: 1.25rem; padding: 1.5rem 1.4rem; display: grid; gap: 0.4rem; align-content: start; }
+  .bloque .titulo { margin-bottom: 0.5rem; font-size: 1.35rem; }
+  .bloque-azul { background: var(--azul-claro); border-color: transparent; }
+  .bloque-azul .boton { justify-self: start; margin-top: 0.75rem; }
+  .lista { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
+  .lista li { display: grid; grid-template-columns: auto 1fr; gap: 0.55rem; align-items: start; }
+  .lista span { display: inline-flex; color: var(--verde); margin-top: 0.2rem; }
+  .lista :global(svg) { width: 1.05rem; height: 1.05rem; }
+
+  /* Botones */
+  .boton {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 3rem; padding: 0.75rem 1.4rem;
+    border-radius: 999px; border: 1.5px solid var(--tinta); background: var(--tinta); color: #fff;
+    font: 600 1rem/1.2 var(--texto); text-decoration: none; transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .boton:hover { background: var(--sello); border-color: var(--sello); }
+  .boton-claro { background: transparent; color: var(--tinta); }
+  .boton-claro:hover { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+  .b-ico { display: inline-flex; width: 1.1rem; height: 1.1rem; }
+
+  .pie { border-top: 1px solid var(--linea); padding-block: 2.5rem 5rem; margin-top: 2rem; }
+  .pie-in { display: grid; gap: 1.25rem; justify-items: start; }
+  .marca { display: inline-flex; color: var(--tinta); width: 7.5rem; }
+  .marca :global(svg) { width: 100%; height: auto; display: block; }
+  .pie-links { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.95rem; }
+  .pie-links a { text-decoration: none; }
+  .pie-links a:hover { text-decoration: underline; }
+  .pie-copy { font-size: 0.875rem; }
+</style>
