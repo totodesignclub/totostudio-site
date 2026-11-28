@@ -370,7 +370,7 @@ export const preguntasMarketing = [
   },
 ];
 
-// ── Planes por horas (página /planes) ─────────────────────────
+// ── Planes por horas (página /planes-horas) ───────────────────
 // Fuente: Propuesta_TotoDesign.pdf. Precios en pesos, por mes.
 // precioOferta: precio con descuento. linkPago: link de pago de Rebill (si queda vacío, el botón abre WhatsApp).
 export const planesHoras = [
@@ -383,4 +383,75 @@ export const incluyeHoras = [
   { icono: 'sliders-horizontal', texto: 'Horas de trabajo dedicadas a ecommerce, diseño UI/UX y automatizaciones o tareas técnicas, según lo que necesites cada mes.' },
   { icono: 'files', texto: 'Reporte semanal con el detalle de las horas trabajadas y las tareas realizadas en ese período.' },
   { icono: 'calendar', texto: 'Hasta 3 visitas mensuales, presenciales o virtuales, para relevamiento, seguimiento o definición de tareas.' },
+];
+
+// ── Planes mensuales (página /precios) ───────────────────────
+// Precios en USD; la página los muestra en pesos con tipoDeCambio.
+// Cada plan suma lo del anterior. linkPago: link de Rebill (si queda vacío, el botón abre WhatsApp).
+export const planesMensuales = [
+  {
+    id: 'destacate', icono: 'store', nombre: 'Destacate', usd: 290, linkPago: '',
+    bajada: 'Tu tienda y tu marca al día, con un diseño que se destaca de la competencia.',
+    suma: null,
+    incluye: [
+      'Productos, precios, stock y novedades siempre actualizados',
+      'Diseño a demanda: banners, piezas y presentaciones',
+      'SEO para Google y para las búsquedas con IA',
+      'Una mejora por mes para que tu tienda venda mejor',
+    ],
+    limite: 'Hasta 200 productos. ¿Tenés más? Vemos tu caso.',
+  },
+  {
+    id: 'visibilizate', icono: 'sparkles', nombre: 'Visibilizate', usd: 520, linkPago: '',
+    bajada: 'Una marca consistente y presente en redes, todos los meses.',
+    suma: 'Destacate',
+    incluye: [
+      'Calendario mensual de contenido que aprobás vos',
+      'Publicaciones e historias diseñadas para tu marca',
+      'Tu red principal al día y adaptada a una segunda red',
+    ],
+    limite: null,
+  },
+  {
+    id: 'potenciate', icono: 'megaphone', nombre: 'Potenciate', usd: 790, linkPago: '',
+    bajada: 'Llevá tu marca a más personas con anuncios y email marketing.',
+    suma: 'Visibilizate',
+    incluye: [
+      'Anuncios en Meta, TikTok o Google, según lo que le convenga a tu negocio',
+      'Email marketing: carrito abandonado y newsletters',
+      'Informe mensual de resultados',
+    ],
+    limite: 'La inversión en anuncios la pagás directo a cada plataforma. LinkedIn, a consultar.',
+  },
+];
+
+export const incluidoSiempre = [
+  { icono: 'calendar', texto: 'Estrategia y una llamada por mes para definir prioridades' },
+  { icono: 'message-circle', texto: 'Resumen semanal por WhatsApp: qué se hizo y qué viene' },
+  { icono: 'badge-check', texto: 'Si algo falla, te avisamos primero y te explicamos qué pasó' },
+  { icono: 'key-round', texto: 'Tus cuentas de tienda, redes y anuncios siempre a tu nombre' },
+];
+
+export const arranque = { nombre: 'Arranque', usd: 150,
+  texto: 'Conocemos tu negocio, ordenamos accesos, revisamos tu tienda y redes y armamos el plan del primer mes. No se cobra si empezás con una puesta a punto.' };
+
+export const puestaAPunto = [
+  { icono: 'pen-tool', nombre: 'Identidad de marca', usd: 200, desde: false, texto: 'Logo, paleta y tipografías.' },
+  { icono: 'house', nombre: 'Tienda nueva', usd: 643, desde: true, texto: 'Tu tienda diseñada a medida y lista para vender.' },
+  { icono: 'palette', nombre: 'Rediseño de tienda', usd: 650, desde: true, texto: 'Para tiendas que ya venden y necesitan verse y funcionar mejor.' },
+];
+
+export const preguntasPrecios = [
+  { p: '¿Tengo que quedarme un mínimo de meses?',
+    r: 'No. Podés dar de baja el servicio avisando con 30 días y volver a activarlo cuando quieras. Retomamos desde donde quedamos, con el contexto de tu negocio.' },
+  { p: '¿Puedo empezar directo por Visibilizate o Potenciate?',
+    r: 'Sí. Cada plan incluye lo de los anteriores: si tu tienda y tu marca ya están bien resueltas, mejor; si vemos mejoras, las aplicamos dentro del plan.' },
+  { p: '¿Y si ya tengo resuelta una parte?',
+    r: 'Ese tiempo no se pierde: lo usamos en lo que más te sirva, como más diseño, landing pages, tu ficha de Google o mejoras en la web.' },
+  { p: '¿La inversión en anuncios está incluida?',
+    r: 'No. La pauta la pagás directo a Meta, TikTok o Google, con tu cuenta y tu tarjeta. Nosotros gestionamos las campañas.' },
+  { p: '¿Qué pasa si necesito algo que se pasa del plan?',
+    r: 'Te avisamos antes de hacerlo y te pasamos el valor del extra. Nada se cobra sin que lo apruebes.' },
+  { p: '¿Hay pedidos que no cubren?',
+    r: 'Sí. No hacemos impresión ni gestión con imprentas o proveedores (te dejamos el archivo listo para imprimir), cartelería, vía pública, stands, ferias o eventos, fotografía y video con producción presencial, animación 3D o motion complejo, packaging con troquel, diseño editorial extenso (catálogos impresos, revistas o libros), apps o software a medida, prensa o gestión de influencers, ni atención al cliente de tu marca.' },
 ];
